@@ -5,96 +5,74 @@
  * @format
  */
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+
+import { NavigationContainer, NavigatorScreenParams } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+
 import type {PropsWithChildren} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+import { StyleSheet } from 'react-native';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import { NativeBaseProvider } from "native-base";
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
+import { store } from './src/redux/store'
+import { Provider } from 'react-redux';
+// import { useSelector, useDispatch } from 'react-redux';
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import TabLayout from './src/router/TabLayout';
 
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+import { loginStatus } from './src/redux/reducer';
+import { collection, onSnapshot } from 'firebase/firestore';
+import { db } from './src/config/firebase'
+import { onAuthStateChanged } from '@firebase/auth';
+import { auth } from './src/config/firebase';
+
+
+import Stack from './src/router/stack';
+
+const queryClient = new QueryClient();
+
+const App = (): React.JSX.Element =>{  
+  const [people, setPeople] = useState([])
+  const [loading, setLoading] = useState(false)
+
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      // console.log("USER IS STILL LOGGsD IN: " , user);
+      if (user) {
+        setUser(user);
+      }
+    });
+  }, [user]);
+  // useEffect(() => {
+  //   console.log("hello")
+  //   setLoading(true)
+  //   const usersQuery = collection(db, "FoodWiki")
+  //   onSnapshot(usersQuery, (snapshot) => {
+  //     let usersList = []
+  //     snapshot.docs.map((doc) => usersList.push({ ...doc.data(), id: doc.id }))
+  //     setPeople(usersList)
+  //     setLoading(false)
+  //   })
+  // }, [])
+
+  console.log({ people })
   return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
+    <QueryClientProvider client={queryClient}>
+      <Provider store={store}>
+        <NavigationContainer>
+          <NativeBaseProvider>
+            {user ? <TabLayout />: <Stack /> }
+          </NativeBaseProvider>
+        </NavigationContainer>
+      </Provider>
+    </QueryClientProvider>
   );
-}
-
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
-}
+};
 
 const styles = StyleSheet.create({
   sectionContainer: {
