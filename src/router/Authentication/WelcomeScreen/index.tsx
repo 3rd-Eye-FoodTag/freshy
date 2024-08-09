@@ -2,11 +2,11 @@ import React from 'react';
 import { StyleSheet, SafeAreaView, ImageBackground } from 'react-native'
 import { Box, Center, Heading, Text, Button, VStack } from 'native-base';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import { RootStackParams } from '../../../../App';
+import { RootStackParams } from '../../constants';
 
 type Props = NativeStackScreenProps<RootStackParams, 'WelcomeScreen'>;
 
-const WelcomeScreen: React.FC<Props> = ({navigation}) => {
+const WelcomeScreen: React.FC<Props> = ({ navigation }) => {
   const goToRigsterScreen = () => {
     navigation.push('EmailInputScreen');
   }

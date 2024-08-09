@@ -1,33 +1,54 @@
 import React, { useState } from 'react';
-import { Box, Heading, VStack, FormControl, Input, Button, Select, CheckIcon, Text, HStack } from 'native-base';
+import { Box, Heading, VStack, FormControl, Input, Button, Select, CheckIcon, WarningOutlineIcon, Text, HStack } from 'native-base';
 import { StyleSheet } from 'react-native';
 import { auth } from '../../../../config/firebase';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { useSelector } from 'react-redux';
+import { registerAuth } from '../../../../redux/reducer';
+import { v4 as uuidv4 } from 'uuid';
+
+import { doc, setDoc, collection, onSnapshot } from 'firebase/firestore';
+import { db } from '../../../../config/firebase'
 
 const MoreInfoInputScreen: React.FC = () => {
-  //change to global value
-  const [name, setName] = useState('');
-  const [age, setAge] = useState('');
-  const [gender, setGender] = useState('');
-  const [zipCode, setZipCode] = useState('');
   const [error, setError] = useState('');
+  const [userInfo, setUserInfo] = useState({
+    name: "",
+    age: "",
+    gender: "",
+    zipCode: "",
+    uuid: ''
+  })
+  const user = useSelector(registerAuth)
 
-  const handleSignUp = async () => {
+  const {name, age, gender, zipCode} = userInfo
+  const { email, password } = user
+
+  const handleContinue = async () => {
     try {
-      await createUserWithEmailAndPassword(auth, "tyang0119@gmail.com", "123456");
-      // User signed up successfully
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      // Set user information in Firestore
+      await setDoc(doc(db, 'Users', user.uid), {
+        name: name,
+        age: age,
+        zipCode: zipCode,
+        gender: gender,
+        email: user.email,
+        uid: user.uid,
+        phoneNumber: user.phoneNumber,
+        createdAt: new Date()
+      });
+
+      console.log('User registered and data added to Firestore:', user);
     } catch (err: any) {
       setError(err.message);
     }
   };
-  const handleContinue = () => {
-    if (name === '') {
-      setError('Name cannot be empty');
-    } else {
-      setError('');
-      // Complete the registration or navigate to the next step
-    }
-  };
+
+  console.log({ userInfo })
+  error && console.log({ error })
 
   return (
     <Box flex={1} px={6} py={6} bg="white" justifyContent="flex-start">
@@ -43,7 +64,10 @@ const MoreInfoInputScreen: React.FC = () => {
           <Input
             placeholder="Your Name"
             value={name}
-            onChangeText={(text) => setName(text)}
+            onChangeText={(value) => setUserInfo(state => ({
+              ...state,
+              name: value
+            }))}
             borderColor="coolGray.300"
             borderRadius="8"
             fontSize="md"
@@ -54,11 +78,14 @@ const MoreInfoInputScreen: React.FC = () => {
         </FormControl>
         <HStack space={3} alignItems="center">
           <FormControl flex={1}>
-            <FormControl.Label fontSize="sm">Age (Optional)</FormControl.Label>
+            <FormControl.Label fontSize="sm">Age</FormControl.Label>
             <Input
               placeholder="Age"
               value={age}
-              onChangeText={(text) => setAge(text)}
+              onChangeText={(value) => setUserInfo(state => ({
+                ...state,
+                age: value
+              }))}
               keyboardType="numeric"
               borderColor="coolGray.300"
               borderRadius="8"
@@ -73,7 +100,10 @@ const MoreInfoInputScreen: React.FC = () => {
             <Select
               selectedValue={gender}
               placeholder="Gender"
-              onValueChange={(value) => setGender(value)}
+              onValueChange={(value) => setUserInfo(state => ({
+                ...state,
+                gender: value
+              }))}
               borderColor="coolGray.300"
               borderRadius="8"
               fontSize="md"
@@ -82,8 +112,8 @@ const MoreInfoInputScreen: React.FC = () => {
                 endIcon: <CheckIcon size="5" />,
               }}
             >
-              <Select.Item label="Male" value="male" />
-              <Select.Item label="Female" value="female" />
+              <Select.Item label="Male" value="Male" />
+              <Select.Item label="Female" value="Female" />
               <Select.Item label="Prefer not to say" value="not_specified" />
             </Select>
           </FormControl>
@@ -93,7 +123,10 @@ const MoreInfoInputScreen: React.FC = () => {
           <Input
             placeholder="Zip Code"
             value={zipCode}
-            onChangeText={(text) => setZipCode(text)}
+            onChangeText={(value) => setUserInfo(state => ({
+              ...state,
+              zipCode: value
+            }))}
             keyboardType="numeric"
             borderColor="coolGray.300"
             borderRadius="8"
@@ -103,18 +136,13 @@ const MoreInfoInputScreen: React.FC = () => {
             }}
           />
         </FormControl>
-        {error ? (
-          <FormControl.ErrorMessage leftIcon={<CheckIcon size="xs" />}>
-            {error}
-          </FormControl.ErrorMessage>
-        ) : null}
         <Button
           mt={8}
           bg={'#00A86B'}
           _text={{ color: 'white', fontSize: 'md' }}
           borderRadius="8"
-          onPress={handleSubmitted}
-          isDisabled={!name || !gender}
+          onPress={handleContinue}
+          isDisabled={!name || !gender || !gender || !zipCode}
         >
           Continue
         </Button>

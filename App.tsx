@@ -18,12 +18,12 @@ import { NativeBaseProvider } from "native-base";
 
 import { store } from './src/redux/store'
 import { Provider } from 'react-redux';
-// import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import TabLayout from './src/router/TabLayout';
 
-import { loginStatus } from './src/redux/reducer';
+import { currentUser, setCurrentUser } from './src/redux/reducer';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { db } from './src/config/firebase'
 import { onAuthStateChanged } from '@firebase/auth';
@@ -34,20 +34,29 @@ import Stack from './src/router/stack';
 
 const queryClient = new QueryClient();
 
-const App = (): React.JSX.Element =>{  
+const Router = (): React.JSX.Element =>{
   const [people, setPeople] = useState([])
   const [loading, setLoading] = useState(false)
 
   const [user, setUser] = useState(null);
 
+  const dispatch = useDispatch()
+  const current = useSelector(currentUser)
+
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
-      // console.log("USER IS STILL LOGGsD IN: " , user);
+      console.log("USER IS STILL LOGGsD IN: " , user);
       if (user) {
         setUser(user);
+        dispatch(setCurrentUser(user.uid))
+      } else {
+        dispatch(setCurrentUser(""))
       }
     });
   }, [user]);
+
+  console.log({ current })
+  
   // useEffect(() => {
   //   console.log("hello")
   //   setLoading(true)
@@ -60,13 +69,19 @@ const App = (): React.JSX.Element =>{
   //   })
   // }, [])
 
-  console.log({ people })
+  // console.log({ people })
+
+  return current ? <TabLayout /> : <Stack /> 
+} 
+
+const App = (): React.JSX.Element =>{  
+
   return (
     <QueryClientProvider client={queryClient}>
       <Provider store={store}>
         <NavigationContainer>
           <NativeBaseProvider>
-            {user ? <TabLayout />: <Stack /> }
+            <Router />
           </NativeBaseProvider>
         </NavigationContainer>
       </Provider>

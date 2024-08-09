@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { Box, Heading, VStack, FormControl, Input, Button, Icon, Text, WarningOutlineIcon } from 'native-base';
+import { Box, Heading, VStack, FormControl, Input, Button, WarningOutlineIcon } from 'native-base';
 
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import { RootStackParams } from '../../../constants'
+import { useDispatch } from 'react-redux';
+import { registerEmail } from '../../../../redux/reducer';
 
 
 import { StyleSheet, SafeAreaView } from 'react-native';
@@ -10,26 +12,21 @@ import { StyleSheet, SafeAreaView } from 'react-native';
 type Props = NativeStackScreenProps<RootStackParams, 'EmailInputScreen'>;
 
 const EmailInputScreen: React.FC<Props> = ({ navigation }) => {
-  //change to global value
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
-
-  const handleValidation = () => {
-    if (email === '') {
-        setError('Email cannot be empty');
-      } else if (!/\S+@\S+\.\S+/.test(email)) {
-        setError('Invalid email format');
-      } else {
-        setError('');
-        // Navigate to the next step
-        navigation.push("PasswordInputScreen")
-      }
-  }
+  const dispatch = useDispatch()
 
   const handleContinue = () => {
-    navigation.push("PasswordInputScreen")
-    handleValidation()
-  };
+    if (email === '') {
+      setError('Email cannot be empty');
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      setError('Invalid email format');
+    } else {
+      setError('');
+      dispatch(registerEmail(email))
+      navigation.push("PasswordInputScreen")
+    }
+  }
 
   return (
     <SafeAreaView style={styles.container}>

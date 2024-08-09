@@ -16,14 +16,6 @@ const LoginScreen: React.FC = () => {
   const dispatch = useDispatch()
   const queryClient = useQueryClient();
 
-  console.log({email, password})
-
-  // const handleLogin = () => {
-  //   const data = handleAuthentication("LogIn", email, password)
-  //   console.log( {data} )
-  //   // dispatch(loginStatus({email, password}))
-  // };
-
   const handleLogin = async () => {
     try {
       const response = await signInWithEmailAndPassword(auth, email, password);
@@ -35,6 +27,7 @@ const LoginScreen: React.FC = () => {
       console.log(err.message)
     }
   };
+  
   return (
     <SafeAreaView style={styles.safeArea}>
       <Box flex={1} px={4} py={8} bg="white" justifyContent="flex-start">

@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import { Box, Heading, VStack, FormControl, Input, Button, Icon, WarningOutlineIcon } from 'native-base';
 
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {RootStackParams } from '../../../../../App'
+import { RootStackParams } from '../../../constants'
+import { useDispatch } from 'react-redux';
+import { registerPassword } from '../../../../redux/reducer';
 
 type Props = NativeStackScreenProps<RootStackParams, 'PasswordInputScreen'>;
 
@@ -15,21 +17,19 @@ const PasswordInputScreen: React.FC<Props> = ({ navigation })=> {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
 
-  const handleValidation = () => {
+  const dispatch = useDispatch()
+
+  const handleContinue = () => {
     if (password === '' || confirmPassword === '') {
         setError('Passwords cannot be empty');
       } else if (password !== confirmPassword) {
         setError("Passwords don't match");
       } else {
         setError('');
+        dispatch(registerPassword(password))
         navigation.push("MoreInfoInputScreen")
-        // Navigate to the next step
     }
   }
-
-  const handleContinue = () => {
-    navigation.push("MoreInfoInputScreen")
-  };
 
   return (
     <Box flex={1} px={4} py={8} bg="white">

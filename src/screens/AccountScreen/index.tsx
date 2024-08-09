@@ -1,6 +1,10 @@
-import React from 'react';
-import { Box, Avatar, Text, VStack, HStack, Divider, Pressable, ChevronRightIcon, ScrollView, FlatList } from 'native-base';
+import React, { useState } from 'react';
+import { Box, Avatar, Text, VStack, HStack, Divider, Button, ChevronRightIcon, ScrollView, FlatList } from 'native-base';
 import { StyleSheet, TouchableOpacity } from 'react-native';
+import { signOut } from 'firebase/auth';
+import { auth } from '../../config/firebase';
+import { RootStackParams } from '../../router/constants';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
 
 const profileOptions = [
     { id: '1', icon: 'person', label: 'Edit User Profile' },
@@ -12,7 +16,22 @@ const profileOptions = [
     { id: '7', icon: 'thumb-up', label: 'Like Us on App Store' },
 ];
 
-const AccountScreen: React.FC = () => {
+type Props = NativeStackScreenProps<RootStackParams, 'WelcomeScreen'>;
+
+const AccountScreen: React.FC<Props> = ({ navigation }) => {
+  const [error, setError] = useState(null)
+  const handleLogout = async () => {
+    try{
+      await signOut(auth)
+    } catch (e: any) {
+      setError(e)
+    }
+  };
+
+  if(error) {
+    console.warn(error)
+  }
+
   return (
     <ScrollView>
         <Box style={styles.container}>
@@ -33,6 +52,9 @@ const AccountScreen: React.FC = () => {
             ItemSeparatorComponent={() => <Divider />}
             contentContainerStyle={{ marginTop: 24 }}
         />
+        <Button mt={4} bg="#00A86B" _text={{ color: 'white' }} onPress={handleLogout}>
+          Sign Out
+        </Button>
         </Box>
     </ScrollView>
   );

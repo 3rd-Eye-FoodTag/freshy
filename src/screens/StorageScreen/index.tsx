@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { SafeAreaView, Text, StyleSheet, View, TouchableOpacity, TextInput, FlatList, Dimensions } from 'react-native';
-import { FontAwesome6 } from '@expo/vector-icons';
+import FoodDetailsModal from '../../component/Modal/FoodDetailsModal';
+import FoodDetailsEditModal from '../../component/Modal/FoodDetailsEditModal';
+import { dummyFoodData } from '../../utils/constants'
+import FoodItem from '../../component/FoodItem';
 
 interface SliderIconProps {
   name: string;
@@ -8,34 +11,33 @@ interface SliderIconProps {
   color?: string;
 }
 
-const data = [
-  { key: 'Onion', quantity: 3, status: -3 },
-  { key: 'Kiwi', quantity: 5, status: -2 },
-  { key: 'Tofu', quantity: 1, status: -1 },
-  { key: 'Carrot', quantity: 2, status: 0 },
-  { key: 'Blueberry', quantity: 1, status: 1 },
-  { key: 'Ground Beef', quantity: 1, status: 2 },
-  { key: 'Potato', quantity: 3, status: 15 },
-  { key: 'Egg', quantity: 8, status: 30 },
-  { key: 'Green bean', quantity: 1, status: 60 },
-  { key: 'Bread', quantity: 1, status: 90 },
-  { key: 'Onion', quantity: 3, status: -3 },
-  { key: 'Kiwi', quantity: 5, status: -2 },
-  { key: 'Tofu', quantity: 1, status: -1 },
-  { key: 'Carrot', quantity: 2, status: 0 },
-  { key: 'Blueberry', quantity: 1, status: 1 },
-  { key: 'Ground Beef', quantity: 1, status: 2 },
-  { key: 'Potato', quantity: 3, status: 15 },
-  { key: 'Egg', quantity: 8, status: 30 },
-  { key: 'Green bean', quantity: 1, status: 60 },
-  { key: 'Bread', quantity: 1, status: 90 },
-];
+const foodData = {
+  name: 'Eggplant',
+  imageUrl: 'https://example.com/your-image-url.jpg',
+  daysLeft: 7,
+  location: 'Fridge',
+  expiryDate: '01/20/2024',
+  reminder: '2 Days Before Exp',
+  category: 'Vegetable',
+  others: 'Other Category',
+  storageTips: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+};
 
 const Storage: React.FC = () => {
+  const [itemList, setItemList] = useState(dummyFoodData)
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedFood, setSelectedFood] = useState("")
+
+  const handleClickIcon = (item) => {
+    console.log({ item })
+    setSelectedFood(item)
+    setModalVisible(true)
+  }
+
   return (
     <SafeAreaView style={styles.screen}>
-      {/* 做了一个大圆形在背景的叠加形成的弧形效果，用了zindex和absolute定位 */}
-    <View style={styles.arcContainer}>
+      <View style={styles.arcContainer}>
+
         <View style={styles.arcBackground}></View>
         <View style={styles.header}>
           <Text style={styles.headerText}>My Storage</Text>
@@ -49,38 +51,21 @@ const Storage: React.FC = () => {
         <TouchableOpacity style={styles.tab}><Text style={styles.tabText}>Fridge</Text></TouchableOpacity>
         <TouchableOpacity style={styles.tab}><Text style={styles.tabText}>Freezer</Text></TouchableOpacity>
         <TouchableOpacity style={styles.tab}><Text style={styles.tabText}>Pantry</Text></TouchableOpacity>
-      </View>
+      </View>      
       <TextInput style={styles.searchBar} placeholder="Search" />
       <FlatList
-        data={data}
+        data={itemList}
         numColumns={3}
-        renderItem={({ item }) => (
-          <View style={styles.item}>
-            <View style={styles.itemImageContainer}>
-              {/* 假图片 */}
-              <View style={styles.fakeImage}></View>
-              <View style={[
-                styles.itemQuantity, 
-                { backgroundColor: item.status < 0 ? 'red' : item.status <= 2 ? 'orange' : 'rgb(81, 179, 125)' }
-              ]}>
-                <Text style={styles.itemQuantityText}>x{item.quantity}</Text>
-              </View>
-            </View>
-            <Text style={styles.itemText}>{item.key}</Text>
-            {item.status < 0 ? (
-              <Text style={[styles.itemStatus, { color: 'red' }]}>expired</Text>
-            ) : item.status <= 2 ? (
-              <Text style={[styles.itemStatus, { color: 'orange' }]}>in {item.status} day{item.status > 1 ? 's' : ''}</Text>
-            ) : (
-              <View style={styles.progressBarContainer}>
-                 <View style={[styles.progressBar, { width: `${(item.status / 90) * 100}%` }]} />
-              </View>
-            )}
-          </View>
-        )}
-        keyExtractor={(item) => item.key}
+        renderItem={({ item }) => 
+          <FoodItem 
+            item={item} 
+            handleOnClick={() => { 
+              handleClickIcon(item) 
+            }}/>}
+        keyExtractor={(item) => item.name}
         contentContainerStyle={styles.itemsContainer}
       />
+      <FoodDetailsEditModal visible={modalVisible} onClose={() => setModalVisible(false)} data={selectedFood} />  
     </SafeAreaView>
   );
 };
@@ -98,7 +83,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: 2000,
     height: 2000, 
-    backgroundColor: 'lightgrey',
+    backgroundColor: '#00A86B',
     borderBottomLeftRadius: 1200, // 圆形弧度
     borderBottomRightRadius: 1200, // 圆形弧度
     zIndex: 1,
@@ -110,7 +95,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: '8%',
-    backgroundColor: 'lightgrey', 
+    backgroundColor: '#00A86B',
     zIndex: 2,
   },
   headerText: {

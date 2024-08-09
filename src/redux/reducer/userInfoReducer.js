@@ -9,6 +9,17 @@ export const userInfoInitialState = {
     isAuthenticating: false,
     profileInfo: aysncField(),
     user: aysncField(),
+    currentUser: "",
+    registerAuth: {
+        email: '',
+        password: '',
+    },
+    registerInfo: {
+        name: "",
+        age: '',
+        gender: '',
+        zipCode: '',
+    }
 }
 
 const userInfoReducer = createSlice({
@@ -17,6 +28,19 @@ const userInfoReducer = createSlice({
         ...userInfoInitialState,
     },
     reducers: {
+        //register
+        [ACTION_NAME.registerEmail]: (state, action) => {
+            state.registerAuth.email = action.payload
+        },
+        [ACTION_NAME.registerPassword]: (state, action) => {
+            state.registerAuth.password = action.payload
+        },
+        //set current login user
+        [ACTION_NAME.setCurrentUser]: (state, action) => {
+            console.log(`reducer, password: `+  action.payload)
+            state.currentUser= action.payload
+        },
+
         //authentication
         [ACTION_NAME.fetchUserInfo]: (state, action) => {
             state.user = fetch(state.user);
@@ -65,12 +89,17 @@ export const {
     register , 
     pluseOne, 
     addItems, 
-    removeItems
+    removeItems,
+    registerEmail,
+    registerPassword,
+    setCurrentUser,
 } = userInfoReducer.actions
 
 export const stateSelector = (state) => state;
 export const uidSelector = (state) => state.userInfomation.profileInfo.uid
 export const userSelector = (state) => state.userInfomation.user
+export const registerAuth = (state) => state.userInfomation.registerAuth
+export const currentUser = (state) => state.userInfomation.currentUser
 //selectorName = (state) => state[slice.name].selectorName
 //3rdEyeFirstReducer/setAuthenticationStatus
 

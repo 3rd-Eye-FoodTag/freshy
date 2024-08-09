@@ -23,7 +23,11 @@ export const ACTION_NAME = {
     fetchUserInfoFailure: 'fetchUserInfoFailure',
     fetchInventoryList: 'fetchInventoryList',
     fetchInventoryListSuccess: 'fetchInventoryListSuccess',
-    fetchInventoryListFailure: 'fetchInventoryListFailure'
+    fetchInventoryListFailure: 'fetchInventoryListFailure',
+    //register email: 
+    registerEmail: 'registerEmail', 
+    registerPassword: 'registerPassword',
+    setCurrentUser: 'setCurrentUser'
 }
 
 export const actionType = (reducerName: string, actions: string) => {
