@@ -15,7 +15,7 @@ export function* fetchUserInfo ({ payload = {} }) {
   try {
     const uid = yield select(uidSelector);
     const { status, data } = yield call(fetchUserList, { uid: uid });
-    yield console.log("hahahhaha", status, data, uid)
+    // yield console.log("hahahhaha", status, data, uid)
     if (status === 200){
       const list = []
       for (const key in data) {

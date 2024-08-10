@@ -1,7 +1,9 @@
 import axios from "axios";
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../config/firebase";
+import { auth, db } from "../config/firebase";
 import { useQuery } from '@tanstack/react-query';
+import { getDoc, doc, setDoc, updateDoc, collection, query, where, getDocs  } from 'firebase/firestore';
+import { FoodDetailsProps } from "./interface";
 
 //authetication
 const JQ = 'AIzaSyBYyGwCHKviq3olXksJWi4c7xSR_GVGoMg';
@@ -99,5 +101,89 @@ export const handleAuthentication = async (mode: string, email: string, password
   } catch (e: any) {
     console.log({ e })
     return e
+  }
+}
+
+export const handleUpdateInventory = async (uid: string, data: any) => {
+  try {
+    await setDoc(doc(db, 'Inventory', uid), { data: data})
+  } catch (e: any) {
+    console.log(e)
+  }
+}
+
+//FoodWiki
+
+export const fetchFoodWikFromFirebase = async () => {
+  //no uuid need because to fetch all data from firebase
+  try {
+    const querySnapshot = await getDocs(collection(db, "FoodWiki"));
+    const foodWikiData = []
+    querySnapshot.forEach((doc) => {
+      // console.log(doc.id, " => ", doc.data());
+      foodWikiData.push(doc.data())
+    });
+
+    return foodWikiData
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+//inventory 
+export const fetchInventoryDataFromeFirebase = async (currentUid: string) => {
+  try {
+    const docRef = doc(db, "Inventory", currentUid);
+    const docSnap = await getDoc(docRef);
+    
+    if (docSnap.exists()) {
+      // console.log("Document data:", docSnap.data());
+      return docSnap.data()
+    } else {
+      // docSnap.data() will be undefined in this case
+      console.log("No such document!");
+    }
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export const postInventoryUpdateToFirebase = async (currentUid: string, newItem: FoodDetailsProps[])  => {
+  try {
+    const docRef = doc(db, "Inventory", currentUid);
+    const docSnap = await getDoc(docRef);
+    const result = docSnap.data()
+    const inventoryupdate = doc(db, "Inventory", currentUid);
+
+    await updateDoc(inventoryupdate, {
+      data: [...result.data, ...newItem]
+    });
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export const updateExistedInventoryItem = async (currentUid: string, newItem: FoodDetailsProps) => {
+  try {
+    const docRef = doc(db, "Inventory", currentUid);
+    const docSnap = await getDoc(docRef);
+    const result = docSnap.data()
+    const collection = result.data
+
+    const updateItem = collection.map(( item ) => {
+      if(item.id === newItem.id) {
+        return {...newItem}
+      }
+
+      return item
+    })
+
+    const inventoryupdate = doc(db, "Inventory", currentUid);
+
+    await updateDoc(inventoryupdate, {
+      data: [...updateItem]
+    });
+  } catch (error) {
+    console.log(error)
   }
 }

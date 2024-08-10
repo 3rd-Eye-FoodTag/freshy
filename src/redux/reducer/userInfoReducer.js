@@ -37,7 +37,6 @@ const userInfoReducer = createSlice({
         },
         //set current login user
         [ACTION_NAME.setCurrentUser]: (state, action) => {
-            console.log(`reducer, password: `+  action.payload)
             state.currentUser= action.payload
         },
 
@@ -46,23 +45,19 @@ const userInfoReducer = createSlice({
             state.user = fetch(state.user);
         },
         [ACTION_NAME.fetchUserInfoSuccess]: (state, action) => {
-            console.log({ payload: action.payload, action})
             state.user = success(state.user, action.payload)
         },
         [ACTION_NAME.fetchUserInfoFailure]: (state, action) => {},
 
         [ACTION_NAME.register]: (state, action) => {
-            console.log("reducer register", action.payload)
         },
         [ACTION_NAME.loginStatus]: (state, action) => {
-            console.log("reducer", action.payload)
         },
         [ACTION_NAME.setAuthenticationStatus]: (state, action) => {
             state.profileInfo = success(state.authenticationInfo, action.payload);
             state.isAuthenticated = !!action.payload;
         },
         [ACTION_NAME.updateProfileInfo]: (state, action) => {
-            console.log(action.payload, "updateProfileInfo")
             //would fixed here in future
             state.user = action.payload.user
         },

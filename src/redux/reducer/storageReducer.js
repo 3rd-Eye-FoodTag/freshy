@@ -24,10 +24,8 @@ const storageReducer = createSlice({
         [ACTION_NAME.fetchInventoryListFailure]: (state, action) => {},
 
         [ACTION_NAME.addInventoryList]: (state, action) => {
-            console.log("reducer",action)
         },
         [ACTION_NAME.addInventoryListSuccess]: (state, action) => {
-            console.log("reducer",action)
         },
         [ACTION_NAME.updateSelectedFoodID] : (state, action) => {
             state.selectedFood = {...action.payload};

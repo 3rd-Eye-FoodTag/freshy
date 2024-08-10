@@ -1,4 +1,7 @@
 {
   "name": "freshy",
-  "displayName": "freshy"
+  "displayName": "freshy",
+  "plugins": [
+    "expo-font"
+  ]
 }

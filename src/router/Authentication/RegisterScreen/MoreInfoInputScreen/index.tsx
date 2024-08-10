@@ -47,9 +47,6 @@ const MoreInfoInputScreen: React.FC = () => {
     }
   };
 
-  console.log({ userInfo })
-  error && console.log({ error })
-
   return (
     <Box flex={1} px={6} py={6} bg="white" justifyContent="flex-start">
       <Heading size="md" fontWeight="600" color="coolGray.800" textAlign="center" mb={2}>

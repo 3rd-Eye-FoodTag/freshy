@@ -1,168 +1,172 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Center, VStack, HStack, Text, Button, Image, ScrollView, Input, Select } from 'native-base';
-
-// Define the interface for the data props
+import { Modal, Button, FormControl, Input, VStack, HStack, Text, Select, Image, Center, ScrollView } from 'native-base';
 import { FoodDetailsProps } from '../../../utils/interface';
+import { updateExistedInventoryItem, postInventoryUpdateToFirebase } from '../../../utils/api';
 
-// Update the component to accept data from parent component
-const FoodDetailsEditModal: React.FC<{ visible: boolean; onClose: () => void; data: FoodDetailsProps }> = ({
+import { useSelector } from 'react-redux';
+import { currentUser } from '../../../redux/reducer';
+
+const FoodDetailsModal: React.FC<{ visible: boolean; onClose: () => void; foodDetails: FoodDetailsProps | null }> = ({
   visible,
   onClose,
-  data,
+  foodDetails,
 }) => {
-  // Initialize state with the passed data
-  const [selectedLocation, setSelectedLocation] = useState(data.location);
-  const [expiryDate, setExpiryDate] = useState(data.expiryDate);
-  const [reminder, setReminder] = useState(data.reminder);
-  const [category, setCategory] = useState(data.category);
-  const [others, setOthers] = useState(data.others);
-  const [storageTips, setStorageTips] = useState(data.storageTips);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [formData, setFormData] = useState<FoodDetailsProps>(foodDetails);
+  const currentUserUUID = useSelector(currentUser)
 
   useEffect(() => {
-    // Update state when new data is passed from parent
-    setSelectedLocation(data.location);
-    setExpiryDate(data.expiryDate);
-    setReminder(data.reminder);
-    setCategory(data.category);
-    setOthers(data.others);
-    setStorageTips(data.storageTips);
-  }, [data]);
+    if (foodDetails) {
+      setFormData(foodDetails);
+    }
+  }, [foodDetails]);
+
+  const toggleEditMode = () => setIsEditMode(!isEditMode);
+
+  const handleInputChange = (name: string, value: any) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
 
   const handleSave = () => {
-    // Save the updated data logic here
-    onClose();
+    if(foodDetails) {
+      updateExistedInventoryItem(currentUserUUID, {...formData, id: foodDetails.id})
+    } else {
+      postInventoryUpdateToFirebase(currentUserUUID, [{...formData, id: crypto.randomUUID()}])
+    }
+    
+    setIsEditMode(false);
   };
 
   return (
     <Modal isOpen={visible} onClose={onClose} size="full">
       <Modal.Content maxWidth="100%" height="80%" marginTop="auto" borderTopRadius="20px">
         <Modal.CloseButton />
-        <Modal.Header>Edit Food Details</Modal.Header>
         <ScrollView>
-          <Center>
-            {/* Image and Title */}
-            <Image
-              source={{ uri: data.imageUrl }} // Use the image URL from the data props
-              alt="Food Image"
-              size="xl"
-              borderRadius={100}
-              mt={3}
-            />
-            <Text fontSize="xl" fontWeight="bold" mt={2}>
-              {data.name}
-            </Text>
-            <Text color="green.500" fontSize="md" mb={3}>
-              {data.daysLeft} days left
-            </Text>
-          </Center>
-
-          {/* Categories and Details */}
           <VStack space={4} px={4} mt={4}>
-            <Text fontWeight="bold">Location</Text>
-            <HStack justifyContent="center" space={3}>
+            <Center>
+              <Image
+                source={require("../../../assets/Fruit/0001_Apple_2.jpg")}
+                alt={formData.name}
+                size="xl"
+                borderRadius={100}
+                mb={4}
+              />
+              <Text fontSize="2xl" fontWeight="bold">{formData.name}</Text>
+              <Text color="green.500">{formData.daysLeft} days left</Text>
+            </Center>
+            <HStack space={3} justifyContent="center">
               <Button
-                colorScheme={selectedLocation === 'Fridge' ? 'green' : 'gray'}
+                colorScheme={formData.location === 'Fridge' ? 'green' : 'coolGray'}
                 size="sm"
-                onPress={() => setSelectedLocation('Fridge')}
+                onPress={() => isEditMode && handleInputChange('location', 'Fridge')}
+                isDisabled={!isEditMode}
               >
                 Fridge
               </Button>
               <Button
-                colorScheme={selectedLocation === 'Freezer' ? 'green' : 'gray'}
+                colorScheme={formData.location === 'Freezer' ? 'green' : 'coolGray'}
                 size="sm"
-                onPress={() => setSelectedLocation('Freezer')}
+                onPress={() => isEditMode && handleInputChange('location', 'Freezer')}
+                isDisabled={!isEditMode}
               >
                 Freezer
               </Button>
               <Button
-                colorScheme={selectedLocation === 'Pantry' ? 'green' : 'gray'}
+                colorScheme={formData.location === 'Pantry' ? 'green' : 'coolGray'}
                 size="sm"
-                onPress={() => setSelectedLocation('Pantry')}
+                onPress={() => isEditMode && handleInputChange('location', 'Pantry')}
+                isDisabled={!isEditMode}
               >
                 Pantry
               </Button>
             </HStack>
-
-            <VStack space={2}>
-              <Text fontWeight="bold">Expiry Date</Text>
+            <FormControl>
+              <FormControl.Label>Expiry Date</FormControl.Label>
               <Input
-                value={expiryDate}
-                onChangeText={(text) => setExpiryDate(text)}
-                placeholder="Expiry Date"
-                variant="filled"
-                keyboardType="default"
+                value={formData.expiryDate}
+                onChangeText={(value) => handleInputChange('expiryDate', value)}
+                isDisabled={!isEditMode}
               />
-            </VStack>
-
-            <VStack space={2}>
-              <Text fontWeight="bold">Reminder</Text>
+            </FormControl>
+            <FormControl>
+              <FormControl.Label>Reminder</FormControl.Label>
               <Input
-                value={reminder}
-                onChangeText={(text) => setReminder(text)}
-                placeholder="Reminder"
-                variant="filled"
-                keyboardType="default"
+                value={formData.reminder}
+                onChangeText={(value) => handleInputChange('reminder', value)}
+                isDisabled={!isEditMode}
               />
-            </VStack>
-
-            <VStack space={2}>
-              <Text fontWeight="bold">Category</Text>
+            </FormControl>
+            <FormControl>
+              <FormControl.Label>Category</FormControl.Label>
               <Select
-                selectedValue={category}
-                minWidth="200"
-                accessibilityLabel="Choose Category"
-                placeholder="Choose Category"
-                onValueChange={(itemValue) => setCategory(itemValue)}
+                selectedValue={formData.category}
+                onValueChange={(value) => handleInputChange('category', value)}
+                isDisabled={!isEditMode}
               >
                 <Select.Item label="Vegetable" value="Vegetable" />
                 <Select.Item label="Fruit" value="Fruit" />
                 <Select.Item label="Dairy" value="Dairy" />
                 <Select.Item label="Meat" value="Meat" />
               </Select>
-            </VStack>
-
-            <VStack space={2}>
-              <Text fontWeight="bold">Others</Text>
+            </FormControl>
+            <FormControl>
+              <FormControl.Label>Storage Tips</FormControl.Label>
               <Input
-                value={others}
-                onChangeText={(text) => setOthers(text)}
-                placeholder="Others"
-                variant="filled"
-                keyboardType="default"
-              />
-            </VStack>
-
-            <VStack space={2}>
-              <Text fontWeight="bold">Storage Tips</Text>
-              <Input
+                value={formData.storageTips}
+                onChangeText={(value) => handleInputChange('storageTips', value)}
+                isDisabled={!isEditMode}
                 multiline
                 numberOfLines={4}
-                value={storageTips}
-                onChangeText={(text) => setStorageTips(text)}
-                placeholder="Storage Tips"
-                variant="filled"
-                keyboardType="default"
               />
-            </VStack>
-
-            <Text fontSize="xs" color="gray.500" textAlign="center" mt={4}>
-              Recorded on 01/18/2024
-            </Text>
+            </FormControl>
           </VStack>
-
-          {/* Bottom Section */}
-          <HStack justifyContent="space-between" alignItems="center" px={4} py={4} borderTopWidth={1} borderColor="coolGray.200">
+        </ScrollView>
+        <HStack justifyContent="space-between" alignItems="center" px={4} py={4} borderTopWidth={1} borderColor="coolGray.200">
+          <HStack
+            space={1}
+            justifyContent="center"
+            alignItems="center"
+          >
+            {isEditMode && (
+              <Button
+                onPress={() => handleInputChange('quantity', formData.quantity + 1)}
+                variant="ghost"
+                size="sm"
+                isDisabled={!isEditMode}
+              >
+                +
+              </Button>
+            )}
+            <Text fontSize="lg" fontWeight="bold">
+              {formData.quantity}
+              <Text fontSize="sm" fontWeight="normal"> left</Text>
+            </Text>
+            {isEditMode && (
+              <Button
+                onPress={() => handleInputChange('quantity', Math.max(formData.quantity - 1, 0))}
+                variant="ghost"
+                size="sm"
+                isDisabled={!isEditMode}
+              >
+                -
+              </Button>
+            )}
+          </HStack>
+          <HStack space={2}>
             <Button onPress={onClose} colorScheme="coolGray" rounded="full">
               Cancel
             </Button>
-            <Button onPress={handleSave} colorScheme="green" rounded="full">
-              Save
+            <Button onPress={isEditMode ? handleSave : toggleEditMode} colorScheme="green" rounded="full">
+              {isEditMode ? 'Save' : 'Edit'}
             </Button>
           </HStack>
-        </ScrollView>
+        </HStack>
       </Modal.Content>
     </Modal>
   );
 };
 
-export default FoodDetailsEditModal;
+export default FoodDetailsModal;

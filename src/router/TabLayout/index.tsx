@@ -1,12 +1,17 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { createBottomTabNavigator, BottomTabBarButtonProps } from '@react-navigation/bottom-tabs';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { Button } from 'native-base';
+import { Button, Icon, MoonIcon } from 'native-base';
+import { MaterialCommunityIcons, AntDesign, Entypo } from "@expo/vector-icons";
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+
 
 import Storage from '../../screens/StorageScreen'
 import ShoppingScreen from '../../screens/ShoppingScreen'
 import AccountScreen from '../../screens/AccountScreen';
+import MealPlanScreen from '../../screens/MealPlanScreen';
+import HomeIcon from '@mui/icons-material/Home';
+// import Ionicons from '@expo/vector-icons/Ionicons';
 
 type RootTabParamList = {
   Home: undefined;
@@ -67,13 +72,13 @@ const TabLayout = (): React.JSX.Element =>  {
           component={Storage}
           options={{
             tabBarIcon: ({ color, size }) => (
-              <Icon name="home-outline" color={color} size={size} />
+              <MoonIcon />
             ),
           }}
         />
         <Tab.Screen
           name="Storage"
-          component={HomeScreen}
+          component={MealPlanScreen}
           options={{
             tabBarIcon: ({ color, size }) => (
               <Icon name="server" color={color} size={size} />
@@ -150,4 +155,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  // tabBarIconContainer: {
+  //   marginBottom: -20, 
+  // },
 });

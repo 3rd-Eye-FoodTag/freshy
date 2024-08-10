@@ -1,71 +1,99 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { SafeAreaView, Text, StyleSheet, View, TouchableOpacity, TextInput, FlatList, Dimensions } from 'react-native';
-import FoodDetailsModal from '../../component/Modal/FoodDetailsModal';
-import FoodDetailsEditModal from '../../component/Modal/FoodDetailsEditModal';
-import { dummyFoodData } from '../../utils/constants'
+// import FoodDetailsModal from '../../component/Modal/FoodDetailsModal';
+import FoodDetailsModal from '../../component/Modal/FoodDetailsEditModal';
 import FoodItem from '../../component/FoodItem';
-
-interface SliderIconProps {
-  name: string;
-  size?: number;
-  color?: string;
-}
-
-const foodData = {
-  name: 'Eggplant',
-  imageUrl: 'https://example.com/your-image-url.jpg',
-  daysLeft: 7,
-  location: 'Fridge',
-  expiryDate: '01/20/2024',
-  reminder: '2 Days Before Exp',
-  category: 'Vegetable',
-  others: 'Other Category',
-  storageTips: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-};
+import { FoodDetailsProps } from '../../utils/interface';
+import ToggleButton from '../../component/ToggleButton';
+import { useSelector } from 'react-redux';
+import { currentUser } from '../../redux/reducer';
+import { handleUpdateInventory, fetchInventoryDataFromeFirebase, postInventoryUpdateToFirebase, fetchFoodWikFromFirebase } from '../../utils/api'
+import { useQuery } from '@tanstack/react-query';;
+import { Button } from 'native-base';
+import { ScrollView } from 'react-native-gesture-handler';
+import { dummyFoodData } from '../../utils/constants';
+import SearchBar from '../../component/SearchBar';
 
 const Storage: React.FC = () => {
-  const [itemList, setItemList] = useState(dummyFoodData)
+  const [itemList, setItemList] = useState([])
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedFood, setSelectedFood] = useState("")
+  const [selectedFood, setSelectedFood] = useState<FoodDetailsProps | null>("")
 
-  const handleClickIcon = (item) => {
-    console.log({ item })
-    setSelectedFood(item)
-    setModalVisible(true)
-  }
+  const [filteredData, setFilteredData] = useState([]);
+  const currentUserUUID = useSelector(currentUser)
+
+  const { data: userData, isSuccess } = useQuery({
+    queryKey: ['userInventory', currentUserUUID],
+    queryFn: () => fetchInventoryDataFromeFirebase(currentUserUUID),
+  })
+
+  const { data: foodWikiData = [] } = useQuery({
+    queryKey: ['foodwiki'],
+    queryFn: () => fetchFoodWikFromFirebase(),
+  })
+
+  useEffect(() => {
+    if(isSuccess){
+      const { data } = userData
+      setItemList(() => data)
+      setFilteredData(() => data)
+    }
+  }, [userData])
+
+  const handleSelect = (selectedOption: string) => {
+    if (selectedOption === 'All') {
+      setFilteredData(itemList);
+    } else {
+      setFilteredData(itemList.filter(item => item.location === selectedOption));
+    }
+  };
 
   return (
     <SafeAreaView style={styles.screen}>
       <View style={styles.arcContainer}>
-
         <View style={styles.arcBackground}></View>
         <View style={styles.header}>
           <Text style={styles.headerText}>My Storage</Text>
           <TouchableOpacity style={styles.icon}>
-          {/* <FontAwesome6 name="sliders" size={20} color="black" /> */}
           </TouchableOpacity>
         </View>
       </View> 
-      <View style={styles.tabs}>
-        <TouchableOpacity style={[styles.tab, styles.activeTab]}><Text style={styles.tabTextActive}>All</Text></TouchableOpacity>
-        <TouchableOpacity style={styles.tab}><Text style={styles.tabText}>Fridge</Text></TouchableOpacity>
-        <TouchableOpacity style={styles.tab}><Text style={styles.tabText}>Freezer</Text></TouchableOpacity>
-        <TouchableOpacity style={styles.tab}><Text style={styles.tabText}>Pantry</Text></TouchableOpacity>
-      </View>      
-      <TextInput style={styles.searchBar} placeholder="Search" />
-      <FlatList
-        data={itemList}
-        numColumns={3}
-        renderItem={({ item }) => 
-          <FoodItem 
-            item={item} 
-            handleOnClick={() => { 
-              handleClickIcon(item) 
-            }}/>}
-        keyExtractor={(item) => item.name}
-        contentContainerStyle={styles.itemsContainer}
+      {/* <Button mt={4} bg="#00A86B" _text={{ color: 'white' }} 
+        onPress={() => {
+          setModalVisible(true)
+          setSelectedFood(null)
+      }}>
+        Add New Inventory
+      </Button> */}
+      <ToggleButton
+        options={['All', 'Fridge', 'Freezer', 'Pantry']}
+        onSelect={handleSelect}
       />
-      <FoodDetailsEditModal visible={modalVisible} onClose={() => setModalVisible(false)} data={selectedFood} />  
+      <SearchBar
+        placeholder="Search"
+        data={foodWikiData.map((item, index) => ({ id: index, name: item.name, ...item }))}
+        onSelect={(item) => {
+          // Handle item selection
+        }}
+      />
+      {isSuccess && <FlatList
+          data={filteredData}
+          numColumns={3}
+          renderItem={({ item }) => (
+            <View style={styles.itemContainer}>
+              <FoodItem
+                item={item}
+                handleOnClick={() => {
+                  setSelectedFood(item);
+                  setModalVisible(true);
+                }}
+              />
+            </View>
+          )}
+          keyExtractor={(item) => item.name}
+          contentContainerStyle={styles.itemsContainer}
+        />}
+      <FoodDetailsModal visible={modalVisible} onClose={() => setModalVisible(false)} foodDetails={selectedFood} />  
     </SafeAreaView>
   );
 };
@@ -77,15 +105,15 @@ const styles = StyleSheet.create({
   },
   arcContainer: {
     position: 'relative',
-    height: 150, // 矩形高度
+    height: 150,
   },
   arcBackground: {
     position: 'absolute',
     width: 2000,
     height: 2000, 
     backgroundColor: '#00A86B',
-    borderBottomLeftRadius: 1200, // 圆形弧度
-    borderBottomRightRadius: 1200, // 圆形弧度
+    borderBottomLeftRadius: 1200, 
+    borderBottomRightRadius: 1200,
     zIndex: 1,
     top: -1880,
     left: -790,
@@ -195,6 +223,11 @@ const styles = StyleSheet.create({
   progressBar: {
     height: '100%',
     backgroundColor: 'rgb(81, 179, 125)',
+  },
+  itemContainer: {
+    flex: 1 / 3, // Each item takes up 1/3rd of the row
+    maxWidth: '33.33%', // Ensures no overflow
+    margin: 5,
   },
 });
 

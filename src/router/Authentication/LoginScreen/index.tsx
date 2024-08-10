@@ -18,10 +18,8 @@ const LoginScreen: React.FC = () => {
 
   const handleLogin = async () => {
     try {
-      const response = await signInWithEmailAndPassword(auth, email, password);
+      await signInWithEmailAndPassword(auth, email, password);
       queryClient.invalidateQueries(); // Invalidate and refetch the auth query
-
-      console.log({ response })
     } catch (err) {
       setError(err.message);
       console.log(err.message)

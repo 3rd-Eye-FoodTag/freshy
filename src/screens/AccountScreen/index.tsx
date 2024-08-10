@@ -5,6 +5,7 @@ import { signOut } from 'firebase/auth';
 import { auth } from '../../config/firebase';
 import { RootStackParams } from '../../router/constants';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import { SafeAreaView } from 'react-native';
 
 const profileOptions = [
     { id: '1', icon: 'person', label: 'Edit User Profile' },
@@ -33,30 +34,32 @@ const AccountScreen: React.FC<Props> = ({ navigation }) => {
   }
 
   return (
-    <ScrollView>
+    // <SafeAreaView style={{flex: 1}}>
+    //   <ScrollView>
         <Box style={styles.container}>
-        <VStack space={4} alignItems="center" mt={8}>
-            <Avatar
-            size="2xl"
-            source={require('../../assets/avater.png')}
-            />
-            <Text fontSize="lg" fontWeight="bold" color="coolGray.800">
-            John Smith
-            </Text>
-        </VStack>
+          <VStack space={4} alignItems="center" mt={8}>
+              <Avatar
+              size="2xl"
+              source={require('../../assets/avater.png')}
+              />
+              <Text fontSize="lg" fontWeight="bold" color="coolGray.800">
+              John Smith
+              </Text>
+          </VStack>
 
-        <FlatList
-            data={profileOptions}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => <ProfileOption icon={item.icon} label={item.label} />}
-            ItemSeparatorComponent={() => <Divider />}
-            contentContainerStyle={{ marginTop: 24 }}
-        />
-        <Button mt={4} bg="#00A86B" _text={{ color: 'white' }} onPress={handleLogout}>
-          Sign Out
-        </Button>
+          <FlatList
+              data={profileOptions}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => <ProfileOption icon={item.icon} label={item.label} />}
+              ItemSeparatorComponent={() => <Divider />}
+              contentContainerStyle={{ marginTop: 24 }}
+          />
+          <Button mt={4} bg="#00A86B" _text={{ color: 'white' }} onPress={handleLogout}>
+            Sign Out
+          </Button>
         </Box>
-    </ScrollView>
+    //   </ScrollView>
+    // </SafeAreaView>
   );
 };
 

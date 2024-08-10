@@ -1,18 +1,25 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { FoodDetailsProps } from '../../utils/interface';
+import { Image } from 'native-base';
 
 interface FoodItemProps {
   item: FoodDetailsProps;
-  handleOnClick: (e) => void;
+  handleOnClick: (e: any) => void;
 }
 
-const FoodItem: React.FC<FoodItemProps> = ({ item , handleOnClick}) => {
+const FoodItem: React.FC<FoodItemProps> = ({ item, handleOnClick }) => {
   return (
     <TouchableOpacity style={styles.item} onPress={handleOnClick}>
       <View style={styles.itemImageContainer}>
-        {/* Replace with actual image component */}
-        <View style={styles.fakeImage}></View>
+        <Image
+          source={require("../../assets/Fruit/0001_Apple_2.jpg")}
+          alt={"item.name"}
+          size="lg"
+          borderRadius={10}
+          resizeMode="cover"
+          style={styles.image}
+        />
         <View
           style={[
             styles.itemQuantity,
@@ -31,7 +38,7 @@ const FoodItem: React.FC<FoodItemProps> = ({ item , handleOnClick}) => {
         </Text>
       ) : (
         <View style={styles.progressBarContainer}>
-          <View style={[styles.progressBar, { width: `${(item.daysLeft / 90) * 100}%` }]} />
+          <View style={[styles.progressBar, { width: `${Math.min((item.daysLeft / 90) * 100, 100)}%` }]} />
         </View>
       )}
     </TouchableOpacity>
@@ -41,30 +48,34 @@ const FoodItem: React.FC<FoodItemProps> = ({ item , handleOnClick}) => {
 const styles = StyleSheet.create({
   item: {
     flex: 1,
-    margin: 5,
+    margin: 10,
     backgroundColor: '#f8f8f8',
     borderRadius: 10,
     padding: 10,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    height: 130,
   },
   itemImageContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    height: 100,
+    width: '100%',
+    height: 70,
     marginBottom: 10,
+    backgroundColor: '#e0e0e0',
+    borderRadius: 10,
   },
-  fakeImage: {
-    width: 50,
-    height: 50,
-    backgroundColor: '#ddd',
-    borderRadius: 25,
+  image: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 10,
   },
   itemQuantity: {
     position: 'absolute',
-    top: -10,
-    right: -10,
+    top: -5,
+    right: -5,
     padding: 5,
     borderRadius: 15,
-    color: 'white',
   },
   itemQuantityText: {
     color: 'white',
@@ -73,21 +84,24 @@ const styles = StyleSheet.create({
   itemText: {
     textAlign: 'center',
     fontWeight: 'bold',
+    fontSize: 14,
   },
   itemStatus: {
     textAlign: 'center',
     fontSize: 12,
   },
   progressBarContainer: {
-    height: 10,
+    height: 4,
     backgroundColor: '#e0e0e0',
-    borderRadius: 5,
+    borderRadius: 2,
     marginTop: 5,
+    width: '100%',
+    overflow: 'hidden', // ensures the progress bar doesn't overflow
   },
   progressBar: {
     height: '100%',
     backgroundColor: '#4caf50',
-    borderRadius: 5,
+    borderRadius: 2,
   },
 });
 
