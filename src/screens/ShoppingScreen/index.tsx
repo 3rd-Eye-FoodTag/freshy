@@ -69,14 +69,14 @@ const ShoppingListScreen = () => {
             />
             <Center mt={4}>
                 <Button
-                w="90%"
-                size="lg"
-                bg="gray.300"
-                _text={{ color: 'black', fontWeight: '500' }}
-                onPress={() => console.log('Add to Inventory')}
-                style={{ marginBottom: 100, marginTop: 30 }} 
-                >
-                Add to Inventory
+                  w="90%"
+                  size="lg"
+                  bg="gray.300"
+                  _text={{ color: 'black', fontWeight: '500' }}
+                  onPress={() => console.log('Add to Inventory')}
+                  style={{ marginBottom: 100, marginTop: 30 }} 
+                  >
+                    Add to Inventory
                 </Button>
             </Center>
         </Box>
