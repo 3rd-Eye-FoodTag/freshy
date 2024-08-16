@@ -77,7 +77,7 @@ const ProfileOption: React.FC<{ icon: string; label: string }> = ({ icon, label 
           {label}
         </Text>
       </HStack>
-      <ChevronRightIcon size="5" mt="0.5" color="emerald.500" iconName='chevron-right' />
+      <ChevronRightIcon size="5" mt="0.5" color="lightgrey" iconName='chevron-right' />
     </HStack>
   </TouchableOpacity>
 );
