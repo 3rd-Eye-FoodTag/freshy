@@ -70,6 +70,7 @@ export default WelcomeScreen;
 const styles = StyleSheet.create({
     container: {
       flex: 1,
+      backgroundColor: 'white',
     },
     button: {
       textAlign: "center", 
