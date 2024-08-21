@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Box, Heading, VStack, FormControl, Input, Button, Icon, WarningOutlineIcon } from 'native-base';
+import { Box, Heading, VStack, FormControl, Input, Button, Icon, WarningOutlineIcon, IconButton } from 'native-base';
 
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import { RootStackParams } from '../../../constants'
 import { useDispatch } from 'react-redux';
 import { registerPassword } from '../../../../redux/reducer';
+import  MaterialIcons  from 'react-native-vector-icons/MaterialIcons'; 
 
 type Props = NativeStackScreenProps<RootStackParams, 'PasswordInputScreen'>;
 
@@ -26,10 +27,10 @@ const PasswordInputScreen: React.FC<Props> = ({ navigation })=> {
         setError("Passwords don't match");
       } else {
         setError('');
-        dispatch(registerPassword(password))
-        navigation.push("MoreInfoInputScreen")
+      dispatch(registerPassword(password));
+      navigation.push("MoreInfoInputScreen");
     }
-  }
+  };
 
   return (
     <Box flex={1} px={4} py={8} bg="white">
@@ -43,20 +44,24 @@ const PasswordInputScreen: React.FC<Props> = ({ navigation })=> {
             placeholder="Enter your password"
             value={password}
             onChangeText={(text) => setPassword(text)}
-            type={showPassword ? 'text' : 'password'}
-            InputRightElement={
-              <Icon
-                // as={showPassword ? 'eye' : 'eye-off'}
-                size="sm"
-                mr="2"
-                color="muted.400"
-                onPress={() => setShowPassword(!showPassword)}
-              />
-            }
+            secureTextEntry={!showPassword} // 控制密码显示
             borderColor="coolGray.300"
             _focus={{
               borderColor: 'coolGray.500',
             }}
+            InputRightElement={
+              <IconButton
+                icon={
+                  <Icon
+                    as={MaterialIcons}
+                    name={showPassword ? "visibility" : "visibility-off"}
+                    size="sm"
+                    color="coolGray.500"
+                  />
+                }
+                onPress={() => setShowPassword(!showPassword)} // 切换显示/隐藏密码
+              />
+            }
           />
         </FormControl>
         <FormControl isInvalid={!!error}>
@@ -65,11 +70,24 @@ const PasswordInputScreen: React.FC<Props> = ({ navigation })=> {
             placeholder="Confirm your password"
             value={confirmPassword}
             onChangeText={(text) => setConfirmPassword(text)}
-            type={showPassword ? 'text' : 'password'}
+            secureTextEntry={!showPassword} // 控制密码显示
             borderColor="coolGray.300"
             _focus={{
               borderColor: 'coolGray.500',
             }}
+            InputRightElement={
+              <IconButton
+                icon={
+                  <Icon
+                    as={MaterialIcons}
+                    name={showPassword ? "visibility" : "visibility-off"}
+                    size="sm"
+                    color="coolGray.500"
+                  />
+                }
+                onPress={() => setShowPassword(!showPassword)} // 切换显示/隐藏密码
+              />
+            }
           />
           {error ? (
             <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
