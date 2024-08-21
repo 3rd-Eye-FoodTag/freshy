@@ -34,8 +34,8 @@ const AccountScreen: React.FC<Props> = ({ navigation }) => {
   }
 
   return (
-    // <SafeAreaView style={{flex: 1}}>
-    //   <ScrollView>
+     <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
+      <ScrollView>
         <Box style={styles.container}>
           <VStack space={4} alignItems="center" mt={8}>
               <Avatar
@@ -58,8 +58,8 @@ const AccountScreen: React.FC<Props> = ({ navigation }) => {
             Sign Out
           </Button>
         </Box>
-    //   </ScrollView>
-    // </SafeAreaView>
+       </ScrollView>
+      </SafeAreaView>
   );
 };
 
