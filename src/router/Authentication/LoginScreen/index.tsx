@@ -1,19 +1,18 @@
 import React, { useState } from 'react';
 import { SafeAreaView, StyleSheet } from 'react-native';
-import { Box, Heading, VStack, FormControl, Input, Button, Link, WarningOutlineIcon } from 'native-base';
-
-import { loginStatus } from '../../../redux/reducer';
+import { Box, Heading, VStack, FormControl, Input, Button, Link, IconButton, Icon, WarningOutlineIcon } from 'native-base';
+import  MaterialIcons  from 'react-native-vector-icons/MaterialIcons'; 
 import { useSelector, useDispatch } from 'react-redux';
-import { handleAuthentication } from '../../../utils/api';
-import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useQueryClient } from '@tanstack/react-query';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../../config/firebase';
 
 const LoginScreen: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false); // 控制密码显示的状态
   const [error, setError] = useState('');
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const queryClient = useQueryClient();
 
   const handleLogin = async () => {
@@ -22,10 +21,10 @@ const LoginScreen: React.FC = () => {
       queryClient.invalidateQueries(); // Invalidate and refetch the auth query
     } catch (err) {
       setError(err.message);
-      console.log(err.message)
+      console.log(err.message);
     }
   };
-  
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <Box flex={1} px={4} py={8} bg="white" justifyContent="flex-start">
@@ -57,6 +56,21 @@ const LoginScreen: React.FC = () => {
               _focus={{
                 borderColor: 'coolGray.500',
               }}
+              autoCapitalize="none"
+              secureTextEntry={!showPassword} // 控制密码是否以星号显示
+              InputRightElement={
+                <IconButton
+                  icon={
+                    <Icon
+                      as={MaterialIcons}
+                      name={showPassword ? "visibility" : "visibility-off"}
+                      size="sm"
+                      color="coolGray.500"
+                    />
+                  }
+                  onPress={() => setShowPassword(!showPassword)} // 切换显示/隐藏密码
+                />
+              }
             />
             {error ? (
               <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
@@ -84,4 +98,3 @@ const styles = StyleSheet.create({
 });
 
 export default LoginScreen;
-
