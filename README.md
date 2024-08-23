@@ -6,9 +6,10 @@ This is a new [**React Native**](https://reactnative.dev) project, bootstrapped 
 
 # Demo
 <img width="250" alt="Screenshot 2024-08-23 at 12 16 14" src="https://github.com/user-attachments/assets/572202f0-7ad2-4917-8c1a-4440e50a7d8c">
-<img width="251" alt="Screenshot 2024-08-23 at 12 16 37" src="https://github.com/user-attachments/assets/76ab7ce4-c533-4034-b403-5b47cdd51818">
-<img width="244" alt="Screenshot 2024-08-23 at 12 16 53" src="https://github.com/user-attachments/assets/154c826b-1534-4b99-9f59-074b895ca621">
-<img width="343" alt="Screenshot 2024-08-23 at 12 17 13" src="https://github.com/user-attachments/assets/d558e2c0-7bde-4243-a1e5-0629802135f1">
+<img width="250" alt="Screenshot 2024-08-23 at 12 16 37" src="https://github.com/user-attachments/assets/76ab7ce4-c533-4034-b403-5b47cdd51818">
+<img width="250" alt="Screenshot 2024-08-23 at 12 16 53" src="https://github.com/user-attachments/assets/154c826b-1534-4b99-9f59-074b895ca621">
+<img width="250" alt="Screenshot 2024-08-23 at 12 20 10" src="https://github.com/user-attachments/assets/7b635f74-f063-4620-a849-c94b30511eb1">
+
 
 ## Step 1: Start the Metro Server
 
