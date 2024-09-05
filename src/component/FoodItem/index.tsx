@@ -38,7 +38,7 @@ const FoodItem: React.FC<FoodItemProps> = ({ item, handleOnClick }) => {
         </Text>
       ) : (
         <View style={styles.progressBarContainer}>
-          <View style={[styles.progressBar, { width: `${Math.min((item.daysLeft / 90) * 100, 100)}%` }]} />
+          <View style={[styles.progressBar, { width: `${Math.min((item.daysLeft / 14) * 100, 100)}%` }]} />
         </View>
       )}
     </TouchableOpacity>
@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
     padding: 10,
     alignItems: 'center',
     justifyContent: 'space-between',
-    height: 130,
+    height: 150,
   },
   itemImageContainer: {
     alignItems: 'center',

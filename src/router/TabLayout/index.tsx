@@ -2,8 +2,9 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { createBottomTabNavigator, BottomTabBarButtonProps } from '@react-navigation/bottom-tabs';
 import { Button, Icon, MoonIcon } from 'native-base';
-import { MaterialCommunityIcons, AntDesign, Entypo } from "@expo/vector-icons";
+import { AntDesign, Entypo} from "@expo/vector-icons";
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+
 
 
 import Storage from '../../screens/StorageScreen'
@@ -12,6 +13,12 @@ import AccountScreen from '../../screens/AccountScreen';
 import MealPlanScreen from '../../screens/MealPlanScreen';
 import HomeIcon from '@mui/icons-material/Home';
 // import Ionicons from '@expo/vector-icons/Ionicons';
+
+
+import Feather from 'react-native-vector-icons/Feather';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import  FontAwesome6  from 'react-native-vector-icons/FontAwesome6';
+import { green } from '@mui/material/colors';
 
 type RootTabParamList = {
   Home: undefined;
@@ -54,7 +61,7 @@ const TabLayout = (): React.JSX.Element =>  {
             bottom: 0,
             left: 0,
             right: 0,
-            height: 60,
+            height: 80,
             borderTopLeftRadius: 20,
             borderTopRightRadius: 20,
             backgroundColor: '#fff',
@@ -65,6 +72,7 @@ const TabLayout = (): React.JSX.Element =>  {
             alignItems: 'center',
           },
           headerShown: false,
+          tabBarActiveTintColor: '#00B578',
         }}
       >
         <Tab.Screen
@@ -72,7 +80,7 @@ const TabLayout = (): React.JSX.Element =>  {
           component={Storage}
           options={{
             tabBarIcon: ({ color, size }) => (
-              <MoonIcon />
+            <Feather name="home" size={size} color={color} />
             ),
           }}
         />
@@ -81,7 +89,7 @@ const TabLayout = (): React.JSX.Element =>  {
           component={MealPlanScreen}
           options={{
             tabBarIcon: ({ color, size }) => (
-              <Icon name="server" color={color} size={size} />
+              <MaterialCommunityIcons name="fridge-outline" size={size} color={color} />
             ),
           }}
         />
@@ -90,11 +98,11 @@ const TabLayout = (): React.JSX.Element =>  {
           component={HomeScreen} // Change this to your desired screen
           options={{
             tabBarIcon: ({ color, size }) => (
-              <Icon name="plus" color="#fff" size={30} />
+              <MaterialCommunityIcons name="plus-minus-variant" size={32} color="white" />
             ),
             tabBarButton: (props) => (
               <PlusMiniusComponent {...props}>
-                <Icon name="plus" color="#fff" size={30} />
+                <MaterialCommunityIcons name="plus-minus-variant" size={32} color="white" />
               </PlusMiniusComponent>
             ),
           }}
@@ -104,7 +112,7 @@ const TabLayout = (): React.JSX.Element =>  {
           component={ShoppingScreen}
           options={{
             tabBarIcon: ({ color, size }) => (
-              <Icon name="shopping-outline" color={color} size={size} />
+              <FontAwesome6 name="basket-shopping" size={20} color={color} />
             ),
             headerRight: () => (
               <Button> + </Button>
@@ -116,7 +124,7 @@ const TabLayout = (): React.JSX.Element =>  {
           component={AccountScreen}
           options={{
             tabBarIcon: ({ color, size }) => (
-              <Icon name="account-outline" color={color} size={size} />
+              <MaterialCommunityIcons name="account-circle-outline" size={size} color={color} />
             ),
           }}
         />
