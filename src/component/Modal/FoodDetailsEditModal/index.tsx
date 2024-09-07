@@ -5,6 +5,7 @@ import { updateExistedInventoryItem, postInventoryUpdateToFirebase } from '../..
 
 import { useSelector } from 'react-redux';
 import { currentUser } from '../../../redux/reducer';
+import { getImageURL } from '../../../utils/constants';
 
 const FoodDetailsModal: React.FC<{ visible: boolean; onClose: () => void; foodDetails: FoodDetailsProps | null }> = ({
   visible,
@@ -48,7 +49,7 @@ const FoodDetailsModal: React.FC<{ visible: boolean; onClose: () => void; foodDe
           <VStack space={4} px={4} mt={4}>
             <Center>
               <Image
-                source={require("../../../assets/Fruit/0001_Apple_2.jpg")}
+                source={{uri: getImageURL(foodDetails.foodPhoto )}}
                 alt={formData.name}
                 size="xl"
                 borderRadius={100}

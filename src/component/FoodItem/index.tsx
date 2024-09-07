@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { FoodDetailsProps } from '../../utils/interface';
 import { Image } from 'native-base';
+import { getImageURL, defaultFoodImage } from '../../utils/constants';
 
 interface FoodItemProps {
   item: FoodDetailsProps;
@@ -9,12 +10,25 @@ interface FoodItemProps {
 }
 
 const FoodItem: React.FC<FoodItemProps> = ({ item, handleOnClick }) => {
+  const [foodUrl, setFoodUrl] = useState(defaultFoodImage)
+  // const getFooodImage = async () => {
+  //   const result = await getFoodImageURL(item.foodPhoto)
+  //   if(result){
+  //     setFoodUrl(result)
+  //   }
+  // }
+  // useEffect(() => {
+  //   getFooodImage()
+  // }, [])
+
   return (
     <TouchableOpacity style={styles.item} onPress={handleOnClick}>
       <View style={styles.itemImageContainer}>
         <Image
-          source={require("../../assets/Fruit/0001_Apple_2.jpg")}
-          alt={"item.name"}
+          source={{
+            uri: getImageURL(item.foodPhoto)
+          }}
+          alt={"item.food"}
           size="lg"
           borderRadius={10}
           resizeMode="cover"

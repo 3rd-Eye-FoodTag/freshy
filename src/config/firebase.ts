@@ -3,6 +3,7 @@ import { initializeApp } from "firebase/app"
 import { getFirestore } from "firebase/firestore"
 import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
 import { getAuth, initializeAuth, getReactNativePersistence } from "firebase/auth";
+import { getStorage, ref, getDownloadURL } from "firebase/storage";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -24,3 +25,12 @@ export const db = getFirestore()
 export const auth = initializeAuth(app, {
   persistence: getReactNativePersistence(ReactNativeAsyncStorage)
 });
+
+export const storage = getStorage(app);
+
+export const getFoodImageURL = async (imageName) => {
+  const pathReference = ref(storage, `images/foodWiki/${imageName}.png`);
+  const url = await getDownloadURL(pathReference)
+
+  return url
+}
