@@ -6,8 +6,12 @@ import {
 } from '@react-navigation/bottom-tabs';
 import {Button} from 'native-base';
 
-import Storage from '../../screens/StorageScreen';
-import ShoppingScreen from '../../screens/ShoppingScreen';
+import AccountStackNavigator from '../stack/AccountStackNavigator';
+
+
+import Storage from '../../screens/StorageScreen'
+import ShoppingScreen from '../../screens/ShoppingScreen'
+
 import AccountScreen from '../../screens/AccountScreen';
 import MealPlanScreen from '../../screens/MealPlanScreen';
 // import Ionicons from '@expo/vector-icons/Ionicons';
