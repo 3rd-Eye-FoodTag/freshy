@@ -1,34 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { FoodDetailsProps } from '../../utils/interface';
-import { Image } from 'native-base';
-import { getImageURL, defaultFoodImage } from '../../utils/constants';
+import React from 'react';
+import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import {FoodDetailsProps} from '../../utils/interface';
+import {Image} from 'native-base';
+import {getImageURL} from '../../utils/constants';
+import {calculateDaysDifference} from '../../utils/utils';
 
 interface FoodItemProps {
   item: FoodDetailsProps;
   handleOnClick: (e: any) => void;
 }
 
-const FoodItem: React.FC<FoodItemProps> = ({ item, handleOnClick }) => {
-  const [foodUrl, setFoodUrl] = useState(defaultFoodImage)
-  // const getFooodImage = async () => {
-  //   const result = await getFoodImageURL(item.foodPhoto)
-  //   if(result){
-  //     setFoodUrl(result)
-  //   }
-  // }
-  // useEffect(() => {
-  //   getFooodImage()
-  // }, [])
+const FoodItem: React.FC<FoodItemProps> = ({item, handleOnClick}) => {
+  let daysLeft = calculateDaysDifference(item?.updatedAt);
 
   return (
     <TouchableOpacity style={styles.item} onPress={handleOnClick}>
       <View style={styles.itemImageContainer}>
         <Image
           source={{
-            uri: getImageURL(item.foodPhoto)
+            uri: getImageURL(item.foodPhoto),
           }}
-          alt={"item.food"}
+          alt={'item.food'}
           size="lg"
           borderRadius={10}
           resizeMode="cover"
@@ -37,22 +29,33 @@ const FoodItem: React.FC<FoodItemProps> = ({ item, handleOnClick }) => {
         <View
           style={[
             styles.itemQuantity,
-            { backgroundColor: item.quantity < 0 ? 'red' : item.quantity <= 2 ? 'orange' : 'rgb(81, 179, 125)' },
-          ]}
-        >
+            {
+              backgroundColor:
+                item.quantity < 0
+                  ? 'red'
+                  : item.quantity <= 2
+                  ? 'orange'
+                  : 'rgb(81, 179, 125)',
+            },
+          ]}>
           <Text style={styles.itemQuantityText}>x{item.quantity}</Text>
         </View>
       </View>
       <Text style={styles.itemText}>{item.name}</Text>
-      {item.daysLeft < 0 ? (
-        <Text style={[styles.itemStatus, { color: 'red' }]}>expired</Text>
-      ) : item.daysLeft <= 2 ? (
-        <Text style={[styles.itemStatus, { color: 'orange' }]}>
-          in {item.daysLeft} day{item.daysLeft > 1 ? 's' : ''}
+      {daysLeft < 0 ? (
+        <Text style={[styles.itemStatus, {color: 'red'}]}>expired</Text>
+      ) : daysLeft <= 2 ? (
+        <Text style={[styles.itemStatus, {color: 'orange'}]}>
+          in {daysLeft} day{daysLeft > 1 ? 's' : ''}
         </Text>
       ) : (
         <View style={styles.progressBarContainer}>
-          <View style={[styles.progressBar, { width: `${Math.min((item.daysLeft / 14) * 100, 100)}%` }]} />
+          <View
+            style={[
+              styles.progressBar,
+              {width: `${Math.min((daysLeft / 14) * 100, 100)}%`},
+            ]}
+          />
         </View>
       )}
     </TouchableOpacity>
