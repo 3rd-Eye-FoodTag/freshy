@@ -72,6 +72,9 @@ const ProfileOption: React.FC<{ icon: string; label: string; navigation: Props['
       if (label === 'Settings') {
         navigation.navigate('SettingScreen');
       }
+      if (label === 'Household Profile') {
+        navigation.navigate('HouseholdProfileScreen');
+      }
 
     }}
     style={styles.option}
