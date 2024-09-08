@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, TouchableOpacity, StyleSheet} from 'react-native';
+import {View, TouchableOpacity, Text, StyleSheet} from 'react-native';
 import {
   createBottomTabNavigator,
   BottomTabBarButtonProps,
@@ -8,13 +8,10 @@ import {Button} from 'native-base';
 
 import AccountStackNavigator from '../stack/AccountStackNavigator';
 
+import Storage from '../../screens/StorageScreen';
+import ShoppingScreen from '../../screens/ShoppingScreen';
 
-import Storage from '../../screens/StorageScreen'
-import ShoppingScreen from '../../screens/ShoppingScreen'
-
-import AccountScreen from '../../screens/AccountScreen';
 import MealPlanScreen from '../../screens/MealPlanScreen';
-// import Ionicons from '@expo/vector-icons/Ionicons';
 
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
@@ -32,8 +29,7 @@ type RootTabParamList = {
 function HomeScreen() {
   return (
     <View style={styles.screen}>
-      <CenterMenu />
-      {/* <Text>Home Screen</Text> */}
+      <Text>Home Screen</Text>
     </View>
   );
 }
@@ -131,7 +127,7 @@ const TabLayout = (): React.JSX.Element => {
       />
       <Tab.Screen
         name="Account"
-        component={AccountScreen}
+        component={AccountStackNavigator}
         options={{
           tabBarIcon: ({color, size}) => (
             <MaterialCommunityIcons

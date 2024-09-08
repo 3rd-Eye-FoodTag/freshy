@@ -1,4 +1,5 @@
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import React from 'react';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import AccountScreen from '../../../screens/AccountScreen';
 import EditUserProfileScreen from '../../../screens/AccountScreen/EditUserProfileScreen';
 import SettingScreen from '../../../screens/AccountScreen/SettingScreen';
@@ -6,37 +7,43 @@ import HouseholdProfileScreen from '../../../screens/AccountScreen/HouseholdProf
 
 const AccountStack = createNativeStackNavigator();
 
-function AccountStackNavigator() {
-    return (
-        <AccountStack.Navigator>
-            <AccountStack.Screen 
-            name="Account" 
-            component={AccountScreen}
-            options={{ headerShown: false }}
-            />
-            
-            <AccountStack.Screen
-                name="EditUserProfileScreen"
-                component={EditUserProfileScreen} options={{
-                headerTitle: '',
-                headerBackTitle: 'Back',
-                }} />
+const AccountStackNavigator: React.FC = () => {
+  return (
+    <AccountStack.Navigator>
+      <AccountStack.Screen
+        name="Account"
+        component={AccountScreen}
+        options={{headerShown: false}}
+      />
 
-            <AccountStack.Screen
-                name="SettingScreen"
-                component={SettingScreen} options={{
-                headerTitle: 'Settings',
-                headerBackTitle: 'Back',
-                }} />  
+      <AccountStack.Screen
+        name="EditUserProfileScreen"
+        component={EditUserProfileScreen}
+        options={{
+          headerTitle: '',
+          headerBackTitle: 'Back',
+        }}
+      />
 
-            <AccountStack.Screen
-                name="HouseholdProfileScreen"
-                component={HouseholdProfileScreen} options={{
-                headerTitle: 'Settings',
-                headerBackTitle: 'Back',
-                }} />           
-        </AccountStack.Navigator>
-    );
-}
+      <AccountStack.Screen
+        name="SettingScreen"
+        component={SettingScreen}
+        options={{
+          headerTitle: 'Settings',
+          headerBackTitle: 'Back',
+        }}
+      />
+
+      <AccountStack.Screen
+        name="HouseholdProfileScreen"
+        component={HouseholdProfileScreen}
+        options={{
+          headerTitle: 'Settings',
+          headerBackTitle: 'Back',
+        }}
+      />
+    </AccountStack.Navigator>
+  );
+};
 
 export default AccountStackNavigator;
