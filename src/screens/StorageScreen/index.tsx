@@ -7,12 +7,15 @@ import { FoodDetailsProps } from '../../utils/interface';
 import ToggleButton from '../../component/ToggleButton';
 import { useSelector } from 'react-redux';
 import { currentUser } from '../../redux/reducer';
-import { handleUpdateInventory, fetchInventoryDataFromeFirebase, postInventoryUpdateToFirebase, fetchFoodWikFromFirebase } from '../../utils/api'
+import { handleUpdateInventory, fetchInventoryDataFromeFirebase, postInventoryUpdateToFirebase, fetchFoodWikFromFirebase, postMockData, addFoodDataToFirestore } from '../../utils/api'
 import { useQuery } from '@tanstack/react-query';;
 import { Button } from 'native-base';
 import { ScrollView } from 'react-native-gesture-handler';
 import { dummyFoodData } from '../../utils/constants';
 import SearchBar from '../../component/SearchBar';
+//test
+import foodWikeData from '../../utils/mockData/foodWikiData.json'
+import foodInventoryData from '../../utils/mockData/foodInventoryData.json'
 
 const Storage: React.FC = () => {
   const [itemList, setItemList] = useState([])
@@ -31,6 +34,14 @@ const Storage: React.FC = () => {
     queryKey: ['foodwiki'],
     queryFn: () => fetchFoodWikFromFirebase(),
   })
+
+  console.log({ isSuccess })
+
+  useEffect(() => {
+    // addFoodDataToFirestore(foodWikeData)
+    // console.log({ foodInventoryData })
+    // postInventoryUpdateToFirebase(currentUserUUID, foodInventoryData)
+  }, [])
 
   useEffect(() => {
     if(isSuccess){
@@ -71,7 +82,19 @@ const Storage: React.FC = () => {
       />
       <SearchBar
         placeholder="Search"
-        data={foodWikiData.map((item, index) => ({ id: index, name: item.name, ...item }))}
+        data={foodWikiData.map((item, index) => {
+          if(item === undefined) {
+            console.log({ item })
+          }
+          // if(!item?.food) {
+          //   console.log({ item })
+          // }
+          return item && 
+          { 
+            id: item.foodID || index, 
+            name: item.food || 'undefined', 
+            ...item }
+        })}
         onSelect={(item) => {
           // Handle item selection
         }}
@@ -85,7 +108,7 @@ const Storage: React.FC = () => {
                 item={item}
                 handleOnClick={() => {
                   setSelectedFood(item);
-                  setModalVisible(true);
+                  setModalVisible(() => true);
                 }}
               />
             </View>

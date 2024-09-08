@@ -42,7 +42,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ placeholder, data, onSelect }) =>
       {query.length > 0 && (
         <FlatList
           data={filteredData}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item, index) => `${item.foodID}-${index}`}
           style={{ backgroundColor: '#E2E8F0', borderRadius: 10 }}
           renderItem={({ item }) => (
             <TouchableOpacity onPress={() => handleSelect(item)}>

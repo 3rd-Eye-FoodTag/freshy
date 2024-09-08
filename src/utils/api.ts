@@ -2,7 +2,7 @@ import axios from "axios";
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "../config/firebase";
 import { useQuery } from '@tanstack/react-query';
-import { getDoc, doc, setDoc, updateDoc, collection, query, where, getDocs  } from 'firebase/firestore';
+import { getDoc, doc, setDoc, updateDoc, collection, query, where, getDocs, addDoc  } from 'firebase/firestore';
 import { FoodDetailsProps } from "./interface";
 
 //authetication
@@ -117,7 +117,7 @@ export const handleUpdateInventory = async (uid: string, data: any) => {
 export const fetchFoodWikFromFirebase = async () => {
   //no uuid need because to fetch all data from firebase
   try {
-    const querySnapshot = await getDocs(collection(db, "FoodWiki"));
+    const querySnapshot = await getDocs(collection(db, "FoodWiki2"));
     const foodWikiData = []
     querySnapshot.forEach((doc) => {
       // console.log(doc.id, " => ", doc.data());
@@ -135,6 +135,7 @@ export const fetchInventoryDataFromeFirebase = async (currentUid: string) => {
   try {
     const docRef = doc(db, "Inventory", currentUid);
     const docSnap = await getDoc(docRef);
+
     
     if (docSnap.exists()) {
       // console.log("Document data:", docSnap.data());
@@ -150,13 +151,15 @@ export const fetchInventoryDataFromeFirebase = async (currentUid: string) => {
 
 export const postInventoryUpdateToFirebase = async (currentUid: string, newItem: FoodDetailsProps[])  => {
   try {
+    
     const docRef = doc(db, "Inventory", currentUid);
     const docSnap = await getDoc(docRef);
     const result = docSnap.data()
     const inventoryupdate = doc(db, "Inventory", currentUid);
+    console.log({ inventoryupdate })
 
     await updateDoc(inventoryupdate, {
-      data: [...result.data, ...newItem]
+      data: newItem
     });
   } catch (error) {
     console.log(error)
@@ -187,3 +190,38 @@ export const updateExistedInventoryItem = async (currentUid: string, newItem: Fo
     console.log(error)
   }
 }
+
+export const postMockData = async (data: any) => {
+  try {
+    console.log({ data })
+    data.forEach(( item ) => {
+      console.log({ name: item.imageName })
+    })
+    // const docRef = doc(db, "Inventory", currentUid);
+    // const docSnap = await getDoc(docRef);
+    // const result = docSnap.data()
+    // const inventoryupdate = doc(db, "Inventory", currentUid);
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+//use to updateFoodWiki
+export const addFoodDataToFirestore = async (foodArray: any) => {
+  const collectionName = 'FoodWiki2'; // Collection name
+
+  try {
+    // Loop through the array and add each item as a document
+    console.log("start adding")
+    for (const item of foodArray) {
+      // Add each document with its foodID as the document ID
+      // await addDoc(collection(db, collectionName), { ...item })
+    }
+
+    console.log('Data successfully added to Firestore!');
+  } catch (error) {
+    console.error('Error adding data to Firestore:', error);
+  }
+}
+
+//use to updateInventory to user 
