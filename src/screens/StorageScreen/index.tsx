@@ -1,75 +1,94 @@
-import React, { useEffect, useState } from 'react';
-import { SafeAreaView, Text, StyleSheet, View, TouchableOpacity, TextInput, FlatList, Dimensions } from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {
+  SafeAreaView,
+  Text,
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  TextInput,
+  FlatList,
+  Dimensions,
+} from 'react-native';
 // import FoodDetailsModal from '../../component/Modal/FoodDetailsModal';
 import FoodDetailsModal from '../../component/Modal/FoodDetailsEditModal';
 import FoodItem from '../../component/FoodItem';
-import { FoodDetailsProps } from '../../utils/interface';
+import {FoodDetailsProps} from '../../utils/interface';
 import ToggleButton from '../../component/ToggleButton';
-import { useSelector } from 'react-redux';
-import { currentUser } from '../../redux/reducer';
-import { handleUpdateInventory, fetchInventoryDataFromeFirebase, postInventoryUpdateToFirebase, fetchFoodWikFromFirebase, postMockData, addFoodDataToFirestore } from '../../utils/api'
-import { useQuery } from '@tanstack/react-query';;
-import { Button } from 'native-base';
-import { ScrollView } from 'react-native-gesture-handler';
-import { dummyFoodData } from '../../utils/constants';
+import {useSelector} from 'react-redux';
+import {currentUser} from '../../redux/reducer';
+import {
+  handleUpdateInventory,
+  fetchInventoryDataFromeFirebase,
+  postInventoryUpdateToFirebase,
+  fetchFoodWikFromFirebase,
+  postMockData,
+  addFoodDataToFirestore,
+} from '../../utils/api';
+import {useQuery} from '@tanstack/react-query';
+import {Button} from 'native-base';
+import {ScrollView} from 'react-native-gesture-handler';
+import {dummyFoodData} from '../../utils/constants';
 import SearchBar from '../../component/SearchBar';
 //test
-import foodWikeData from '../../utils/mockData/foodWikiData.json'
-import foodInventoryData from '../../utils/mockData/foodInventoryData.json'
+import foodWikeData from '../../utils/mockData/foodWikiData.json';
+import foodInventoryData from '../../utils/mockData/foodInventoryData.json';
 
 const Storage: React.FC = () => {
-  const [itemList, setItemList] = useState([])
-  const [modalVisible, setModalVisible] = useState(false);
-  const [selectedFood, setSelectedFood] = useState<FoodDetailsProps | null>("")
-
+  const [itemList, setItemList] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
-  const currentUserUUID = useSelector(currentUser)
 
-  const { data: userData, isSuccess } = useQuery({
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedFood, setSelectedFood] = useState<FoodDetailsProps | null>('');
+  const currentUserUUID = useSelector(currentUser);
+
+  const {data: userData, isSuccess} = useQuery({
     queryKey: ['userInventory', currentUserUUID],
     queryFn: () => fetchInventoryDataFromeFirebase(currentUserUUID),
-  })
+  });
 
-  const { data: foodWikiData = [] } = useQuery({
+  const {data: foodWikiData = []} = useQuery({
     queryKey: ['foodwiki'],
     queryFn: () => fetchFoodWikFromFirebase(),
-  })
+  });
 
-  console.log({ isSuccess })
+  console.log({isSuccess});
 
   useEffect(() => {
     // addFoodDataToFirestore(foodWikeData)
     // console.log({ foodInventoryData })
     // postInventoryUpdateToFirebase(currentUserUUID, foodInventoryData)
-  }, [])
+  }, []);
+
+  console.log({userData: userData?.data[0]});
 
   useEffect(() => {
-    if(isSuccess){
-      const { data } = userData
-      setItemList(() => data)
-      setFilteredData(() => data)
+    if (isSuccess) {
+      const {data} = userData;
+      setItemList(() => data);
+      setFilteredData(() => data);
     }
-  }, [userData])
+  }, [userData]);
 
   const handleSelect = (selectedOption: string) => {
     if (selectedOption === 'All') {
       setFilteredData(itemList);
     } else {
-      setFilteredData(itemList.filter(item => item.location === selectedOption));
+      setFilteredData(
+        itemList.filter(item => item.storagePlace === selectedOption),
+      );
     }
   };
 
   return (
     <SafeAreaView style={styles.screen}>
       <View style={styles.arcContainer}>
-        <View style={styles.arcBackground}></View>
+        <View style={styles.arcBackground} />
         <View style={styles.header}>
           <Text style={styles.headerText}>My Storage</Text>
-          <TouchableOpacity style={styles.icon}>
-          </TouchableOpacity>
+          <TouchableOpacity style={styles.icon} />
         </View>
-      </View> 
-      {/* <Button mt={4} bg="#00A86B" _text={{ color: 'white' }} 
+      </View>
+      {/* <Button mt={4} bg="#00A86B" _text={{ color: 'white' }}
         onPress={() => {
           setModalVisible(true)
           setSelectedFood(null)
@@ -83,26 +102,29 @@ const Storage: React.FC = () => {
       <SearchBar
         placeholder="Search"
         data={foodWikiData.map((item, index) => {
-          if(item === undefined) {
-            console.log({ item })
+          if (item === undefined) {
+            console.log({item});
           }
           // if(!item?.food) {
           //   console.log({ item })
           // }
-          return item && 
-          { 
-            id: item.foodID || index, 
-            name: item.food || 'undefined', 
-            ...item }
+          return (
+            item && {
+              id: item.foodID || index,
+              name: item.food || 'undefined',
+              ...item,
+            }
+          );
         })}
-        onSelect={(item) => {
+        onSelect={item => {
           // Handle item selection
         }}
       />
-      {isSuccess && <FlatList
+      {isSuccess && (
+        <FlatList
           data={filteredData}
           numColumns={3}
-          renderItem={({ item }) => (
+          renderItem={({item}) => (
             <View style={styles.itemContainer}>
               <FoodItem
                 item={item}
@@ -113,10 +135,15 @@ const Storage: React.FC = () => {
               />
             </View>
           )}
-          keyExtractor={(item) => item.name}
+          keyExtractor={item => item.name}
           contentContainerStyle={styles.itemsContainer}
-        />}
-      <FoodDetailsModal visible={modalVisible} onClose={() => setModalVisible(false)} foodDetails={selectedFood} />  
+        />
+      )}
+      <FoodDetailsModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        foodDetails={selectedFood}
+      />
     </SafeAreaView>
   );
 };
@@ -133,9 +160,9 @@ const styles = StyleSheet.create({
   arcBackground: {
     position: 'absolute',
     width: 2000,
-    height: 2000, 
+    height: 2000,
     backgroundColor: '#00A86B',
-    borderBottomLeftRadius: 1200, 
+    borderBottomLeftRadius: 1200,
     borderBottomRightRadius: 1200,
     zIndex: 1,
     top: -1880,
