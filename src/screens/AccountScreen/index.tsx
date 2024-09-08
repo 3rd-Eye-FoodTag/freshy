@@ -50,7 +50,7 @@ const AccountScreen: React.FC<Props> = ({ navigation }) => {
           <FlatList
               data={profileOptions}
               keyExtractor={(item) => item.id}
-              renderItem={({ item }) => <ProfileOption icon={item.icon} label={item.label} />}
+              renderItem={({ item }) => <ProfileOption icon={item.icon} label={item.label} navigation={navigation}  />}
               ItemSeparatorComponent={() => <Divider />}
               contentContainerStyle={{ marginTop: 24 }}
           />
@@ -63,10 +63,12 @@ const AccountScreen: React.FC<Props> = ({ navigation }) => {
   );
 };
 
-const ProfileOption: React.FC<{ icon: string; label: string }> = ({ icon, label }) => (
+const ProfileOption: React.FC<{ icon: string; label: string; navigation: Props['navigation'] }> = ({ icon, label, navigation }) => (
   <TouchableOpacity
     onPress={() => {
-      // Handle navigation or action here
+      if (label === 'Edit User Profile') {
+        navigation.navigate('EditUserProfileScreen');
+      }
     }}
     style={styles.option}
   >

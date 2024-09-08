@@ -5,6 +5,7 @@ import { Button, Icon, MoonIcon } from 'native-base';
 import { AntDesign, Entypo} from "@expo/vector-icons";
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 
+import AccountStackNavigator from '../stack/AccountStackNavigator';
 
 
 import Storage from '../../screens/StorageScreen'
@@ -121,7 +122,7 @@ const TabLayout = (): React.JSX.Element =>  {
         />
         <Tab.Screen
           name="Account"
-          component={AccountScreen}
+          component={AccountStackNavigator}
           options={{
             tabBarIcon: ({ color, size }) => (
               <MaterialCommunityIcons name="account-circle-outline" size={size} color={color} />
