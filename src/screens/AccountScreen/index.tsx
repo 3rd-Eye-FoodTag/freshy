@@ -69,6 +69,10 @@ const ProfileOption: React.FC<{ icon: string; label: string; navigation: Props['
       if (label === 'Edit User Profile') {
         navigation.navigate('EditUserProfileScreen');
       }
+      if (label === 'Settings') {
+        navigation.navigate('SettingScreen');
+      }
+
     }}
     style={styles.option}
   >

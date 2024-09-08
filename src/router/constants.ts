@@ -6,6 +6,7 @@ export type RootStackParams = {
     PasswordInputScreen: undefined;
     MoreInfoInputScreen: undefined;
     EditUserProfileScreen: undefined;
+    SettingScreen: undefined;
   };
   
   export type AuthenticationStackParams = {
