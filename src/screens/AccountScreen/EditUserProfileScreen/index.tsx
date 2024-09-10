@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
-import { SafeAreaView, StyleSheet, View, TouchableOpacity, Image } from 'react-native';
+import React, {useState} from 'react';
+import {SafeAreaView, StyleSheet, View, TouchableOpacity} from 'react-native';
 import Avatar from '../../../component/Avater';
-import { FontAwesome5 } from 'react-native-vector-icons/FontAwesome5';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import ProfileInfoRow from '../../../component/ProfileInfoRow.tsx';
-
-
+import {Icon} from 'native-base';
 
 const UserProfile: React.FC = () => {
   const [name, setName] = useState('John Smith');
@@ -18,20 +17,31 @@ const UserProfile: React.FC = () => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-      {/* FIXME: image path invalid */}
-      {/* <Avatar source={require('src/assets/avater.png')} /> */}
-        <TouchableOpacity style={styles.editButton} >
-        {/*  FIXME: Render Error */}
-        {/* <FontAwesome5 name="pencil-alt" size={17} color="white" /> */}
+        <Avatar source={require('../../../assets/avater.png')} />
+        <TouchableOpacity style={styles.editButton}>
+          <Icon as={FontAwesome5} name={'pencil-alt'} size="sm" />
         </TouchableOpacity>
       </View>
       <ProfileInfoRow label="Name" value={name} onChange={setName} />
       <ProfileInfoRow label="Email" value={email} onChange={setEmail} />
-      <ProfileInfoRow label="Password" value={password} onChange={setPassword} secureTextEntry />
+      <ProfileInfoRow
+        label="Password"
+        value={password}
+        onChange={setPassword}
+        secureTextEntry
+      />
       <ProfileInfoRow label="Zipcode" value={zipcode} onChange={setZipcode} />
-      <ProfileInfoRow label="Phone Number (Optional)" value={phoneNumber} onChange={setPhoneNumber} />
+      <ProfileInfoRow
+        label="Phone Number (Optional)"
+        value={phoneNumber}
+        onChange={setPhoneNumber}
+      />
       <ProfileInfoRow label="Age (Optional)" value={age} onChange={setAge} />
-      <ProfileInfoRow label="Gender (Optional)" value={gender} onChange={setGender} />
+      <ProfileInfoRow
+        label="Gender (Optional)"
+        value={gender}
+        onChange={setGender}
+      />
     </SafeAreaView>
   );
 };
@@ -41,9 +51,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
-  avatar: {
-
-  },
+  avatar: {},
   header: {
     alignItems: 'center',
     marginBottom: 40,

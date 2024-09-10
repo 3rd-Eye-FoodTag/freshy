@@ -1,20 +1,39 @@
-import React, { useState, useEffect } from 'react';
-import { Modal, Button, FormControl, Input, VStack, HStack, Text, Select, Image, Center, ScrollView } from 'native-base';
-import { FoodDetailsProps } from '../../../utils/interface';
-import { updateExistedInventoryItem, postInventoryUpdateToFirebase } from '../../../utils/api';
+import React, {useState, useEffect} from 'react';
+import {
+  Modal,
+  Button,
+  FormControl,
+  Input,
+  VStack,
+  HStack,
+  Text,
+  Select,
+  Image,
+  Center,
+  ScrollView,
+} from 'native-base';
+import {FoodDetailsProps} from '../../../utils/interface';
+import {
+  updateExistedInventoryItem,
+  postInventoryUpdateToFirebase,
+} from '../../../utils/api';
 
-import { useSelector } from 'react-redux';
-import { currentUser } from '../../../redux/reducer';
-import { getImageURL } from '../../../utils/constants';
+import {useSelector} from 'react-redux';
+import {currentUser} from '../../../redux/reducer';
+import {getImageURL} from '../../../utils/constants';
+import {
+  calculateDaysDifference,
+  convertTimeStringToDate,
+} from '../../../utils/utils';
 
-const FoodDetailsModal: React.FC<{ visible: boolean; onClose: () => void; foodDetails: FoodDetailsProps | null }> = ({
-  visible,
-  onClose,
-  foodDetails,
-}) => {
+const FoodDetailsModal: React.FC<{
+  visible: boolean;
+  onClose: () => void;
+  foodDetails: FoodDetailsProps | null;
+}> = ({visible, onClose, foodDetails}) => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [formData, setFormData] = useState<FoodDetailsProps>(foodDetails);
-  const currentUserUUID = useSelector(currentUser)
+  const currentUserUUID = useSelector(currentUser);
 
   useEffect(() => {
     if (foodDetails) {
@@ -25,70 +44,92 @@ const FoodDetailsModal: React.FC<{ visible: boolean; onClose: () => void; foodDe
   const toggleEditMode = () => setIsEditMode(!isEditMode);
 
   const handleInputChange = (name: string, value: any) => {
-    setFormData((prevData) => ({
+    setFormData(prevData => ({
       ...prevData,
       [name]: value,
     }));
   };
 
   const handleSave = () => {
-    if(foodDetails) {
-      updateExistedInventoryItem(currentUserUUID, {...formData, id: foodDetails.id})
+    if (foodDetails) {
+      updateExistedInventoryItem(currentUserUUID, {
+        ...formData,
+        id: foodDetails.id,
+      });
     } else {
-      postInventoryUpdateToFirebase(currentUserUUID, [{...formData, id: crypto.randomUUID()}])
+      postInventoryUpdateToFirebase(currentUserUUID, [
+        {...formData, id: crypto.randomUUID()},
+      ]);
+
+      setIsEditMode(false);
     }
-    
-    setIsEditMode(false);
   };
+
+  let daysLeft = calculateDaysDifference(formData?.expiryDate);
 
   return (
     <Modal isOpen={visible} onClose={onClose} size="full">
-      <Modal.Content maxWidth="100%" height="80%" marginTop="auto" borderTopRadius="20px">
+      <Modal.Content
+        maxWidth="100%"
+        height="80%"
+        marginTop="auto"
+        borderTopRadius="20px">
         <Modal.CloseButton />
         <ScrollView>
           <VStack space={4} px={4} mt={4}>
             <Center>
               <Image
-                source={{uri: getImageURL(foodDetails.foodPhoto )}}
+                source={{uri: getImageURL(foodDetails.foodPhoto)}}
                 alt={formData.name}
                 size="xl"
                 borderRadius={100}
                 mb={4}
               />
-              <Text fontSize="2xl" fontWeight="bold">{formData.name}</Text>
-              <Text color="green.500">{formData.daysLeft} days left</Text>
+              <Text fontSize="2xl" fontWeight="bold">
+                {formData.name}
+              </Text>
+              <Text color="green.500">{daysLeft} days left</Text>
             </Center>
             <HStack space={3} justifyContent="center">
               <Button
-                colorScheme={formData.location === 'Fridge' ? 'green' : 'coolGray'}
+                colorScheme={
+                  formData.storagePlace === 'Fridge' ? 'green' : 'coolGray'
+                }
                 size="sm"
-                onPress={() => isEditMode && handleInputChange('location', 'Fridge')}
-                isDisabled={!isEditMode}
-              >
+                onPress={() =>
+                  isEditMode && handleInputChange('storagePlace', 'Fridge')
+                }
+                isDisabled={!isEditMode}>
                 Fridge
               </Button>
               <Button
-                colorScheme={formData.location === 'Freezer' ? 'green' : 'coolGray'}
+                colorScheme={
+                  formData.storagePlace === 'Freezer' ? 'green' : 'coolGray'
+                }
                 size="sm"
-                onPress={() => isEditMode && handleInputChange('location', 'Freezer')}
-                isDisabled={!isEditMode}
-              >
+                onPress={() =>
+                  isEditMode && handleInputChange('storagePlace', 'Freezer')
+                }
+                isDisabled={!isEditMode}>
                 Freezer
               </Button>
               <Button
-                colorScheme={formData.location === 'Pantry' ? 'green' : 'coolGray'}
+                colorScheme={
+                  formData.storagePlace === 'Pantry' ? 'green' : 'coolGray'
+                }
                 size="sm"
-                onPress={() => isEditMode && handleInputChange('location', 'Pantry')}
-                isDisabled={!isEditMode}
-              >
+                onPress={() =>
+                  isEditMode && handleInputChange('storagePlace', 'Pantry')
+                }
+                isDisabled={!isEditMode}>
                 Pantry
               </Button>
             </HStack>
             <FormControl>
               <FormControl.Label>Expiry Date</FormControl.Label>
               <Input
-                value={formData.expiryDate}
-                onChangeText={(value) => handleInputChange('expiryDate', value)}
+                value={convertTimeStringToDate(formData.expiryDate)}
+                onChangeText={value => handleInputChange('expiryDate', value)}
                 isDisabled={!isEditMode}
               />
             </FormControl>
@@ -96,7 +137,7 @@ const FoodDetailsModal: React.FC<{ visible: boolean; onClose: () => void; foodDe
               <FormControl.Label>Reminder</FormControl.Label>
               <Input
                 value={formData.reminder}
-                onChangeText={(value) => handleInputChange('reminder', value)}
+                onChangeText={value => handleInputChange('reminder', value)}
                 isDisabled={!isEditMode}
               />
             </FormControl>
@@ -104,9 +145,8 @@ const FoodDetailsModal: React.FC<{ visible: boolean; onClose: () => void; foodDe
               <FormControl.Label>Category</FormControl.Label>
               <Select
                 selectedValue={formData.category}
-                onValueChange={(value) => handleInputChange('category', value)}
-                isDisabled={!isEditMode}
-              >
+                onValueChange={value => handleInputChange('category', value)}
+                isDisabled={!isEditMode}>
                 <Select.Item label="Vegetable" value="Vegetable" />
                 <Select.Item label="Fruit" value="Fruit" />
                 <Select.Item label="Dairy" value="Dairy" />
@@ -117,7 +157,7 @@ const FoodDetailsModal: React.FC<{ visible: boolean; onClose: () => void; foodDe
               <FormControl.Label>Storage Tips</FormControl.Label>
               <Input
                 value={formData.storageTips}
-                onChangeText={(value) => handleInputChange('storageTips', value)}
+                onChangeText={value => handleInputChange('storageTips', value)}
                 isDisabled={!isEditMode}
                 multiline
                 numberOfLines={4}
@@ -125,33 +165,43 @@ const FoodDetailsModal: React.FC<{ visible: boolean; onClose: () => void; foodDe
             </FormControl>
           </VStack>
         </ScrollView>
-        <HStack justifyContent="space-between" alignItems="center" px={4} py={4} borderTopWidth={1} borderColor="coolGray.200">
-          <HStack
-            space={1}
-            justifyContent="center"
-            alignItems="center"
-          >
+        <HStack
+          justifyContent="space-between"
+          alignItems="center"
+          px={4}
+          py={4}
+          borderTopWidth={1}
+          borderColor="coolGray.200">
+          <HStack space={1} justifyContent="center" alignItems="center">
             {isEditMode && (
               <Button
-                onPress={() => handleInputChange('quantity', formData.quantity + 1)}
+                onPress={() =>
+                  handleInputChange('quantity', formData.quantity + 1)
+                }
                 variant="ghost"
                 size="sm"
-                isDisabled={!isEditMode}
-              >
+                isDisabled={!isEditMode}>
                 +
               </Button>
             )}
             <Text fontSize="lg" fontWeight="bold">
               {formData.quantity}
-              <Text fontSize="sm" fontWeight="normal"> left</Text>
+              <Text fontSize="sm" fontWeight="normal">
+                {' '}
+                left
+              </Text>
             </Text>
             {isEditMode && (
               <Button
-                onPress={() => handleInputChange('quantity', Math.max(formData.quantity - 1, 0))}
+                onPress={() =>
+                  handleInputChange(
+                    'quantity',
+                    Math.max(formData.quantity - 1, 0),
+                  )
+                }
                 variant="ghost"
                 size="sm"
-                isDisabled={!isEditMode}
-              >
+                isDisabled={!isEditMode}>
                 -
               </Button>
             )}
@@ -160,7 +210,10 @@ const FoodDetailsModal: React.FC<{ visible: boolean; onClose: () => void; foodDe
             <Button onPress={onClose} colorScheme="coolGray" rounded="full">
               Cancel
             </Button>
-            <Button onPress={isEditMode ? handleSave : toggleEditMode} colorScheme="green" rounded="full">
+            <Button
+              onPress={isEditMode ? handleSave : toggleEditMode}
+              colorScheme="green"
+              rounded="full">
               {isEditMode ? 'Save' : 'Edit'}
             </Button>
           </HStack>

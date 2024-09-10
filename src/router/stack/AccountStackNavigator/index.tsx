@@ -15,7 +15,6 @@ const AccountStackNavigator: React.FC = () => {
         component={AccountScreen}
         options={{headerShown: false}}
       />
-
       <AccountStack.Screen
         name="EditUserProfileScreen"
         component={EditUserProfileScreen}
@@ -24,7 +23,6 @@ const AccountStackNavigator: React.FC = () => {
           headerBackTitle: 'Back',
         }}
       />
-
       <AccountStack.Screen
         name="SettingScreen"
         component={SettingScreen}
@@ -33,7 +31,6 @@ const AccountStackNavigator: React.FC = () => {
           headerBackTitle: 'Back',
         }}
       />
-
       <AccountStack.Screen
         name="HouseholdProfileScreen"
         component={HouseholdProfileScreen}

@@ -11,7 +11,7 @@ interface FoodItemProps {
 }
 
 const FoodItem: React.FC<FoodItemProps> = ({item, handleOnClick}) => {
-  let daysLeft = calculateDaysDifference(item?.updatedAt);
+  let daysLeft = calculateDaysDifference(item?.expiryDate);
 
   return (
     <TouchableOpacity style={styles.item} onPress={handleOnClick}>
@@ -49,14 +49,17 @@ const FoodItem: React.FC<FoodItemProps> = ({item, handleOnClick}) => {
           in {daysLeft} day{daysLeft > 1 ? 's' : ''}
         </Text>
       ) : (
-        <View style={styles.progressBarContainer}>
-          <View
-            style={[
-              styles.progressBar,
-              {width: `${Math.min((daysLeft / 14) * 100, 100)}%`},
-            ]}
-          />
-        </View>
+        <Text style={[styles.itemStatus, {color: 'green'}]}>
+          in {daysLeft} day{daysLeft > 1 ? 's' : ''}
+        </Text>
+        // <View style={styles.progressBarContainer}>
+        //   <View
+        //     style={[
+        //       styles.progressBar,
+        //       {width: `${Math.min((daysLeft / 14) * 100, 100)}%`},
+        //     ]}
+        //   />
+        // </View>
       )}
     </TouchableOpacity>
   );

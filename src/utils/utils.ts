@@ -46,5 +46,34 @@ export const calculateDaysDifference = expirationDate => {
   );
 
   // Return the days remaining (positive if not expired, negative if expired)
-  return -differenceInDays;
+  return differenceInDays;
+};
+
+export const convertTimeStringToDate = (timeString: string | Date): string => {
+  // Create a Date object from the time string
+  const date = new Date(timeString);
+
+  // Define options for date formatting
+  const options: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    // hour: 'numeric',
+    // minute: 'numeric',
+    // hour12: true, // Use 12-hour format with AM/PM
+  };
+
+  // Format the date using the specified options
+  return date.toLocaleDateString('en-US', options);
+};
+
+export const calculateExpirationDate = (
+  expirationDays: number,
+  // today: Date,
+): string => {
+  const expiryDate = new Date();
+
+  expiryDate.setDate(Number(expiryDate.getDate()) + Number(expirationDays));
+
+  return expiryDate.toString();
 };

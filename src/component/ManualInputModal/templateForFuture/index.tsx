@@ -1,5 +1,5 @@
 // ManualInputModal.tsx
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import {
   View,
   TextInput,
@@ -8,19 +8,21 @@ import {
   Text,
   FlatList,
   Modal,
+  Image,
   Animated,
 } from 'react-native';
-import FoodIcon from '../FoodIcon';
-import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 
-import {getImageURL} from '../../utils/constants';
-import {FoodDetailsProps} from '../../utils/interface';
-import _filter from 'lodash/filter';
-import {calculateExpirationDate} from '../../utils/utils';
-import {useSelector} from 'react-redux';
-import {currentUser} from '../../redux/reducer';
-import {postInventoryUpdateToFirebase} from '../../utils/api';
-import ItemDetailsRow from '../ItemDetailsRow';
+// Dummy data to simulate database items
+const databaseItems = [
+  {id: 1, name: 'Milk', image: 'https://via.placeholder.com/50'},
+  {id: 2, name: 'Onion', image: 'https://via.placeholder.com/50'},
+  {id: 3, name: 'Tofu', image: 'https://via.placeholder.com/50'},
+  {id: 4, name: 'Egg', image: 'https://via.placeholder.com/50'},
+  {id: 5, name: 'Bread', image: 'https://via.placeholder.com/50'},
+  {id: 6, name: 'Chicken', image: 'https://via.placeholder.com/50'},
+  {id: 7, name: 'Broccoli', image: 'https://via.placeholder.com/50'},
+  {id: 8, name: 'Strawberry', image: 'https://via.placeholder.com/50'},
+];
 
 const ManualInputModal = ({
   visible,
@@ -30,22 +32,13 @@ const ManualInputModal = ({
   onClose: () => void;
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedItems, setSelectedItems] = useState<any>([]);
+  const [selectedItems, setSelectedItems] = useState<
+    {id: number; name: string; quantity: number; expiryDate: string}[]
+  >([]);
   const [isConfirmationVisible, setConfirmationVisible] = useState(false);
   const [slideAnim] = useState(new Animated.Value(0)); // Animation for sliding up
-  const [recommendedList, setRecommendedList] = useState<any>([]);
-  const currentUserUUID = useSelector(currentUser);
 
-  const queryClient = useQueryClient();
-
-  const {data: foodWikiData = []} = useQuery({
-    queryKey: ['foodwiki'],
-  });
-
-  useEffect(() => {
-    setRecommendedList(foodWikiData);
-  }, [foodWikiData]);
-
+  // Function to handle showing the modal with animation
   const handleShowModal = () => {
     Animated.timing(slideAnim, {
       toValue: 1,
@@ -61,14 +54,6 @@ const ManualInputModal = ({
       duration: 300,
       useNativeDriver: true,
     }).start(() => onClose());
-
-    setRecommendedList(pre => [
-      ...pre.map(item => {
-        return {...item, selected: false};
-      }),
-    ]);
-
-    setSelectedItems([]);
   };
 
   // Function to handle adding selected items to the confirmation list
@@ -79,110 +64,26 @@ const ManualInputModal = ({
   };
 
   // Function to handle updating the quantity of items
-  const updateQuantity = (listIndex: number, change: number) => {
-    setSelectedItems(prevItems =>
-      prevItems.map((item, index) =>
-        index === listIndex
-          ? {...item, quantity: Math.max((item.quantity || 0) + change, 0)} // Ensure quantity does not go below 0
-          : item,
-      ),
-    );
-  };
-
-  const updateStoragePlace = (selectedPlace: string) => {
-    setSelectedItems(prevItems =>
-      prevItems.map(item => {
-        return {...item, storagePlace: selectedPlace};
-      }),
-    );
-  };
-
-  const handleStoragePlacedChanged = (storagePlace: string) => {
-    updateStoragePlace(storagePlace);
+  const updateQuantity = (index: number, change: number) => {
+    const updatedItems = [...selectedItems];
+    updatedItems[index].quantity += change;
+    setSelectedItems(updatedItems);
   };
 
   // Function to select an item from the list
-  const selectItem = (selectedFood: FoodDetailsProps) => {
-    const isSelectedFood = selectedItems.some(item => {
-      return item.foodID === selectedFood.foodID;
-    });
-    if (!isSelectedFood) {
-      setSelectedItems(pre => [...pre, {...selectedFood, selected: true}]);
-    } else {
-      setSelectedItems(pre => {
-        return [
-          ..._filter(pre, item => {
-            return item.foodID !== selectedFood.foodID;
-          }),
-        ];
-      });
+  const selectItem = (item: {id: number; name: string}) => {
+    if (!selectedItems.some(selected => selected.id === item.id)) {
+      setSelectedItems([
+        ...selectedItems,
+        {...item, quantity: 1, expiryDate: ''},
+      ]);
     }
-
-    setRecommendedList(pre => [
-      ...pre.map(item => {
-        if (item.foodID === selectedFood.foodID) {
-          return {...item, selected: !item?.selected};
-        }
-        return item;
-      }),
-    ]);
-  };
-
-  const postData = async (input: any) => {
-    const {userId, data} = input;
-    return await postInventoryUpdateToFirebase(userId, data);
-  };
-
-  const mutation = useMutation({
-    mutationFn: postData,
-    onSuccess: () => {
-      queryClient.invalidateQueries({queryKey: ['userInventory']});
-    },
-  });
-
-  const todayDate = new Date();
-
-  const handleConfirmationAll = () => {
-    const submittedFood = selectedItems.map(item => {
-      return {
-        name: item.food,
-        quantity: item.quantity,
-        purchaseDate: todayDate.toString(),
-        expiryDate: calculateExpirationDate(item?.predictedFreshDurations.room),
-        predictedFreshDurations: item?.predictedFreshDurations,
-        consumed: false,
-        category: item.type,
-        share: true,
-        createdBy: todayDate.toString(),
-        freshnessScore: 100,
-        storagePlace: item.storagePlace || 'Fridge',
-        cost: 0,
-        groceryStore: '',
-        updatedByUser: currentUserUUID,
-        consumedAt: '',
-        foodPhoto: item?.imageName,
-        createdAt: todayDate.toString(),
-        updatedAt: todayDate.toString(),
-        // id: crypto.randomUUID(),
-      };
-    });
-
-    mutation.mutate({userId: currentUserUUID, data: [...submittedFood]});
-
-    setConfirmationVisible(false);
-    handleHideModal();
   };
 
   // Filtered items based on search input
-  const filteredItems = recommendedList.filter(item => {
-    if (!item.id) {
-      // console.log('null------', item);
-    }
-    return (
-      item.type === 'Fruit' &&
-      item?.food?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  });
+  const filteredItems = databaseItems.filter(item =>
+    item.name.toLowerCase().includes(searchTerm.toLowerCase()),
+  );
 
   return (
     <Modal
@@ -191,6 +92,7 @@ const ManualInputModal = ({
       animationType="none"
       onShow={handleShowModal}>
       <View style={styles.modalOverlay}>
+        {/* Bottom Sheet */}
         <Animated.View
           style={[
             styles.modalContent,
@@ -199,12 +101,13 @@ const ManualInputModal = ({
                 {
                   translateY: slideAnim.interpolate({
                     inputRange: [0, 1],
-                    outputRange: [500, 0],
+                    outputRange: [500, 0], // Slide up from the bottom
                   }),
                 },
               ],
             },
           ]}>
+          {/* Search and Selection Screen */}
           {!isConfirmationVisible && (
             <View>
               <View style={styles.header}>
@@ -221,25 +124,50 @@ const ManualInputModal = ({
                 </TouchableOpacity>
               </View>
 
+              <Text style={styles.sectionTitle}>
+                Suggestions from grocery list
+              </Text>
               <FlatList
-                style={styles.recommendationContainer}
+                data={filteredItems.slice(0, 3)} // Show only a few suggestions
+                horizontal
+                keyExtractor={item => item.id.toString()}
+                renderItem={({item}) => (
+                  <TouchableOpacity
+                    style={[
+                      styles.suggestionItem,
+                      selectedItems.some(i => i.id === item.id) &&
+                        styles.selectedItem,
+                    ]}
+                    onPress={() => selectItem(item)}>
+                    <Image
+                      source={{uri: item.image}}
+                      style={styles.itemImage}
+                    />
+                    <Text style={styles.itemText}>{item.name}</Text>
+                  </TouchableOpacity>
+                )}
+              />
+
+              <Text style={styles.sectionTitle}>Popular</Text>
+              <FlatList
                 data={filteredItems}
                 numColumns={3}
-                keyExtractor={(item, index) => {
-                  return `${item.id?.toString()} + ${index}`;
-                }}
-                renderItem={({item}) => {
-                  return (
-                    <FoodIcon
-                      name={item.food}
-                      url={getImageURL(item.imageName)}
-                      selected={item.selected}
-                      onClick={() => {
-                        selectItem(item);
-                      }}
+                keyExtractor={item => item.id.toString()}
+                renderItem={({item}) => (
+                  <TouchableOpacity
+                    style={[
+                      styles.popularItem,
+                      selectedItems.some(i => i.id === item.id) &&
+                        styles.selectedItem,
+                    ]}
+                    onPress={() => selectItem(item)}>
+                    <Image
+                      source={{uri: item.image}}
+                      style={styles.itemImage}
                     />
-                  );
-                }}
+                    <Text style={styles.itemText}>{item.name}</Text>
+                  </TouchableOpacity>
+                )}
                 ListEmptyComponent={
                   <View style={styles.emptyComponent}>
                     <Text style={styles.noItemText}>Cannot find the item.</Text>
@@ -251,6 +179,7 @@ const ManualInputModal = ({
                   </View>
                 }
               />
+
               {selectedItems.length > 0 && (
                 <TouchableOpacity
                   style={styles.addButton}
@@ -261,6 +190,7 @@ const ManualInputModal = ({
             </View>
           )}
 
+          {/* Confirmation Screen */}
           {isConfirmationVisible && (
             <View style={styles.confirmationContainer}>
               <Text style={styles.header}>Confirm Adding to Inventory</Text>
@@ -268,17 +198,29 @@ const ManualInputModal = ({
                 data={selectedItems}
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={({item, index}) => (
-                  <ItemDetailsRow
-                    onClick={updateQuantity}
-                    itemDetails={item}
-                    index={index}
-                    handleStoragePlacedChanged={handleStoragePlacedChanged}
-                  />
+                  <View style={styles.itemRow}>
+                    <Text style={styles.itemName}>{item.name}</Text>
+                    <View style={styles.quantityControls}>
+                      <TouchableOpacity
+                        onPress={() => updateQuantity(index, -1)}
+                        disabled={item.quantity <= 1}>
+                        <Text style={styles.quantityButton}>-</Text>
+                      </TouchableOpacity>
+                      <Text style={styles.quantityText}>{item.quantity}</Text>
+                      <TouchableOpacity
+                        onPress={() => updateQuantity(index, 1)}>
+                        <Text style={styles.quantityButton}>+</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
                 )}
               />
               <TouchableOpacity
                 style={styles.confirmButton}
-                onPress={handleConfirmationAll}>
+                onPress={() => {
+                  setConfirmationVisible(false);
+                  handleHideModal();
+                }}>
                 <Text style={styles.confirmButtonText}>Confirm All</Text>
               </TouchableOpacity>
             </View>
@@ -344,22 +286,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: 16,
   },
-  itemName: {
-    fontSize: 16,
-  },
-  quantityControls: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  quantityButton: {
-    padding: 10,
-    fontSize: 18,
-  },
-  quantityText: {
-    marginHorizontal: 10,
-    textAlign: 'center',
-    width: 30,
-  },
+  itemName: {fontSize: 16},
+  quantityControls: {flexDirection: 'row', alignItems: 'center'},
+  quantityButton: {padding: 10, fontSize: 18},
+  quantityText: {marginHorizontal: 10},
   confirmButton: {
     backgroundColor: '#4CAF50',
     padding: 12,
@@ -370,9 +300,6 @@ const styles = StyleSheet.create({
   emptyComponent: {alignItems: 'center', marginTop: 20},
   noItemText: {color: '#555', textAlign: 'center'},
   createNewItemText: {color: '#007BFF', textAlign: 'center', marginTop: 5},
-  recommendationContainer: {
-    height: 500,
-  },
 });
 
 export default ManualInputModal;

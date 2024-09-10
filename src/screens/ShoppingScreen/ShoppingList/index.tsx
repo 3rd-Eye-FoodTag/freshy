@@ -1,24 +1,33 @@
-import React, { useState } from 'react';
-import { FlatList, TouchableOpacity, StyleSheet, Text, Pressable, View, Animated } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { Checkbox } from "native-base";
+import React, {useState} from 'react';
+import {
+  FlatList,
+  TouchableOpacity,
+  StyleSheet,
+  Text,
+  Pressable,
+  View,
+  Animated,
+} from 'react-native';
+import {Checkbox} from 'native-base';
 // import ShoppingListDeleteIcon from '../icons/ShoppingListDeleteIcon';
 
 interface Props {
-  data: { key: string, icon?: string }[];
-  renderItem: ({ item }: { item: { key: string, icon?: string } }) => React.ReactNode;
-  keyExtractor: (item: { key: string }) => string;
+  data: {key: string; icon?: string}[];
+  renderItem: ({item}: {item: {key: string; icon?: string}}) => React.ReactNode;
+  keyExtractor: (item: {key: string}) => string;
 }
 
-const ShoppingList: React.FC<Props> = ({ data, renderItem, keyExtractor }) => {
-  const [checkedItems, setCheckedItems] = useState<{ [key: string]: boolean }>({});
+const ShoppingList: React.FC<Props> = ({data, renderItem, keyExtractor}) => {
+  const [checkedItems, setCheckedItems] = useState<{[key: string]: boolean}>(
+    {},
+  );
   const [listData, setListData] = useState(data);
 
   const toggleCheckbox = (key: string) => {
-    console.log({key, checkedItems , listData})
+    console.log({key, checkedItems, listData});
     setCheckedItems(prevState => ({
       ...prevState,
-      [key]: !prevState[key]
+      [key]: !prevState[key],
     }));
   };
 
@@ -29,7 +38,7 @@ const ShoppingList: React.FC<Props> = ({ data, renderItem, keyExtractor }) => {
       <Pressable
         style={[styles.checkboxBase, checked && styles.checkboxChecked]}
         onPress={() => toggleCheckbox(key)}>
-        {checked && <Checkbox value="test" isChecked={checkedItems[key]}/>}
+        {checked && <Checkbox value="test" isChecked={checkedItems[key]} />}
       </Pressable>
     );
   };
@@ -37,7 +46,7 @@ const ShoppingList: React.FC<Props> = ({ data, renderItem, keyExtractor }) => {
   const getListItemTextStyle = (key: string) => {
     return {
       ...styles.listItemText,
-      color: checkedItems[key] ? 'lightgrey' : 'black'
+      color: checkedItems[key] ? 'lightgrey' : 'black',
     };
   };
 
@@ -46,7 +55,9 @@ const ShoppingList: React.FC<Props> = ({ data, renderItem, keyExtractor }) => {
   };
 
   const renderRightActions = (key: string) => (
-    <TouchableOpacity style={styles.deleteButton} onPress={() => handleDelete(key)}>
+    <TouchableOpacity
+      style={styles.deleteButton}
+      onPress={() => handleDelete(key)}>
       {/* <ShoppingListDeleteIcon color={'white'} /> */}
     </TouchableOpacity>
   );
@@ -54,15 +65,15 @@ const ShoppingList: React.FC<Props> = ({ data, renderItem, keyExtractor }) => {
   return (
     <FlatList
       data={listData}
-      renderItem={({ item }) => (
-          <TouchableOpacity
-            style={styles.listItem}
-            onPress={() => toggleCheckbox(item.key)}>
-            <Text style={[styles.listItemText, getListItemTextStyle(item.key)]}>
-              {item.key}
-            </Text>
-            {renderCheckbox(item.key)}
-          </TouchableOpacity>
+      renderItem={({item}) => (
+        <TouchableOpacity
+          style={styles.listItem}
+          onPress={() => toggleCheckbox(item.key)}>
+          <Text style={[styles.listItemText, getListItemTextStyle(item.key)]}>
+            {item.key}
+          </Text>
+          {renderCheckbox(item.key)}
+        </TouchableOpacity>
       )}
       keyExtractor={keyExtractor}
     />

@@ -1,21 +1,21 @@
 import React from 'react';
-import { VStack, Input, FlatList, Text, Pressable } from 'native-base';
-import { TouchableOpacity } from 'react-native';
+import {VStack, Input, FlatList, Text, Pressable} from 'native-base';
+import {TouchableOpacity} from 'react-native';
 
 interface SearchBarProps {
   placeholder: string;
   data: Array<any>;
-  onSelect: (item: { id: string; name: string }) => void;
+  onSelect: (item: {id: string; name: string}) => void;
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({ placeholder, data, onSelect }) => {
+const SearchBar: React.FC<SearchBarProps> = ({placeholder, data, onSelect}) => {
   const [query, setQuery] = React.useState('');
   const [filteredData, setFilteredData] = React.useState(data);
 
   React.useEffect(() => {
     if (query) {
       const filtered = data.filter(item =>
-        item.name.toLowerCase().includes(query.toLowerCase())
+        item.name.toLowerCase().includes(query.toLowerCase()),
       );
       setFilteredData(filtered);
     } else {
@@ -23,7 +23,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ placeholder, data, onSelect }) =>
     }
   }, [query, data]);
 
-  const handleSelect = (item: { id: string; name: string }) => {
+  const handleSelect = (item: {id: string; name: string}) => {
     setQuery(item.name);
     onSelect(item);
   };
@@ -43,8 +43,8 @@ const SearchBar: React.FC<SearchBarProps> = ({ placeholder, data, onSelect }) =>
         <FlatList
           data={filteredData}
           keyExtractor={(item, index) => `${item.foodID}-${index}`}
-          style={{ backgroundColor: '#E2E8F0', borderRadius: 10 }}
-          renderItem={({ item }) => (
+          style={{backgroundColor: '#E2E8F0', borderRadius: 10}}
+          renderItem={({item}) => (
             <TouchableOpacity onPress={() => handleSelect(item)}>
               <Text p={2} borderBottomWidth={1} borderBottomColor="gray.200">
                 {item.name}
