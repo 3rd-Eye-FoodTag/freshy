@@ -51,15 +51,11 @@ const Storage: React.FC = () => {
     queryFn: () => fetchFoodWikFromFirebase(),
   });
 
-  console.log({isSuccess});
-
   useEffect(() => {
     // addFoodDataToFirestore(foodWikeData)
     // console.log({ foodInventoryData })
     // postInventoryUpdateToFirebase(currentUserUUID, foodInventoryData)
   }, []);
-
-  console.log({userData: userData?.data[0]});
 
   useEffect(() => {
     if (isSuccess) {
@@ -88,13 +84,6 @@ const Storage: React.FC = () => {
           <TouchableOpacity style={styles.icon} />
         </View>
       </View>
-      {/* <Button mt={4} bg="#00A86B" _text={{ color: 'white' }}
-        onPress={() => {
-          setModalVisible(true)
-          setSelectedFood(null)
-      }}>
-        Add New Inventory
-      </Button> */}
       <ToggleButton
         options={['All', 'Fridge', 'Freezer', 'Pantry']}
         onSelect={handleSelect}
@@ -105,9 +94,6 @@ const Storage: React.FC = () => {
           if (item === undefined) {
             console.log({item});
           }
-          // if(!item?.food) {
-          //   console.log({ item })
-          // }
           return (
             item && {
               id: item.foodID || index,

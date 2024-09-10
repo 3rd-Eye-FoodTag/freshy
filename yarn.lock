@@ -2971,6 +2971,11 @@
   dependencies:
     plist "^3.1.0"
 
+"@react-native-picker/picker@^2.4.0":
+  version "2.8.0"
+  resolved "https://registry.npmjs.org/@react-native-picker/picker/-/picker-2.8.0.tgz"
+  integrity sha512-nNU3T3DUi0NDmOEv34aGvV3tDybfIo4Di+1AaNceiImhRFD/dvBWIEgkVfOKUsC/biqv1Yo7td+2BrDL0gyZcw==
+
 "@react-native/assets-registry@0.74.87":
   version "0.74.87"
 
@@ -6863,6 +6868,11 @@ lodash.isequal@^4.5.0:
 lodash.isnil@^4.0.0:
   version "4.0.0"
 
+lodash.isobject@^3.0.2:
+  version "3.0.2"
+  resolved "https://registry.npmjs.org/lodash.isobject/-/lodash.isobject-3.0.2.tgz"
+  integrity sha512-3/Qptq2vr7WeJbB4KHUSKlq8Pl7ASXi3UG6CMbBm8WRtXi8+GHm7mKaU3urfpSEzWe2wCIChs6/sdocUsTKJiA==
+
 lodash.merge@^4.6.2:
   version "4.6.2"
 
@@ -6886,6 +6896,8 @@ lodash.uniqueid@^4.0.1:
 
 lodash@^4.17.13, lodash@^4.17.21:
   version "4.17.21"
+  resolved "https://registry.npmjs.org/lodash/-/lodash-4.17.21.tgz"
+  integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
 
 log-symbols@^2.2.0:
   version "2.2.0"
@@ -8124,6 +8136,14 @@ react-native-gesture-handler@^2.18.1, react-native-gesture-handler@>=2.0.0:
     hoist-non-react-statics "^3.3.0"
     invariant "^2.2.4"
     prop-types "^15.7.2"
+
+react-native-picker-select@^9.3.1:
+  version "9.3.1"
+  resolved "https://registry.npmjs.org/react-native-picker-select/-/react-native-picker-select-9.3.1.tgz"
+  integrity sha512-o621HcsKJfJkpYeP/PZQiZTKbf8W7FT08niLFL0v1pGkIQyak5IfzfinV2t+/l1vktGwAH2Tt29LrP/Hc5fk3A==
+  dependencies:
+    lodash.isequal "^4.5.0"
+    lodash.isobject "^3.0.2"
 
 react-native-reanimated@^3.15.0, react-native-reanimated@>=2.8.0:
   version "3.15.0"

@@ -28,6 +28,18 @@ const CustomTabBar: React.FC<BottomTabBarProps> = props => {
 
         const iconName = iconMapping[route.name] || 'circle';
 
+        if (route.name === 'Add') {
+          return (
+            <TouchableOpacity
+              key={index}
+              accessibilityRole="button"
+              accessibilityStates={isFocused ? ['selected'] : []}
+              onPress={() => props.navigation.navigate(route.name)}
+              style={styles.tabButton}
+            />
+          );
+        }
+
         return (
           <TouchableOpacity
             key={index}
@@ -52,6 +64,7 @@ const CustomTabBar: React.FC<BottomTabBarProps> = props => {
           name="plus-minus-variant"
           size={32}
           color="white"
+          style={styles.iconCenter} // Ensures the icon is perfectly centered
         />
         <CenterMenu
           isMenuVisible={isMenuVisible}
@@ -71,6 +84,7 @@ const styles = StyleSheet.create({
     borderTopColor: '#ddd',
     alignItems: 'center',
     justifyContent: 'space-around',
+    position: 'relative',
   },
   tabButton: {
     flex: 1,
@@ -79,21 +93,24 @@ const styles = StyleSheet.create({
   },
   customButton: {
     position: 'absolute',
-    bottom: 20,
+    bottom: 10,
     backgroundColor: '#4CAF50',
-    borderRadius: 35,
+    borderRadius: 50,
     width: 70,
     height: 70,
     justifyContent: 'center',
     alignItems: 'center',
-    alignSelf: 'center', // Center the button horizontally
+    zIndex: 10,
     left: '50%',
-    transform: [{translateX: -35}], // Move the button to the exact center
+    transform: [{translateX: -35}],
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.3,
     shadowRadius: 5,
     elevation: 5,
+  },
+  iconCenter: {
+    top: 17,
   },
 });
 
