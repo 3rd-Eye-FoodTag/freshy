@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { SafeAreaView, Text, StyleSheet, TouchableOpacity, FlatList, View } from 'react-native';
 import Avatar from '../../../component/Avater';
-import { FontAwesome5 } from 'react-native-vector-icons/FontAwesome5';
-// import GreenButton from '@/components/globalComponent/GreenButton';
+import  FontAwesome5  from 'react-native-vector-icons/FontAwesome5';
+import { Icon } from 'native-base';
+import UnstyleButton from '../../../component/UnstyleButton';
 
 const initialMembers = [
   { key: 'ABC DDD 1', role: 'Host' },
@@ -22,17 +23,13 @@ const HouseholdProfileScreen: React.FC = () => {
 
     return (
         <SafeAreaView style={styles.container}>
-            {/* 头像和家庭名 */}
             <View style={styles.header}>
-                {/* FIXME: image path invalid */}
-                {/* <Avatar source={require('@/assets/images/avater2.png')} /> */}
+            <Avatar source={require('../../../assets/avater.png')} />
                 <TouchableOpacity style={styles.editButton} >
-                {/*  FIXME: Render Error */}
-                {/* <FontAwesome5 name="pencil-alt" size={17} color="white" /> */}
+                <Icon as={FontAwesome5} name={'pencil-alt'} size="sm" color={'white'} />
                 </TouchableOpacity>
                 <Text style={styles.familyName}>The Smith Family</Text>
             </View>
-            {/* 家庭成员信息 */}
             <View style={styles.separator}></View>
             <Text style={styles.memberInfo}>Members (5 maximum)</Text>
             <FlatList
@@ -54,7 +51,7 @@ const HouseholdProfileScreen: React.FC = () => {
             />
 
             <TouchableOpacity style={styles.addButton} onPress={() => { /* Handle button press here */ }}>
-                {/* <GreenButton text='Add Member' backgroundColor='#00B578' style={{ alignSelf: 'center' }}/> */}
+                <UnstyleButton text='Add Member' backgroundColor='#00B578' style={{ alignSelf: 'center', height: 40, }}/>
             </TouchableOpacity>
             <TouchableOpacity style={styles.button}>
                 <Text style={styles.leaveText}>{userRole === 'host' ? 'Transfer Host' : 'Leave this household'}</Text>
@@ -75,7 +72,7 @@ const styles = StyleSheet.create({
     },
     editButton: {
         position: 'absolute',
-        right: 160,
+        right: 145,
         bottom: 50,
         backgroundColor: '#00B578',
         padding: 10,
@@ -92,7 +89,6 @@ const styles = StyleSheet.create({
         color: 'grey',
         fontFamily: 'PingFang SC',
         marginLeft: 10,
-        marginBottom: 10,
     },
     memberContainer: {
         flexDirection: 'row',
@@ -112,12 +108,11 @@ const styles = StyleSheet.create({
         color: '#00B578',
     },
     addButton: {
-        marginBottom: 20,
-        width: '88%',
-        alignSelf: 'center',
+        width: '100%',
+        marginBottom: -10
     },
     button: {
-        marginBottom: 20,
+        marginBottom: 30,
         width: '88%',
         height: '7%',
         alignItems: 'center',
