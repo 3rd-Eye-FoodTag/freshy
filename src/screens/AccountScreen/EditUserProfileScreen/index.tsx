@@ -19,7 +19,7 @@ const UserProfile: React.FC = () => {
       <View style={styles.header}>
         <Avatar source={require('../../../assets/avater.png')} />
         <TouchableOpacity style={styles.editButton}>
-          <Icon as={FontAwesome5} name={'pencil-alt'} size="sm" />
+          <Icon as={FontAwesome5} name={'pencil-alt'} size="sm" color={'white'} />
         </TouchableOpacity>
       </View>
       <ProfileInfoRow label="Name" value={name} onChange={setName} />
@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
   },
   editButton: {
     position: 'absolute',
-    right: 160,
+    right: 145,
     bottom: 0,
     backgroundColor: '#00B578',
     padding: 10,
