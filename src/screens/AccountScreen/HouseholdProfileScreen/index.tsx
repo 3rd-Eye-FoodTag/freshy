@@ -3,7 +3,7 @@ import { SafeAreaView, Text, StyleSheet, TouchableOpacity, FlatList, View } from
 import Avatar from '../../../component/Avater';
 import  FontAwesome5  from 'react-native-vector-icons/FontAwesome5';
 import { Icon } from 'native-base';
-import GreenButton from '../../../component/GreenButton';
+import UnstyleButton from '../../../component/UnstyleButton';
 
 const initialMembers = [
   { key: 'ABC DDD 1', role: 'Host' },
@@ -51,7 +51,7 @@ const HouseholdProfileScreen: React.FC = () => {
             />
 
             <TouchableOpacity style={styles.addButton} onPress={() => { /* Handle button press here */ }}>
-                <GreenButton text='Add Member' backgroundColor='#00B578' style={{ alignSelf: 'center', height: 40, }}/>
+                <UnstyleButton text='Add Member' backgroundColor='#00B578' style={{ alignSelf: 'center', height: 40, }}/>
             </TouchableOpacity>
             <TouchableOpacity style={styles.button}>
                 <Text style={styles.leaveText}>{userRole === 'host' ? 'Transfer Host' : 'Leave this household'}</Text>
