@@ -10,6 +10,7 @@ import ReferLogAndEarnScreen from '../../../screens/AccountScreen/ReferLogAndEar
 import DisplayPreferencesScreen from '../../../screens/AccountScreen/SettingScreen/DisplayPreferencesScreen.tsx';
 import FoodProfileScreen from '../../../screens/AccountScreen/SettingScreen/FoodProfileScreen';
 import LanguageScreen from '../../../screens/AccountScreen/SettingScreen/LanguageScreen';
+import WeeklyWrapUpTimeScreen from '../../../screens/AccountScreen/SettingScreen/WeeklyWrapUpTimeScreen.tsx';
 
 const AccountStack = createNativeStackNavigator();
 
@@ -90,6 +91,15 @@ const AccountStackNavigator: React.FC = () => {
         component={LanguageScreen}
         options={{
           headerTitle: 'Language',
+          headerBackTitle: 'Back',
+        }}
+      />
+
+      <AccountStack.Screen
+        name="WeeklyWrapUpTimeScreen"
+        component={WeeklyWrapUpTimeScreen}
+        options={{
+          headerTitle: 'Weekly Wrap Up Time',
           headerBackTitle: 'Back',
         }}
       />
