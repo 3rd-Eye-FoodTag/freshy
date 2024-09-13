@@ -7,6 +7,7 @@ import HouseholdProfileScreen from '../../../screens/AccountScreen/HouseholdProf
 import ContactUsScreen from '../../../screens/AccountScreen/ContactUsScreen';
 import SubscriptionScreen from '../../../screens/AccountScreen/SubscriptionScreen';
 import ReferLogAndEarnScreen from '../../../screens/AccountScreen/ReferLogAndEarnScreen';
+import DisplayPreferencesScreen from '../../../screens/AccountScreen/SettingScreen/DisplayPreferencesScreen.tsx';
 
 const AccountStack = createNativeStackNavigator();
 
@@ -63,6 +64,14 @@ const AccountStackNavigator: React.FC = () => {
         component={ReferLogAndEarnScreen}
         options={{
           headerTitle: 'Refer, Log And Earn',
+          headerBackTitle: 'Back',
+        }}
+      />
+      <AccountStack.Screen
+        name="DisplayPreferencesScreen"
+        component={DisplayPreferencesScreen}
+        options={{
+          headerTitle: 'Display Preferences',
           headerBackTitle: 'Back',
         }}
       />

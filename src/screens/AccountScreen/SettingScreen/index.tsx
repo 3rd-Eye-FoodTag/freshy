@@ -1,6 +1,9 @@
 import React from 'react';
 import { SafeAreaView, Text, StyleSheet, View, TouchableOpacity } from 'react-native';
 import AccountFlatList from '../../../component/AccountFlatList';
+import { useNavigation } from '@react-navigation/native';
+import { RootStackParams } from '../../../router/constants';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 const data = [
     { key: 'Display Preferences' },
@@ -10,14 +13,43 @@ const data = [
     { key: 'Push Notifications' },
 ];
 
+type SettingScreenNavigationProp = NativeStackNavigationProp<RootStackParams>;
+
 const SettingScreen: React.FC = () => {
+    const navigation = useNavigation<SettingScreenNavigationProp>();
+
+    const handleNavigation = (key: string) => {
+        switch (key) {
+            case 'Display Preferences':
+                navigation.navigate('DisplayPreferencesScreen');
+                break;
+            case 'Food Profile':
+                navigation.navigate('FoodProfileScreen');
+                break;
+            case 'Language':
+                navigation.navigate('LanguageScreen');
+                break;
+            case 'Weekly Wrap Up Time':
+                navigation.navigate('WeeklyWrapUpTimeScreen');
+                break;
+            case 'Push Notifications':
+                navigation.navigate('PushNotificationsScreen');
+                break;
+            default:
+                break;
+        }
+    };
+
     return (
         <SafeAreaView style={styles.screen}>
             <View style={styles.container}>
                 <AccountFlatList
                     data={data}
                     renderItem={({ item }) => (
-                        <TouchableOpacity style={styles.listItem}>
+                        <TouchableOpacity
+                            style={styles.listItem}
+                            onPress={() => handleNavigation(item.key)}
+                        >
                             <Text style={styles.listItemText}>
                                 {item.key}
                             </Text>
@@ -28,8 +60,8 @@ const SettingScreen: React.FC = () => {
                 />
             </View>
         </SafeAreaView>
-    )
-}
+    );
+};
 
 const styles = StyleSheet.create({
     screen: {
