@@ -11,6 +11,7 @@ import DisplayPreferencesScreen from '../../../screens/AccountScreen/SettingScre
 import FoodProfileScreen from '../../../screens/AccountScreen/SettingScreen/FoodProfileScreen';
 import LanguageScreen from '../../../screens/AccountScreen/SettingScreen/LanguageScreen';
 import WeeklyWrapUpTimeScreen from '../../../screens/AccountScreen/SettingScreen/WeeklyWrapUpTimeScreen.tsx';
+import PushNotificationsScreen from '../../../screens/AccountScreen/SettingScreen/PushNotificationsScreen';
 
 const AccountStack = createNativeStackNavigator();
 
@@ -100,6 +101,14 @@ const AccountStackNavigator: React.FC = () => {
         component={WeeklyWrapUpTimeScreen}
         options={{
           headerTitle: 'Weekly Wrap Up Time',
+          headerBackTitle: 'Back',
+        }}
+      />
+      <AccountStack.Screen
+        name="PushNotificationsScreen"
+        component={PushNotificationsScreen}
+        options={{
+          headerTitle: 'Push Notifications',
           headerBackTitle: 'Back',
         }}
       />
