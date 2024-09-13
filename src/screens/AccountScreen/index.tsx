@@ -66,25 +66,28 @@ const AccountScreen: React.FC<Props> = ({ navigation }) => {
 const ProfileOption: React.FC<{ icon: string; label: string; navigation: Props['navigation'] }> = ({ icon, label, navigation }) => (
   <TouchableOpacity
     onPress={() => {
-      if (label === 'Edit User Profile') {
-        navigation.navigate('EditUserProfileScreen');
+      switch (label) {
+        case 'Edit User Profile':
+          navigation.navigate('EditUserProfileScreen');
+          break;
+        case 'Settings':
+          navigation.navigate('SettingScreen');
+          break;
+        case 'Household Profile':
+          navigation.navigate('HouseholdProfileScreen');
+          break;
+        case 'Contact Us':
+          navigation.navigate('ContactUsScreen');
+          break;
+        case 'Subscription':
+          navigation.navigate('SubscriptionScreen');
+          break;
+        case 'Refer, Log And Earn':
+          navigation.navigate('ReferLogAndEarnScreen');
+          break;
+        default:
+          break;
       }
-      if (label === 'Settings') {
-        navigation.navigate('SettingScreen');
-      }
-      if (label === 'Household Profile') {
-        navigation.navigate('HouseholdProfileScreen');
-      }
-      if (label === 'Contact Us') {
-        navigation.navigate('ContactUsScreen');
-      }
-      if (label === 'Subscription') {
-        navigation.navigate('SubscriptionScreen');
-      }
-      if (label === 'Refer, Log And Earn') {
-        navigation.navigate('ReferLogAndEarnScreen');
-      }
-
     }}
     style={styles.option}
   >
