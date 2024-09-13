@@ -4,17 +4,17 @@ import { StyleSheet, TouchableOpacity } from 'react-native';
 import { signOut } from 'firebase/auth';
 import { auth } from '../../config/firebase';
 import { RootStackParams } from '../../router/constants';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { SafeAreaView } from 'react-native';
 
 const profileOptions = [
-    { id: '1', icon: 'person', label: 'Edit User Profile' },
-    { id: '2', icon: 'settings', label: 'Settings' },
-    { id: '3', icon: 'home', label: 'Household Profile' },
-    { id: '4', icon: 'email', label: 'Contact Us' },
-    { id: '5', icon: 'subscriptions', label: 'Subscription' },
-    { id: '6', icon: 'card-giftcard', label: 'Refer, Log And Earn' },
-    { id: '7', icon: 'thumb-up', label: 'Like Us on App Store' },
+  { id: '1', icon: 'person', label: 'Edit User Profile' },
+  { id: '2', icon: 'settings', label: 'Settings' },
+  { id: '3', icon: 'home', label: 'Household Profile' },
+  { id: '4', icon: 'email', label: 'Contact Us' },
+  { id: '5', icon: 'subscriptions', label: 'Subscription' },
+  { id: '6', icon: 'card-giftcard', label: 'Refer, Log And Earn' },
+  { id: '7', icon: 'thumb-up', label: 'Like Us on App Store' },
 ];
 
 type Props = NativeStackScreenProps<RootStackParams, 'WelcomeScreen'>;
@@ -22,44 +22,44 @@ type Props = NativeStackScreenProps<RootStackParams, 'WelcomeScreen'>;
 const AccountScreen: React.FC<Props> = ({ navigation }) => {
   const [error, setError] = useState(null)
   const handleLogout = async () => {
-    try{
+    try {
       await signOut(auth)
     } catch (e: any) {
       setError(e)
     }
   };
 
-  if(error) {
+  if (error) {
     console.warn(error)
   }
 
   return (
-     <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
       <ScrollView>
         <Box style={styles.container}>
           <VStack space={4} alignItems="center" mt={8}>
-              <Avatar
+            <Avatar
               size="2xl"
               source={require('../../assets/avater.png')}
-              />
-              <Text fontSize="lg" fontWeight="bold" color="coolGray.800">
+            />
+            <Text fontSize="lg" fontWeight="bold" color="coolGray.800">
               John Smith
-              </Text>
+            </Text>
           </VStack>
 
           <FlatList
-              data={profileOptions}
-              keyExtractor={(item) => item.id}
-              renderItem={({ item }) => <ProfileOption icon={item.icon} label={item.label} navigation={navigation}  />}
-              ItemSeparatorComponent={() => <Divider />}
-              contentContainerStyle={{ marginTop: 24 }}
+            data={profileOptions}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => <ProfileOption icon={item.icon} label={item.label} navigation={navigation} />}
+            ItemSeparatorComponent={() => <Divider />}
+            contentContainerStyle={{ marginTop: 24 }}
           />
           <Button mt={4} bg="#00A86B" _text={{ color: 'white' }} onPress={handleLogout}>
             Sign Out
           </Button>
         </Box>
-       </ScrollView>
-      </SafeAreaView>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
@@ -74,6 +74,9 @@ const ProfileOption: React.FC<{ icon: string; label: string; navigation: Props['
       }
       if (label === 'Household Profile') {
         navigation.navigate('HouseholdProfileScreen');
+      }
+      if (label === 'Contact Us') {
+        navigation.navigate('ContactUsScreen');
       }
 
     }}

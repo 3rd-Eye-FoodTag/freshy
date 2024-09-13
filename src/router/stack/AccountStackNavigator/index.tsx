@@ -4,6 +4,7 @@ import AccountScreen from '../../../screens/AccountScreen';
 import EditUserProfileScreen from '../../../screens/AccountScreen/EditUserProfileScreen';
 import SettingScreen from '../../../screens/AccountScreen/SettingScreen';
 import HouseholdProfileScreen from '../../../screens/AccountScreen/HouseholdProfileScreen';
+import ContactUsScreen from '../../../screens/AccountScreen/ContactUsScreen';
 
 const AccountStack = createNativeStackNavigator();
 
@@ -35,7 +36,15 @@ const AccountStackNavigator: React.FC = () => {
         name="HouseholdProfileScreen"
         component={HouseholdProfileScreen}
         options={{
-          headerTitle: 'Settings',
+          headerTitle: '',
+          headerBackTitle: 'Back',
+        }}
+      />
+      <AccountStack.Screen
+        name="ContactUsScreen"
+        component={ContactUsScreen}
+        options={{
+          headerTitle: 'Contact Us',
           headerBackTitle: 'Back',
         }}
       />
