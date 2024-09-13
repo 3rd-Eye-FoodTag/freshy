@@ -81,6 +81,9 @@ const ProfileOption: React.FC<{ icon: string; label: string; navigation: Props['
       if (label === 'Subscription') {
         navigation.navigate('SubscriptionScreen');
       }
+      if (label === 'Refer, Log And Earn') {
+        navigation.navigate('ReferLogAndEarnScreen');
+      }
 
     }}
     style={styles.option}
