@@ -8,6 +8,7 @@ import ContactUsScreen from '../../../screens/AccountScreen/ContactUsScreen';
 import SubscriptionScreen from '../../../screens/AccountScreen/SubscriptionScreen';
 import ReferLogAndEarnScreen from '../../../screens/AccountScreen/ReferLogAndEarnScreen';
 import DisplayPreferencesScreen from '../../../screens/AccountScreen/SettingScreen/DisplayPreferencesScreen.tsx';
+import FoodProfileScreen from '../../../screens/AccountScreen/SettingScreen/FoodProfileScreen';
 
 const AccountStack = createNativeStackNavigator();
 
@@ -72,6 +73,14 @@ const AccountStackNavigator: React.FC = () => {
         component={DisplayPreferencesScreen}
         options={{
           headerTitle: 'Display Preferences',
+          headerBackTitle: 'Back',
+        }}
+      />
+      <AccountStack.Screen
+        name="FoodProfileScreen"
+        component={FoodProfileScreen}
+        options={{
+          headerTitle: 'Food Profile',
           headerBackTitle: 'Back',
         }}
       />
