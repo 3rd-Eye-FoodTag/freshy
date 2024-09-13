@@ -78,6 +78,9 @@ const ProfileOption: React.FC<{ icon: string; label: string; navigation: Props['
       if (label === 'Contact Us') {
         navigation.navigate('ContactUsScreen');
       }
+      if (label === 'Subscription') {
+        navigation.navigate('SubscriptionScreen');
+      }
 
     }}
     style={styles.option}
