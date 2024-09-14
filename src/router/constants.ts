@@ -8,6 +8,14 @@ export type RootStackParams = {
     EditUserProfileScreen: undefined;
     SettingScreen: undefined;
     HouseholdProfileScreen: undefined;
+    ContactUsScreen: undefined;
+    SubscriptionScreen: undefined;
+    ReferLogAndEarnScreen: undefined;
+    DisplayPreferencesScreen: undefined;
+    FoodProfileScreen: undefined;
+    LanguageScreen: undefined;
+    WeeklyWrapUpTimeScreen: undefined;
+    PushNotificationsScreen: undefined;
   };
   
   export type AuthenticationStackParams = {
