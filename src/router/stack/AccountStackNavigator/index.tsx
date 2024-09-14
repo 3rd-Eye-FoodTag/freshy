@@ -13,6 +13,7 @@ import LanguageScreen from '../../../screens/AccountScreen/SettingScreen/Languag
 import WeeklyWrapUpTimeScreen from '../../../screens/AccountScreen/SettingScreen/WeeklyWrapUpTimeScreen.tsx';
 import PushNotificationsScreen from '../../../screens/AccountScreen/SettingScreen/PushNotificationsScreen';
 import ReferDetailsScreen from '../../../screens/AccountScreen/ReferLogAndEarnScreen/ReferDetailsScreen';
+import ShareFamilyScreen from '../../../screens/AccountScreen/ReferLogAndEarnScreen/ShareFamilyScreen';
 
 const AccountStack = createNativeStackNavigator();
 
@@ -118,6 +119,14 @@ const AccountStackNavigator: React.FC = () => {
         component={ReferDetailsScreen}
         options={{
           headerTitle: 'Refer Details',
+          headerBackTitle: 'Back',
+        }}
+      />
+      <AccountStack.Screen
+        name="ShareFamilyScreen"
+        component={ShareFamilyScreen}
+        options={{
+          headerTitle: '',
           headerBackTitle: 'Back',
         }}
       />

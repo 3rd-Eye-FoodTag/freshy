@@ -16,6 +16,8 @@ export type RootStackParams = {
     LanguageScreen: undefined;
     WeeklyWrapUpTimeScreen: undefined;
     PushNotificationsScreen: undefined;
+    ReferDetailsScreen: undefined;
+    ShareFamilyScreen: undefined;
   };
   
   export type AuthenticationStackParams = {
