@@ -12,6 +12,7 @@ import FoodProfileScreen from '../../../screens/AccountScreen/SettingScreen/Food
 import LanguageScreen from '../../../screens/AccountScreen/SettingScreen/LanguageScreen';
 import WeeklyWrapUpTimeScreen from '../../../screens/AccountScreen/SettingScreen/WeeklyWrapUpTimeScreen.tsx';
 import PushNotificationsScreen from '../../../screens/AccountScreen/SettingScreen/PushNotificationsScreen';
+import ReferDetailsScreen from '../../../screens/AccountScreen/ReferLogAndEarnScreen/ReferDetailsScreen';
 
 const AccountStack = createNativeStackNavigator();
 
@@ -109,6 +110,14 @@ const AccountStackNavigator: React.FC = () => {
         component={PushNotificationsScreen}
         options={{
           headerTitle: 'Push Notifications',
+          headerBackTitle: 'Back',
+        }}
+      />
+      <AccountStack.Screen
+        name="ReferDetailsScreen"
+        component={ReferDetailsScreen}
+        options={{
+          headerTitle: 'Refer Details',
           headerBackTitle: 'Back',
         }}
       />

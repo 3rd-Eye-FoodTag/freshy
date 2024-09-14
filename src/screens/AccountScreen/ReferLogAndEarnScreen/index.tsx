@@ -2,7 +2,15 @@ import React from 'react';
 import { SafeAreaView, View, Text, StyleSheet, Image, TouchableOpacity, } from 'react-native';
 import UnstyleButton from '../../../component/UnstyleButton';
 
+import { useNavigation } from '@react-navigation/native';
+import { RootStackParams } from '../../../router/constants';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
+type ReferLogAndEarnScreenNavigationProp = NativeStackNavigationProp<RootStackParams>;
+
 const ReferLogAndEarnScreen: React.FC = () => {
+
+    const navigation = useNavigation<ReferLogAndEarnScreenNavigationProp>();
 
     const invitedFriends = 4;
     const freeMonthsEarned = 7;
@@ -28,14 +36,10 @@ const ReferLogAndEarnScreen: React.FC = () => {
                     Free month{"\n"} earned {"\n"} {freeMonthsEarned}
                 </Text>
 
-                {/* Detail Button */}
-
-                {/* FIXME: navigate to /ReferDetails */}
-                {/* <Link href="/ReferDetails" asChild> */}
-                <TouchableOpacity style={styles.detailsButton} >
+                <TouchableOpacity style={styles.detailsButton}
+                    onPress={() => navigation.navigate('ReferDetailsScreen')} >
                     <Text style={styles.detailsButtonText}>Details{">"}</Text>
                 </TouchableOpacity>
-                {/* </Link> */}
 
             </View>
             {/* FIXME: navigate to /ShareFamily */}
