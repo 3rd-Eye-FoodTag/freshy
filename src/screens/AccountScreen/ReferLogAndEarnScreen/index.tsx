@@ -42,10 +42,11 @@ const ReferLogAndEarnScreen: React.FC = () => {
                 </TouchableOpacity>
 
             </View>
-            {/* FIXME: navigate to /ShareFamily */}
-            {/* <Link href="/ShareFamily" asChild> */}
-            <UnstyleButton text="Share" backgroundColor="#00B578" />
-            {/* </Link> */}
+            <UnstyleButton
+                text="Share"
+                backgroundColor="#00B578"
+                onPress={() => navigation.navigate('ShareFamilyScreen')}
+            />
         </SafeAreaView>
     );
 };
