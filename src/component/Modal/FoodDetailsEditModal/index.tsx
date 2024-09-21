@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Modal,
   Button,
@@ -12,25 +12,33 @@ import {
   Center,
   ScrollView,
 } from 'native-base';
-import {FoodDetailsProps} from '../../../utils/interface';
+import { FoodDetailsProps } from '../../../utils/interface';
 import {
   updateExistedInventoryItem,
   postInventoryUpdateToFirebase,
 } from '../../../utils/api';
 
-import {useSelector} from 'react-redux';
-import {currentUser} from '../../../redux/reducer';
-import {getImageURL} from '../../../utils/constants';
+import { useSelector } from 'react-redux';
+import { currentUser } from '../../../redux/reducer';
+import { getImageURL } from '../../../utils/constants';
 import {
   calculateDaysDifference,
   convertTimeStringToDate,
 } from '../../../utils/utils';
 
+import { StyleSheet } from 'react-native';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import { Icon } from 'native-base';
+import { TouchableOpacity, View } from 'react-native';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import DateSelector from '../../DateSelector';
+
 const FoodDetailsModal: React.FC<{
   visible: boolean;
   onClose: () => void;
   foodDetails: FoodDetailsProps | null;
-}> = ({visible, onClose, foodDetails}) => {
+}> = ({ visible, onClose, foodDetails }) => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [formData, setFormData] = useState<FoodDetailsProps>(foodDetails);
   const currentUserUUID = useSelector(currentUser);
@@ -58,7 +66,7 @@ const FoodDetailsModal: React.FC<{
       });
     } else {
       postInventoryUpdateToFirebase(currentUserUUID, [
-        {...formData, id: crypto.randomUUID()},
+        { ...formData, id: crypto.randomUUID() },
       ]);
 
       setIsEditMode(false);
@@ -76,18 +84,45 @@ const FoodDetailsModal: React.FC<{
         borderTopRadius="20px">
         <Modal.CloseButton />
         <ScrollView>
+
+
           <VStack space={4} px={4} mt={4}>
             <Center>
-              <Image
-                source={{uri: getImageURL(foodDetails.foodPhoto)}}
-                alt={formData.name}
-                size="xl"
-                borderRadius={100}
-                mb={4}
-              />
-              <Text fontSize="2xl" fontWeight="bold">
-                {formData.name}
-              </Text>
+              <HStack space={4} alignItems="center" justifyContent="center">
+                <View style={styles.leftIcon}>
+                  <TouchableOpacity style={styles.iconLeftButton}>
+                    <Icon as={AntDesign} name={'shoppingcart'} size="sm" color={'black'} />
+                  </TouchableOpacity>
+                  <Text style={styles.iconText}>Add to List</Text>
+                </View>
+
+                <Image
+                  source={{ uri: getImageURL(foodDetails.foodPhoto) }}
+                  alt={formData.name}
+                  size="xl"
+                  borderRadius={100}
+                  mb={4}
+                />
+
+                <View style={styles.rightIcon}>
+                  <TouchableOpacity style={styles.iconRightButton}>
+                    <Icon as={MaterialCommunityIcons} name={'pac-man'} size="sm" color={'black'} />
+                  </TouchableOpacity>
+                  <Text style={styles.iconText}>Eat First</Text>
+                </View>
+              </HStack>
+
+              <View style={styles.foodNameRow}>
+                <Text fontSize="2xl" fontWeight="bold">
+                  {formData.name}
+                </Text>
+                <TouchableOpacity>
+                  <Icon as={FontAwesome5} name={'pencil-alt'} size="sm" color={'black'} />
+                </TouchableOpacity>
+              </View>
+              <View style={styles.progressBarContainer}>
+                <View style={[styles.progressBar, { width: `${Math.max((daysLeft / 14) * 100, 0)}%` }]} />
+              </View>
               <Text color="green.500">{daysLeft} days left</Text>
             </Center>
             <HStack space={3} justifyContent="center">
@@ -133,6 +168,14 @@ const FoodDetailsModal: React.FC<{
                 isDisabled={!isEditMode}
               />
             </FormControl>
+            <DateSelector
+              label="Expiry Date"
+              date={convertTimeStringToDate(formData.expiryDate)}
+              options={['in 3 days', 'in 7 days', 'Custom']}
+              // TODO: Need to review onSelectOption logic
+              onSelectOption={(selectedOption) => handleInputChange('expiryDate', selectedOption)}
+            />
+
             <FormControl>
               <FormControl.Label>Reminder</FormControl.Label>
               <Input
@@ -141,6 +184,13 @@ const FoodDetailsModal: React.FC<{
                 isDisabled={!isEditMode}
               />
             </FormControl>
+            <DateSelector
+              label="Reminder Date"
+              date={formData.reminder}
+              options={['2 days', '3 days', '7 days', '1 month', '2 months', '6 months']}
+              // TODO: Need to review onSelectOption logic
+              onSelectOption={(selectedOption) => handleInputChange('reminder', selectedOption)}
+            />
             <FormControl>
               <FormControl.Label>Category</FormControl.Label>
               <Select
@@ -164,6 +214,7 @@ const FoodDetailsModal: React.FC<{
               />
             </FormControl>
           </VStack>
+          <Text style={styles.recordDate}>Recorded on {convertTimeStringToDate(formData.createdAt)}</Text>
         </ScrollView>
         <HStack
           justifyContent="space-between"
@@ -222,5 +273,72 @@ const FoodDetailsModal: React.FC<{
     </Modal>
   );
 };
+
+const styles = StyleSheet.create({
+
+  leftIcon: {
+    marginTop: -20,
+    alignItems: 'center',
+  },
+  rightIcon: {
+    marginTop: -20,
+    alignItems: 'center',
+  },
+  iconLeftButton: {
+    width: 55,
+    height: 40,
+    backgroundColor: 'rgb(255, 255, 255)',
+    borderWidth: 1,
+    borderColor: 'lightgray',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 5,
+  },
+  iconRightButton: {
+    width: 55,
+    height: 40,
+    backgroundColor: 'white',
+    borderWidth: 1,
+    borderColor: 'lightgray',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 5,
+  },
+  iconText: {
+    fontSize: 17,
+    fontFamily: 'PingFang SC',
+    color: '#666666',
+    marginTop: 5,
+  },
+
+  foodNameRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 10,
+  },
+  progressBarContainer: {
+    marginTop: 15,
+    marginBottom: 15,
+    width: 350,
+    height: 6,
+    backgroundColor: 'lightgrey',
+    overflow: 'hidden',
+  },
+  progressBar: {
+    height: 6,
+    backgroundColor: 'rgb(81, 179, 125)',
+  },
+  recordDate: {
+    marginTop: 20,
+    color: '#999',
+    fontFamily: 'PingFang SC',
+    fontSize: 17,
+    alignSelf: 'flex-start',
+    marginLeft: 15,
+    marginBottom: 200,
+  },
+
+});
 
 export default FoodDetailsModal;
