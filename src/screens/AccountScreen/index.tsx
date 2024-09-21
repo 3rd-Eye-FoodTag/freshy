@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Avatar, Text, VStack, HStack, Divider, Button, ChevronRightIcon, ScrollView, FlatList } from 'native-base';
 import { StyleSheet, TouchableOpacity } from 'react-native';
 import { signOut } from 'firebase/auth';
@@ -20,17 +20,31 @@ const profileOptions = [
 type Props = NativeStackScreenProps<RootStackParams, 'WelcomeScreen'>;
 
 const AccountScreen: React.FC<Props> = ({ navigation }) => {
-  const [error, setError] = useState(null)
+  const [username, setUsername] = useState<string | null>(null);
+  const [avater, setAvater] = useState<string | null>(null);
+
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const currentUser = auth.currentUser;
+    if (currentUser) {
+      setUsername(currentUser.displayName || currentUser.email);
+      setAvater(currentUser.photoURL || "../../assets/avater.png")
+      // Test
+      // console.log('Current User Object:', currentUser)
+    }
+  }, []);
+
   const handleLogout = async () => {
     try {
-      await signOut(auth)
+      await signOut(auth);
     } catch (e: any) {
-      setError(e)
+      setError(e);
     }
   };
 
   if (error) {
-    console.warn(error)
+    console.warn(error);
   }
 
   return (
@@ -40,10 +54,10 @@ const AccountScreen: React.FC<Props> = ({ navigation }) => {
           <VStack space={4} alignItems="center" mt={8}>
             <Avatar
               size="2xl"
-              source={require('../../assets/avater.png')}
+              source={avater ? { uri: avater } : require('../../assets/avater.png')}
             />
             <Text fontSize="lg" fontWeight="bold" color="coolGray.800">
-              John Smith
+              {username || 'Loading...'}
             </Text>
           </VStack>
 
@@ -93,7 +107,6 @@ const ProfileOption: React.FC<{ icon: string; label: string; navigation: Props['
   >
     <HStack alignItems="center" justifyContent="space-between" w="100%" px={4} py={3}>
       <HStack alignItems="center" space={3}>
-        {/* <Icon as={MaterialIcons} name={icon} size="md" color="coolGray.600" /> */}
         <Text fontSize="md" color="coolGray.800">
           {label}
         </Text>
