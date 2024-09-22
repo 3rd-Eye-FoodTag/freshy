@@ -17,6 +17,14 @@ const ItemDetailsRow: React.FC<{
   const [isDropdownVisible, setDropdownVisible] = useState(false);
 
   const expiryDate = calculateExpirationDate(predictedFreshDurations.room);
+  let expiryDays = predictedFreshDurations.room;
+  if (storePlace === 'Pantry') {
+    expiryDays = predictedFreshDurations.room;
+  } else if (storePlace === 'Fridge') {
+    expiryDays = predictedFreshDurations.fridge;
+  } else if (storePlace === 'Freezer') {
+    expiryDays = predictedFreshDurations.freezer;
+  }
 
   // Function to handle selecting a storage place
   const handleSelectPlace = (place: string) => {
@@ -50,7 +58,7 @@ const ItemDetailsRow: React.FC<{
           onPress={() => setDropdownVisible(true)}>
           <Text style={styles.selectorText}>{storePlace}</Text>
         </TouchableOpacity>
-        <Text>{convertTimeStringToDate(expiryDate)}</Text>
+        <Text>{expiryDays} days</Text>
       </View>
 
       {/* Modal for Dropdown */}
