@@ -1,17 +1,35 @@
 import React from 'react';
-import { Modal, Box, VStack, HStack, Text, Button, Image, ScrollView, CloseIcon, Center } from 'native-base';
+import {
+  Modal,
+  Box,
+  VStack,
+  HStack,
+  Text,
+  Button,
+  Image,
+  ScrollView,
+  CloseIcon,
+  Center,
+} from 'native-base';
 
-const FoodDetailsModal: React.FC<{ visible: boolean; onClose: () => void }> = ({ visible, onClose }) => {
+const FoodDetailsModal: React.FC<{visible: boolean; onClose: () => void}> = ({
+  visible,
+  onClose,
+}) => {
   return (
     <Modal isOpen={visible} onClose={onClose} size="full">
-      <Modal.Content maxWidth="100%" height="80%" marginTop="auto" borderTopRadius="20px">
+      <Modal.Content
+        maxWidth="100%"
+        height="80%"
+        marginTop="auto"
+        borderTopRadius="20px">
         <Modal.CloseButton />
         {/* <Modal.Header>Food Details</Modal.Header> */}
         <ScrollView>
           <Center>
             {/* Image and Title */}
             <Image
-              source={require("../../../assets/Fruit/0001_Apple_2.jpg")} // Replace with your image URL
+              source={require('../../../assets/Fruit/0001_Apple_2.jpg')} // Replace with your image URL
               alt="Food Image"
               size="xl"
               borderRadius={100}
@@ -68,8 +86,8 @@ const FoodDetailsModal: React.FC<{ visible: boolean; onClose: () => void }> = ({
               <Text fontWeight="bold">Storage Tips</Text>
               <Box bg="coolGray.100" px={3} py={2} rounded="md">
                 <Text>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
-                  et dolore magna aliqua.
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                 </Text>
               </Box>
             </VStack>
@@ -80,7 +98,13 @@ const FoodDetailsModal: React.FC<{ visible: boolean; onClose: () => void }> = ({
           </VStack>
 
           {/* Bottom Section */}
-          <HStack justifyContent="space-between" alignItems="center" px={4} py={4} borderTopWidth={1} borderColor="coolGray.200">
+          <HStack
+            justifyContent="space-between"
+            alignItems="center"
+            px={4}
+            py={4}
+            borderTopWidth={1}
+            borderColor="coolGray.200">
             <Text fontSize="lg">2 left</Text>
             <Button onPress={onClose} colorScheme="green" rounded="full">
               Finish

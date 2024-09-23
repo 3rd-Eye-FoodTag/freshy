@@ -73,9 +73,13 @@ const ManualInputModal = ({
 
   // Function to handle adding selected items to the confirmation list
   const handleAddItem = () => {
-    if (selectedItems.length > 0) {
-      setConfirmationVisible(true);
-    }
+    setConfirmationVisible(true);
+
+    //will comment out this part when we select mutliple items
+
+    // if (selectedItems.length > 0) {
+    //   setConfirmationVisible(true);
+    // }
   };
 
   // Function to handle updating the quantity of items
@@ -236,6 +240,7 @@ const ManualInputModal = ({
                       selected={item.selected}
                       onClick={() => {
                         selectItem(item);
+                        handleAddItem();
                       }}
                     />
                   );
