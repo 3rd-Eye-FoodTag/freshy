@@ -8,7 +8,7 @@ import { auth } from '../../../config/firebase';
 import { updateProfile } from 'firebase/auth';
 
 const UserProfile: React.FC = () => {
-  const [state, setState] = useState({
+  const [userInfo, setUserInfo] = useState({
     name: '',
     email: '',
     password: '12345',
@@ -21,7 +21,7 @@ const UserProfile: React.FC = () => {
   useEffect(() => {
     const currentUser = auth.currentUser;
     if (currentUser) {
-      setState((prevState) => ({
+      setUserInfo((prevState) => ({
         ...prevState,
         name: currentUser.displayName || '',
         email: currentUser.email || '',
@@ -34,7 +34,7 @@ const UserProfile: React.FC = () => {
     if (currentUser) {
       try {
         await updateProfile(currentUser, {
-          displayName: state.name,
+          displayName: userInfo.name,
         });
         Alert.alert('Success', 'Profile updated successfully!');
       } catch (error) {
@@ -71,13 +71,13 @@ const UserProfile: React.FC = () => {
 
 
   const profileFields = [
-    { label: 'Name', value: state.name, key: 'name', secureTextEntry: false },
-    { label: 'Email', value: state.email, key: 'email', secureTextEntry: false },
-    { label: 'Password', value: state.password, key: 'password', secureTextEntry: true },
-    { label: 'Zipcode', value: state.zipcode, key: 'zipcode', secureTextEntry: false },
-    { label: 'Phone Number (Optional)', value: state.phoneNumber, key: 'phoneNumber', secureTextEntry: false },
-    { label: 'Age (Optional)', value: state.age, key: 'age', secureTextEntry: false },
-    { label: 'Gender (Optional)', value: state.gender, key: 'gender', secureTextEntry: false },
+    { label: 'Name', value: userInfo.name, key: 'name', secureTextEntry: false },
+    { label: 'Email', value: userInfo.email, key: 'email', secureTextEntry: false },
+    { label: 'Password', value: userInfo.password, key: 'password', secureTextEntry: true },
+    { label: 'Zipcode', value: userInfo.zipcode, key: 'zipcode', secureTextEntry: false },
+    { label: 'Phone Number (Optional)', value: userInfo.phoneNumber, key: 'phoneNumber', secureTextEntry: false },
+    { label: 'Age (Optional)', value: userInfo.age, key: 'age', secureTextEntry: false },
+    { label: 'Gender (Optional)', value: userInfo.gender, key: 'gender', secureTextEntry: false },
   ];
 
   return (
@@ -98,7 +98,7 @@ const UserProfile: React.FC = () => {
             label={field.label}
             value={field.value}
             onChange={(newValue) =>
-              setState((prevState) => ({
+              setUserInfo((prevState) => ({
                 ...prevState,
                 [field.key]: newValue,
               }))
