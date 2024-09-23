@@ -8,19 +8,24 @@ import { auth } from '../../../config/firebase';
 import { updateProfile } from 'firebase/auth';
 
 const UserProfile: React.FC = () => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('12345');
-  const [zipcode, setZipcode] = useState('95054');
-  const [phoneNumber, setPhoneNumber] = useState('123-456-7890');
-  const [age, setAge] = useState('33');
-  const [gender, setGender] = useState('Male');
+  const [state, setState] = useState({
+    name: '',
+    email: '',
+    password: '12345',
+    zipcode: '95054',
+    phoneNumber: '123-456-7890',
+    age: '33',
+    gender: 'Male',
+  });
 
   useEffect(() => {
     const currentUser = auth.currentUser;
     if (currentUser) {
-      setName(currentUser.displayName || "");
-      setEmail(currentUser.email || "");
+      setState((prevState) => ({
+        ...prevState,
+        name: currentUser.displayName || '',
+        email: currentUser.email || '',
+      }));
     }
   }, []);
 
@@ -29,14 +34,51 @@ const UserProfile: React.FC = () => {
     if (currentUser) {
       try {
         await updateProfile(currentUser, {
-          displayName: name,
+          displayName: state.name,
         });
         Alert.alert('Success', 'Profile updated successfully!');
       } catch (error) {
         Alert.alert('Error', 'Error updating profile: ' + error.message);
       }
     }
+
+    // 测试用fetchUserList
+    // if (currentUser) {
+    //   try {
+    //     // 从 Firebase 获取用户信息
+    //     const userInfoResponse = await fetchUserList({ uid: currentUser.uid });
+    //     console.log('Full Response:', userInfoResponse);
+
+    //     const userInfo = userInfoResponse.data;
+
+    //     if (userInfo) {
+    //       // 打印完整的用户信息
+    //       console.log('Fetched User Info:', userInfo);
+
+    //       // 根据获取到的信息设置状态
+    //       setName(userInfo.name || '');
+    //       setAge(userInfo.age || '');
+    //       setEmail(currentUser.email || '');
+    //     } else {
+    //       console.log('No user info found');
+    //     }
+    //   } catch (error) {
+    //     console.log('Error fetching user info:', error);
+    //   }
+    // }
+
   };
+
+
+  const profileFields = [
+    { label: 'Name', value: state.name, key: 'name', secureTextEntry: false },
+    { label: 'Email', value: state.email, key: 'email', secureTextEntry: false },
+    { label: 'Password', value: state.password, key: 'password', secureTextEntry: true },
+    { label: 'Zipcode', value: state.zipcode, key: 'zipcode', secureTextEntry: false },
+    { label: 'Phone Number (Optional)', value: state.phoneNumber, key: 'phoneNumber', secureTextEntry: false },
+    { label: 'Age (Optional)', value: state.age, key: 'age', secureTextEntry: false },
+    { label: 'Gender (Optional)', value: state.gender, key: 'gender', secureTextEntry: false },
+  ];
 
   return (
     <SafeAreaView style={styles.container}>
@@ -50,26 +92,20 @@ const UserProfile: React.FC = () => {
             <Icon as={FontAwesome5} name={'pencil-alt'} size="sm" color={'white'} />
           </TouchableOpacity>
         </View>
-        <ProfileInfoRow label="Name" value={name} onChange={setName} />
-        <ProfileInfoRow label="Email" value={email} onChange={setEmail} />
-        <ProfileInfoRow
-          label="Password"
-          value={password}
-          onChange={setPassword}
-          secureTextEntry
-        />
-        <ProfileInfoRow label="Zipcode" value={zipcode} onChange={setZipcode} />
-        <ProfileInfoRow
-          label="Phone Number (Optional)"
-          value={phoneNumber}
-          onChange={setPhoneNumber}
-        />
-        <ProfileInfoRow label="Age (Optional)" value={age} onChange={setAge} />
-        <ProfileInfoRow
-          label="Gender (Optional)"
-          value={gender}
-          onChange={setGender}
-        />
+        {profileFields.map((field) => (
+          <ProfileInfoRow
+            key={field.key}
+            label={field.label}
+            value={field.value}
+            onChange={(newValue) =>
+              setState((prevState) => ({
+                ...prevState,
+                [field.key]: newValue,
+              }))
+            }
+            secureTextEntry={field.secureTextEntry}
+          />
+        ))}
       </ScrollView>
     </SafeAreaView>
   );
