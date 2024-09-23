@@ -14,7 +14,7 @@ import FoodDetailsModal from '../../component/Modal/FoodDetailsEditModal';
 import FoodItem from '../../component/FoodItem';
 import {FoodDetailsProps} from '../../utils/interface';
 import ToggleButton from '../../component/ToggleButton';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {currentUser} from '../../redux/reducer';
 import {
   handleUpdateInventory,
@@ -32,13 +32,14 @@ import SearchBar from '../../component/SearchBar';
 //test
 import foodWikeData from '../../utils/mockData/foodWikiData.json';
 import foodInventoryData from '../../utils/mockData/foodInventoryData.json';
+import ModalContainer from '../../component/Modal';
+import {updateModalConstant} from '../../redux/reducer/storageReducer';
 
 const Storage: React.FC = () => {
   const [itemList, setItemList] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
 
-  const [modalVisible, setModalVisible] = useState(false);
-  const [selectedFood, setSelectedFood] = useState<FoodDetailsProps | null>('');
+  const dispatch = useDispatch();
   const currentUserUUID = useSelector(currentUser);
 
   const {data: userData, isSuccess} = useQuery({
@@ -84,6 +85,7 @@ const Storage: React.FC = () => {
           <TouchableOpacity style={styles.icon} />
         </View>
       </View>
+      <ModalContainer />
       <ToggleButton
         options={['All', 'Fridge', 'Freezer', 'Pantry']}
         onSelect={handleSelect}
@@ -115,8 +117,14 @@ const Storage: React.FC = () => {
               <FoodItem
                 item={item}
                 handleOnClick={() => {
-                  setSelectedFood(item);
-                  setModalVisible(() => true);
+                  dispatch(
+                    updateModalConstant({
+                      modalConstant: 'FOOD_DETAILS_MODAL',
+                      modalProps: {
+                        foodDetails: item,
+                      },
+                    }),
+                  );
                 }}
               />
             </View>
@@ -125,11 +133,6 @@ const Storage: React.FC = () => {
           contentContainerStyle={styles.itemsContainer}
         />
       )}
-      <FoodDetailsModal
-        visible={modalVisible}
-        onClose={() => setModalVisible(false)}
-        foodDetails={selectedFood}
-      />
     </SafeAreaView>
   );
 };

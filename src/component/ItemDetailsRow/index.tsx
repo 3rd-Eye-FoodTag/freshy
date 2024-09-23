@@ -1,10 +1,12 @@
 import React, {useState} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet, Modal} from 'react-native';
+import {Icon} from 'native-base';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {
   calculateExpirationDate,
   convertTimeStringToDate,
 } from '../../utils/utils';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 const ItemDetailsRow: React.FC<{
   itemDetails: any;
@@ -36,7 +38,21 @@ const ItemDetailsRow: React.FC<{
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.itemRow}>
-        <Text style={styles.itemName}>{food}</Text>
+        <Text style={styles.itemName}>
+          <TouchableOpacity
+            style={styles.iconRightButton}
+            onPress={() => {
+              console.log('hello');
+            }}>
+            <Icon
+              as={FontAwesome5}
+              name={'pencil-alt'}
+              size="sm"
+              color={'black'}
+            />
+          </TouchableOpacity>
+          {food}
+        </Text>
         <View style={styles.quantityControls}>
           <TouchableOpacity
             onPress={() => onClick(index, -1)}
@@ -145,6 +161,15 @@ const styles = StyleSheet.create({
   dropdownItem: {
     padding: 10,
     alignItems: 'center',
+  },
+  iconRightButton: {
+    paddingRight: 10,
+    backgroundColor: 'white',
+    borderWidth: 0,
+    borderColor: 'lightgray',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 5,
   },
 });
 
