@@ -3,7 +3,7 @@ import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import {FoodDetailsProps} from '../../utils/interface';
 import {Image} from 'native-base';
 import {getImageURL} from '../../utils/constants';
-import {calculateDaysDifference} from '../../utils/utils';
+import {calculateDaysDifference, transformDays} from '../../utils/utils';
 
 interface FoodItemProps {
   item: FoodDetailsProps;
@@ -46,11 +46,11 @@ const FoodItem: React.FC<FoodItemProps> = ({item, handleOnClick}) => {
         <Text style={[styles.itemStatus, {color: 'red'}]}>expired</Text>
       ) : daysLeft <= 2 ? (
         <Text style={[styles.itemStatus, {color: 'orange'}]}>
-          in {daysLeft} day{daysLeft > 1 ? 's' : ''}
+          in {transformDays(daysLeft)}
         </Text>
       ) : (
         <Text style={[styles.itemStatus, {color: 'green'}]}>
-          in {daysLeft} day{daysLeft > 1 ? 's' : ''}
+          in {transformDays(daysLeft)}
         </Text>
         // <View style={styles.progressBarContainer}>
         //   <View

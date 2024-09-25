@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import {transformDays} from '../../utils/utils';
 
 interface OptionSelectorProps {
   label?: string;
@@ -8,7 +9,7 @@ interface OptionSelectorProps {
   onSelectOption: (option: string | number) => void;
   isEditMode: boolean;
   type?: 'date' | null;
-  defaultOption?: boolean;
+  defaultOption?: string | number;
   reset?: boolean;
 }
 
@@ -22,11 +23,11 @@ const OptionSelector: React.FC<OptionSelectorProps> = ({
   defaultOption,
   reset,
 }) => {
-  const [selectedOption, setSelectedOption] = useState<string | null>(null);
-  const [formattedOption, setOptions] = useState(options);
-
-  const handlePress = (option: string | number, index: number) => {
-    setSelectedOption(() => option);
+  const [selectedOption, setSelectedOption] = useState<string | number | null>(
+    null,
+  );
+  const handlePress = (option: string | number, index?: number) => {
+    setSelectedOption(option);
     if (type === 'date') {
       onSelectOption(options[index]);
     } else {
@@ -42,13 +43,9 @@ const OptionSelector: React.FC<OptionSelectorProps> = ({
 
   useEffect(() => {
     if (defaultOption) {
-      handlePress(options[0]);
+      handlePress(defaultOption);
     }
-
-    if (type === 'date') {
-      setOptions(pre => [...pre.map(day => `in ${day} days`)]);
-    }
-  }, []);
+  }, [defaultOption]);
 
   return (
     <View style={styles.container}>
@@ -59,24 +56,26 @@ const OptionSelector: React.FC<OptionSelectorProps> = ({
         </View>
       )}
       <View style={styles.optionsContainer}>
-        {formattedOption.map((option, index) => (
-          <TouchableOpacity
-            key={option}
-            style={[
-              styles.option,
-              selectedOption === option && styles.selectedOption,
-            ]}
-            disabled={!isEditMode}
-            onPress={() => handlePress(option, index)}>
-            <Text
+        {options.map((option, index) => {
+          return (
+            <TouchableOpacity
+              key={`option-${index}`}
               style={[
-                styles.optionText,
-                selectedOption === option && styles.selectedOptionText,
-              ]}>
-              {option}
-            </Text>
-          </TouchableOpacity>
-        ))}
+                styles.option,
+                selectedOption === option && styles.selectedOption,
+              ]}
+              disabled={!isEditMode}
+              onPress={() => handlePress(option, index)}>
+              <Text
+                style={[
+                  styles.optionText,
+                  selectedOption === option && styles.selectedOptionText,
+                ]}>
+                {type === 'date' ? transformDays(option) : option}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
       </View>
     </View>
   );
