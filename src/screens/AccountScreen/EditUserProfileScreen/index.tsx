@@ -5,76 +5,73 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import ProfileInfoRow from '../../../component/ProfileInfoRow.tsx';
 import { Icon } from 'native-base';
 import { auth } from '../../../config/firebase';
-import { updateProfile } from 'firebase/auth';
+import { useQuery } from '@tanstack/react-query';
+import { useSelector } from 'react-redux';
+import { fetchUserDataFromFirebase, updateUserInfoFromFirebase } from '../../../utils/api';
+import { currentUser } from '../../../redux/reducer';
 
 const UserProfile: React.FC = () => {
   const [userInfo, setUserInfo] = useState({
     name: '',
     email: '',
-    password: '12345',
-    zipcode: '95054',
-    phoneNumber: '123-456-7890',
-    age: '33',
-    gender: 'Male',
+    password: '',
+    zipCode: '',
+    phoneNumber: '',
+    age: '',
+    gender: '',
+  });
+
+  const currentUserUUID = useSelector(currentUser);
+
+  const { data: userData, isSuccess, isLoading, isError } = useQuery({
+    queryKey: ['fetchUserInfo', currentUserUUID],
+    queryFn: () => fetchUserDataFromFirebase(currentUserUUID),
   });
 
   useEffect(() => {
-    const currentUser = auth.currentUser;
-    if (currentUser) {
-      setUserInfo((prevState) => ({
-        ...prevState,
-        name: currentUser.displayName || '',
-        email: currentUser.email || '',
-      }));
+    if (isSuccess && userData) {
+      setUserInfo({
+        name: userData.name || '',
+        email: userData.email || '',
+        password: '123456',
+        zipCode: userData.zipCode || '',
+        phoneNumber: userData.phoneNumber || '',
+        age: userData.age || '',
+        gender: userData.gender || '',
+      });
     }
-  }, []);
+  }, [isSuccess, userData]);
+
+  useEffect(() => {
+    if (isError) {
+      Alert.alert('Error', 'Error fetching user data from Firebase.');
+    }
+  }, [isError]);
 
   const handleSave = async () => {
-    const currentUser = auth.currentUser;
-    if (currentUser) {
+    const currentUid = auth.currentUser?.uid;
+    if (currentUid) {
       try {
-        await updateProfile(currentUser, {
-          displayName: userInfo.foodName,
+        await updateUserInfoFromFirebase(currentUid, {
+          name: userInfo.name,
+          email: userInfo.email,
+          zipCode: userInfo.zipCode,
+          phoneNumber: userInfo.phoneNumber,
+          age: userInfo.age,
+          gender: userInfo.gender,
         });
         Alert.alert('Success', 'Profile updated successfully!');
       } catch (error) {
         Alert.alert('Error', 'Error updating profile: ' + error.message);
       }
     }
-
-    // 测试用fetchUserList
-    // if (currentUser) {
-    //   try {
-    //     // 从 Firebase 获取用户信息
-    //     const userInfoResponse = await fetchUserList({ uid: currentUser.uid });
-    //     console.log('Full Response:', userInfoResponse);
-
-    //     const userInfo = userInfoResponse.data;
-
-    //     if (userInfo) {
-    //       // 打印完整的用户信息
-    //       console.log('Fetched User Info:', userInfo);
-
-    //       // 根据获取到的信息设置状态
-    //       setName(userInfo.foodName || '');
-    //       setAge(userInfo.age || '');
-    //       setEmail(currentUser.email || '');
-    //     } else {
-    //       console.log('No user info found');
-    //     }
-    //   } catch (error) {
-    //     console.log('Error fetching user info:', error);
-    //   }
-    // }
-
   };
 
-
   const profileFields = [
-    { label: 'Name', value: userInfo.foodName, key: 'name', secureTextEntry: false },
+    { label: 'Name', value: userInfo.name, key: 'name', secureTextEntry: false },
     { label: 'Email', value: userInfo.email, key: 'email', secureTextEntry: false },
     { label: 'Password', value: userInfo.password, key: 'password', secureTextEntry: true },
-    { label: 'Zipcode', value: userInfo.zipcode, key: 'zipcode', secureTextEntry: false },
+    { label: 'Zipcode', value: userInfo.zipCode, key: 'zipCode', secureTextEntry: false },
     { label: 'Phone Number (Optional)', value: userInfo.phoneNumber, key: 'phoneNumber', secureTextEntry: false },
     { label: 'Age (Optional)', value: userInfo.age, key: 'age', secureTextEntry: false },
     { label: 'Gender (Optional)', value: userInfo.gender, key: 'gender', secureTextEntry: false },
@@ -87,11 +84,12 @@ const UserProfile: React.FC = () => {
           <Text style={styles.saveText}>Save</Text>
         </TouchableOpacity>
         <View style={styles.header}>
-          <Avatar source={require('../../../assets/avater.png')} />
+          <Avatar source={require('../../../assets/avater-potato.jpg')} />
           <TouchableOpacity style={styles.editButton}>
             <Icon as={FontAwesome5} name={'pencil-alt'} size="sm" color={'white'} />
           </TouchableOpacity>
         </View>
+        <View style={{ height: 0.5, backgroundColor: 'lightgray', marginBottom: 15 }} />
         {profileFields.map((field) => (
           <ProfileInfoRow
             key={field.key}
