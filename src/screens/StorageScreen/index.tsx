@@ -40,11 +40,12 @@ import {modalConstants} from '../../component/Modal/constants';
 const Storage: React.FC = () => {
   const [itemList, setItemList] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
+  const [storeMethod, setStoreMethod] = useState('All');
 
   const dispatch = useDispatch();
   const currentUserUUID = useSelector(currentUser);
 
-  const {data: userData, isSuccess} = useQuery({
+  const {data: userData = [], isSuccess} = useQuery({
     queryKey: ['userInventory', currentUserUUID],
     queryFn: () => fetchInventoryDataFromeFirebase(currentUserUUID),
   });
@@ -65,6 +66,15 @@ const Storage: React.FC = () => {
       const {data} = userData;
       setItemList(() => data);
       setFilteredData(() => data);
+      if (
+        storeMethod === 'Fridge' ||
+        storeMethod === 'Freezer' ||
+        storeMethod === 'Pantry'
+      ) {
+        setFilteredData(() => [
+          ...data.filter(item => item.storagePlace === storeMethod),
+        ]);
+      }
     }
   }, [userData]);
 
@@ -76,6 +86,7 @@ const Storage: React.FC = () => {
         itemList.filter(item => item.storagePlace === selectedOption),
       );
     }
+    setStoreMethod(selectedOption);
   };
 
   return (

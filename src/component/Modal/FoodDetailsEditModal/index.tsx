@@ -24,6 +24,7 @@ import {
   calculateDaysDifference,
   calculateExpirationDate,
   convertTimeStringToDate,
+  transformDays,
 } from '../../../utils/utils';
 import OptionSelector from '../../OptionSelector';
 import {currentUser} from '../../../redux/reducer';
@@ -34,6 +35,7 @@ import {
   updateModalConstant,
 } from '../../../redux/reducer/storageReducer';
 import {useMutation, useQueryClient} from '@tanstack/react-query';
+import _uniq from 'lodash/uniq';
 
 const FoodDetailsEditModal: React.FC<{
   onClose?: () => void;
@@ -43,15 +45,24 @@ const FoodDetailsEditModal: React.FC<{
   const [nameField, setNameField] = useState<Boolean>(false);
   const [formData, setFormData] = useState<any>(foodDetails);
 
-  const [storagePL, setStoragePL] = useState('Fridge');
+  const [storagePL, setStoragePL] = useState<any>('Fridge');
   const [expiryDate, setExpiryDate] = useState('');
   const [category, setCategory] = useState(foodDetails?.category);
   const [reset, setReset] = useState(false);
+  const [disableButton, setDisableButton] = useState(false);
 
   const dispatch = useDispatch();
   const currentUserUUID = useSelector(currentUser);
   const selectedFoodDetails = useSelector(selectedFoodDetailsSelector);
   const queryClient = useQueryClient();
+  const {predictedFreshDurations} = foodDetails;
+
+  useEffect(() => {
+    if (!isNewItem) {
+      setDisableButton(true);
+    }
+    setStoragePL(foodDetails.storagePlace);
+  }, []);
 
   useEffect(() => {
     if (selectedFoodDetails) {
@@ -69,8 +80,6 @@ const FoodDetailsEditModal: React.FC<{
   };
 
   useEffect(() => {
-    const {predictedFreshDurations} = formData;
-
     let expirationInDays, newExpirationDate;
 
     if (storagePL === 'Fridge') {
@@ -118,6 +127,23 @@ const FoodDetailsEditModal: React.FC<{
     }
   };
   const daysLeft = calculateDaysDifference(expiryDate);
+
+  let options = [];
+  let storeMethod = 'room';
+
+  if (storagePL === 'Pantry') {
+    storeMethod = 'room';
+  } else if (storagePL === 'Freezer') {
+    storeMethod = 'freezer';
+  } else if (storagePL === 'Fridge') {
+    storeMethod = 'fridge';
+  }
+
+  options = [
+    Math.floor(predictedFreshDurations[storeMethod] * 0.75),
+    Number(predictedFreshDurations[storeMethod]),
+    Math.ceil(predictedFreshDurations[storeMethod] * 1.25),
+  ];
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -186,39 +212,44 @@ const FoodDetailsEditModal: React.FC<{
                 />
               </TouchableOpacity>
             </View>
-            <View style={styles.progressBarContainer}>
+            {/* <View style={styles.progressBarContainer}>
               <View
                 style={[
                   styles.progressBar,
                   {width: `${Math.max((daysLeft / 14) * 100, 0)}%`},
                 ]}
               />
-            </View>
-            <Text color="green.500">{daysLeft} days left</Text>
+            </View> */}
+            <Text color="green.500">{transformDays(daysLeft)} left</Text>
           </Center>
           <OptionSelector
             options={['Fridge', 'Freezer', 'Pantry']}
             onSelectOption={selectedOption => {
+              setDisableButton(false);
               handleInputChange('storagePlace', selectedOption);
               setStoragePL(selectedOption);
               setReset(true);
             }}
             isEditMode={true}
-            defaultOption={true}
+            defaultOption={foodDetails?.storagePlace || 'Fridge'}
           />
           <OptionSelector
             label="Expiry Date"
             type="date"
             value={convertTimeStringToDate(expiryDate)}
-            options={[3, 7, 21]}
+            options={_uniq(options)}
             onSelectOption={selectedOption => {
+              setDisableButton(false);
               setReset(false);
-              const expiryDate = calculateExpirationDate(selectedOption);
-              setExpiryDate(expiryDate);
-              handleInputChange('expiryDate', expiryDate);
+              const expiry = calculateExpirationDate(selectedOption);
+              setExpiryDate(expiry);
+              handleInputChange('expiryDate', expiry);
             }}
             isEditMode={true}
             reset={reset}
+            defaultOption={
+              isNewItem && Number(predictedFreshDurations[storeMethod])
+            }
           />
           {/* <OptionSelector
             label="Reminder Date"
@@ -236,6 +267,7 @@ const FoodDetailsEditModal: React.FC<{
               selectedValue={category}
               onValueChange={type => {
                 setCategory(type);
+                setDisableButton(false);
                 handleInputChange('category', type);
               }}>
               <Select.Item label="Vegetable" value="Vegetable" />
@@ -248,7 +280,10 @@ const FoodDetailsEditModal: React.FC<{
             <FormControl.Label>Storage Tips</FormControl.Label>
             <Input
               value={formData?.storageTips}
-              onChangeText={value => handleInputChange('storageTip', value)}
+              onChangeText={value => {
+                setDisableButton(false);
+                handleInputChange('storageTip', value);
+              }}
               multiline
               numberOfLines={4}
             />
@@ -267,7 +302,13 @@ const FoodDetailsEditModal: React.FC<{
           borderTopWidth={1}
           borderColor="coolGray.200">
           <HStack space={1} justifyContent="center" alignItems="center" />
-          <Button onPress={handleSave} colorScheme="green" rounded="full">
+          <Button
+            onPress={handleSave}
+            colorScheme="green"
+            rounded="full"
+            isDisabled={disableButton}
+            bg={disableButton ? 'gray.400' : 'green.500'}
+            _disabled={{bg: 'gray.400'}}>
             Save
           </Button>
         </HStack>
