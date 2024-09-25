@@ -47,8 +47,8 @@ const SectionComponent: React.FC<{ section: Section }> = ({ section }) => {
       <Text style={styles.sectionTitle}>{section.title}</Text><Text style={styles.dragHandleText}>≡</Text>
       <View style={styles.itemsContainer}>
         {section.data.map((item) => (
-          <View key={item.name} style={styles.itemContainer}>
-            <Text style={styles.itemName}>{item.name}</Text>
+          <View key={item.foodName} style={styles.itemContainer}>
+            <Text style={styles.itemName}>{item.foodName}</Text>
             <Text style={styles.itemDaysLeft}>in {item.daysLeft} day{item.daysLeft !== 1 ? 's' : ''}</Text>
           </View>
         ))}

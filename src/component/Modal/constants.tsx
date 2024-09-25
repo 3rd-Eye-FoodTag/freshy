@@ -1,7 +1,6 @@
 import React, {ReactNode} from 'react';
 import FoodDetailsEditModal from './FoodDetailsEditModal'; // Example modal component
-import {Text} from 'react-native';
-import ManualInputModal from '../ManualInputModal';
+import ManualInputModal from './ManualInputModal';
 
 // Define modal constants
 interface Modal {

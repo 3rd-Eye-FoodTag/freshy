@@ -1,48 +1,46 @@
-import React, {useState} from 'react';
-import {View, Text, TouchableOpacity, StyleSheet, Modal} from 'react-native';
+import React from 'react';
+import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import {Icon} from 'native-base';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {
-  calculateExpirationDate,
+  calculateDaysDifference,
   convertTimeStringToDate,
 } from '../../utils/utils';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import {useDispatch} from 'react-redux';
+import {
+  updateModalConstant,
+  updateSelectedFoodDetails,
+} from '../../redux/reducer/storageReducer';
+import {modalConstants} from '../Modal/constants';
 
 const ItemDetailsRow: React.FC<{
   itemDetails: any;
   onClick: (a: number, b: number) => void;
   index: number;
-  handleStoragePlacedChanged: (input) => void;
-}> = ({itemDetails, onClick, index, handleStoragePlacedChanged}) => {
-  const {food, quantity, predictedFreshDurations} = itemDetails;
-  const [storePlace, setStorePlace] = useState('Fridge');
-  const [isDropdownVisible, setDropdownVisible] = useState(false);
-
-  const expiryDate = calculateExpirationDate(predictedFreshDurations.room);
-  let expiryDays = predictedFreshDurations.room;
-  if (storePlace === 'Pantry') {
-    expiryDays = predictedFreshDurations.room;
-  } else if (storePlace === 'Fridge') {
-    expiryDays = predictedFreshDurations.fridge;
-  } else if (storePlace === 'Freezer') {
-    expiryDays = predictedFreshDurations.freezer;
-  }
-
-  // Function to handle selecting a storage place
-  const handleSelectPlace = (place: string) => {
-    setStorePlace(() => place);
-    setDropdownVisible(false);
-    handleStoragePlacedChanged(place);
-  };
+}> = ({itemDetails, onClick, index}) => {
+  const {foodName, quantity, expiryDate, storagePlace, foodID} = itemDetails;
+  const dispatch = useDispatch();
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.itemRow}>
         <Text style={styles.itemName}>
           <TouchableOpacity
             style={styles.iconRightButton}
             onPress={() => {
-              console.log('hello');
+              dispatch(updateSelectedFoodDetails({...itemDetails}));
+              dispatch(
+                updateModalConstant({
+                  modalConstant: modalConstants.FOOD_DETAILS_MODAL,
+                  modalProps: {
+                    foodDetails: {
+                      ...itemDetails,
+                    },
+                    isNewItem: true,
+                  },
+                }),
+              );
             }}>
             <Icon
               as={FontAwesome5}
@@ -51,61 +49,27 @@ const ItemDetailsRow: React.FC<{
               color={'black'}
             />
           </TouchableOpacity>
-          {food}
+          {foodName}
         </Text>
         <View style={styles.quantityControls}>
           <TouchableOpacity
-            onPress={() => onClick(index, -1)}
+            onPress={() => onClick(foodID, -1)}
             disabled={quantity < 1}>
             <Text style={styles.quantityButton}>-</Text>
           </TouchableOpacity>
           <Text style={styles.quantityText}>{quantity || 0}</Text>
-          <TouchableOpacity onPress={() => onClick(index, 1)}>
+          <TouchableOpacity onPress={() => onClick(foodID, 1)}>
             <Text style={styles.quantityButton}>+</Text>
           </TouchableOpacity>
         </View>
       </View>
 
       <View style={styles.itemRow}>
-        <Text>Expiry Date</Text>
-        {/* Custom Selector Button */}
-        <TouchableOpacity
-          style={styles.selectorButton}
-          onPress={() => setDropdownVisible(true)}>
-          <Text style={styles.selectorText}>{storePlace}</Text>
-        </TouchableOpacity>
-        <Text>{expiryDays} days</Text>
+        <Text>{convertTimeStringToDate(expiryDate)}</Text>
+        <Text>{storagePlace}</Text>
+        <Text>{calculateDaysDifference(expiryDate)} days</Text>
       </View>
-
-      {/* Modal for Dropdown */}
-      <Modal
-        visible={isDropdownVisible}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setDropdownVisible(false)}>
-        <TouchableOpacity
-          style={styles.modalOverlay}
-          onPress={() => setDropdownVisible(false)}>
-          <View style={styles.dropdown}>
-            <TouchableOpacity
-              onPress={() => handleSelectPlace('Pantry')}
-              style={styles.dropdownItem}>
-              <Text>Pantry</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => handleSelectPlace('Fridge')}
-              style={styles.dropdownItem}>
-              <Text>Fridge</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => handleSelectPlace('Freezer')}
-              style={styles.dropdownItem}>
-              <Text>Freeze</Text>
-            </TouchableOpacity>
-          </View>
-        </TouchableOpacity>
-      </Modal>
-    </SafeAreaView>
+    </View>
   );
 };
 

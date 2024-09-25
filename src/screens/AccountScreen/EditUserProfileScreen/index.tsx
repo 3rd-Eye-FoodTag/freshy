@@ -34,7 +34,7 @@ const UserProfile: React.FC = () => {
     if (currentUser) {
       try {
         await updateProfile(currentUser, {
-          displayName: userInfo.name,
+          displayName: userInfo.foodName,
         });
         Alert.alert('Success', 'Profile updated successfully!');
       } catch (error) {
@@ -56,7 +56,7 @@ const UserProfile: React.FC = () => {
     //       console.log('Fetched User Info:', userInfo);
 
     //       // 根据获取到的信息设置状态
-    //       setName(userInfo.name || '');
+    //       setName(userInfo.foodName || '');
     //       setAge(userInfo.age || '');
     //       setEmail(currentUser.email || '');
     //     } else {
@@ -71,7 +71,7 @@ const UserProfile: React.FC = () => {
 
 
   const profileFields = [
-    { label: 'Name', value: userInfo.name, key: 'name', secureTextEntry: false },
+    { label: 'Name', value: userInfo.foodName, key: 'name', secureTextEntry: false },
     { label: 'Email', value: userInfo.email, key: 'email', secureTextEntry: false },
     { label: 'Password', value: userInfo.password, key: 'password', secureTextEntry: true },
     { label: 'Zipcode', value: userInfo.zipcode, key: 'zipcode', secureTextEntry: false },

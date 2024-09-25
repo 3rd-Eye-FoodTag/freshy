@@ -7,6 +7,8 @@ export const initialStorageReducer = {
   inventoryList: aysncField(),
   selectedFood: null,
   modal: {modalConstant: '', modalProp: ''},
+  confirmFoodList: [],
+  selectedFoodDetails: {},
 };
 
 const storageReducer = createSlice({
@@ -37,6 +39,26 @@ const storageReducer = createSlice({
         modalProps: action.payload?.modalProps || {},
       };
     },
+    [ACTION_NAME.updateSelectedFoodDetails]: (state, action) => {
+      state.selectedFoodDetails = {...action.payload};
+    },
+    [ACTION_NAME.resetConfirmationList]: state => {
+      state.confirmFoodList = [];
+    },
+    [ACTION_NAME.addFoodItemToConfirmationList]: (state, action) => {
+      state.confirmFoodList = [...state.confirmFoodList, {...action.payload}];
+    },
+    [ACTION_NAME.updateConfirmationList]: (state, action) => {
+      state.confirmFoodList = [
+        ...state.confirmFoodList.map(item => {
+          if (action.payload.foodID === item.foodID) {
+            return {...action.payload};
+          } else {
+            return item;
+          }
+        }),
+      ];
+    },
   },
 });
 
@@ -49,6 +71,10 @@ export const {
   addInventoryListSuccess,
   updateSelectedFoodID,
   updateModalConstant,
+  updateSelectedFoodDetails,
+  addFoodItemToConfirmationList,
+  updateConfirmationList,
+  resetConfirmationList,
 } = storageReducer.actions;
 
 export const inventorySelector = state =>
@@ -56,5 +82,9 @@ export const inventorySelector = state =>
 export const selectedFoodIdSelector = state =>
   state.inventory.selectedFood || '';
 export const modalSelector = state => state.inventory.modal;
+export const selectedFoodDetailsSelector = state =>
+  state.inventory.selectedFoodDetails;
+export const confirmationListSelector = state =>
+  state.inventory.confirmFoodList;
 
 export default storageReducer.reducer;

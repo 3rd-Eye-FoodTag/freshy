@@ -24,7 +24,12 @@ export const ACTION_NAME = {
   fetchInventoryList: 'fetchInventoryList',
   fetchInventoryListSuccess: 'fetchInventoryListSuccess',
   fetchInventoryListFailure: 'fetchInventoryListFailure',
+
   updateModalConstant: 'updateModalConstant',
+  updateSelectedFoodDetails: 'updateSelectedFoodDetails',
+  updateConfirmationList: 'updateConfirmationList',
+  resetConfirmationList: 'resetConfirmationList',
+  addFoodItemToConfirmationList: 'addFoodItemToConfirmationList',
   //register email:
   registerEmail: 'registerEmail',
   registerPassword: 'registerPassword',

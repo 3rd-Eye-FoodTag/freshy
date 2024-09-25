@@ -18,7 +18,7 @@ const FoodItem: React.FC<FoodItemProps> = ({item, handleOnClick}) => {
       <View style={styles.itemImageContainer}>
         <Image
           source={{
-            uri: getImageURL(item.foodPhoto),
+            uri: getImageURL(item.imageName),
           }}
           alt={'item.food'}
           size="lg"
@@ -41,7 +41,7 @@ const FoodItem: React.FC<FoodItemProps> = ({item, handleOnClick}) => {
           <Text style={styles.itemQuantityText}>x{item.quantity}</Text>
         </View>
       </View>
-      <Text style={styles.itemText}>{item.name}</Text>
+      <Text style={styles.itemText}>{item.foodName}</Text>
       {daysLeft < 0 ? (
         <Text style={[styles.itemStatus, {color: 'red'}]}>expired</Text>
       ) : daysLeft <= 2 ? (

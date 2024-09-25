@@ -82,7 +82,7 @@ const ManualInputModal = ({
 
   // Filtered items based on search input
   const filteredItems = databaseItems.filter(item =>
-    item.name.toLowerCase().includes(searchTerm.toLowerCase()),
+    item.foodName.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   return (
@@ -142,8 +142,9 @@ const ManualInputModal = ({
                     <Image
                       source={{uri: item.image}}
                       style={styles.itemImage}
+                      alt={item.image}
                     />
-                    <Text style={styles.itemText}>{item.name}</Text>
+                    <Text style={styles.itemText}>{item.foodName}</Text>
                   </TouchableOpacity>
                 )}
               />
@@ -164,8 +165,9 @@ const ManualInputModal = ({
                     <Image
                       source={{uri: item.image}}
                       style={styles.itemImage}
+                      alt={item.image}
                     />
-                    <Text style={styles.itemText}>{item.name}</Text>
+                    <Text style={styles.itemText}>{item.foodName}</Text>
                   </TouchableOpacity>
                 )}
                 ListEmptyComponent={
@@ -199,7 +201,7 @@ const ManualInputModal = ({
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={({item, index}) => (
                   <View style={styles.itemRow}>
-                    <Text style={styles.itemName}>{item.name}</Text>
+                    <Text style={styles.itemName}>{item.foodName}</Text>
                     <View style={styles.quantityControls}>
                       <TouchableOpacity
                         onPress={() => updateQuantity(index, -1)}

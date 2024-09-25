@@ -18,7 +18,7 @@ const DATA: ReferData[] = [
 const ReferDetailsScreen: React.FC = () => {
     const renderItem: ListRenderItem<ReferData> = ({ item }) => (
         <View style={styles.row}>
-            <Text style={styles.name}>{item.name}</Text>
+            <Text style={styles.foodName}>{item.foodName}</Text>
             <View style={styles.bonusContainer}>
                 <View style={[styles.bonus, item.bonus1 && styles.bonusActive]}>
                     <Text>sign up bonus</Text>

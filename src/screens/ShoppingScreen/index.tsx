@@ -63,19 +63,19 @@ const ShoppingListScreen = () => {
                   strikeThrough={item.isChecked}
                   color={item.isChecked ? 'gray.400' : 'black'}
                   fontSize="md">
-                  {item.name}
+                  {item.foodName}
                 </Text>
               </HStack>
               <Checkbox
                 isChecked={item.isChecked}
-                value={item.name}
+                value={item.foodName}
                 onChange={() => handleCheckboxChange(item.id)}
                 size="md"
                 _checked={{
                   bg: 'gray.500',
                   borderColor: 'gray.500',
                 }}
-                aria-label={item.name}
+                aria-label={item.foodName}
               />
             </HStack>
           )}

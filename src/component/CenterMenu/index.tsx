@@ -1,16 +1,20 @@
 import React, {useState} from 'react';
 import {View, StyleSheet, TouchableOpacity, Text, Modal} from 'react-native';
-import ManualInputModal from '../ManualInputModal';
+import {useDispatch} from 'react-redux';
+import {updateModalConstant} from '../../redux/reducer/storageReducer';
 
 const CenterMenu = ({isMenuVisible, setMenuVisible}) => {
   const [isSearchModalVisible, setSearchModalVisible] = useState(false);
+  const dispatch = useDispatch();
   const toggleMenu = () => {
     setMenuVisible(!isMenuVisible);
   };
 
   const handleManualInput = () => {
     console.log('Manual Input selected');
-    setSearchModalVisible(true);
+    // ManualInputModal
+    dispatch(updateModalConstant({modalConstant: 'MANNUAL_INPUT_MODAL'}));
+    // setSearchModalVisible(true);
     setMenuVisible(!isMenuVisible);
   };
 
@@ -64,11 +68,6 @@ const CenterMenu = ({isMenuVisible, setMenuVisible}) => {
           </View>
         </Modal>
       )}
-
-      <ManualInputModal
-        visible={isSearchModalVisible}
-        onClose={() => setSearchModalVisible(false)}
-      />
     </View>
   );
 };
