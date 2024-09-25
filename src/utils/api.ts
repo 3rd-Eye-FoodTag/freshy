@@ -144,6 +144,21 @@ export const fetchUserDataFromFirebase = async (currentUid: string) => {
   }
 };
 
+// Update user
+export const updateUserInfoFromFirebase = async (currentUid: string, updatedData: Partial<{  age: string, email: string, gender: string, name: string, phoneNumber: string, zipCode: string, }>) => {
+  try {
+    const docRef = doc(db, 'Users', currentUid);
+
+    await updateDoc(docRef, {
+      ...updatedData, 
+    });
+
+    console.log('User information updated successfully');
+  } catch (error) {
+    console.log('Error updating user information:', error);
+  }
+};
+
 export const handleUpdateInventory = async (uid: string, data: any) => {
   try {
     await setDoc(doc(db, 'Inventory', uid), {data: data});
