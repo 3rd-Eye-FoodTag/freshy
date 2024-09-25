@@ -98,7 +98,6 @@ export const fetchUserList = async ({uid}: InventoryProps) => {
   const response = await axios.get(DATA_BASE_URL + `/${uid}/profileInfo.json`);
 
   const userInfoData = response.data;
-  console.log({userInfoData});
   return response;
 };
 
@@ -132,6 +131,19 @@ export const handleAuthentication = async (
   }
 };
 
+//User
+export const fetchUserDataFromFirebase = async (currentUid: string) => {
+  try {
+    const docRef = doc(db, 'Users', currentUid);
+    const docSnap = await getDoc(docRef);
+    const userData = docSnap.data();
+
+    return userData;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const handleUpdateInventory = async (uid: string, data: any) => {
   try {
     await setDoc(doc(db, 'Inventory', uid), {data: data});
@@ -141,7 +153,6 @@ export const handleUpdateInventory = async (uid: string, data: any) => {
 };
 
 //FoodWiki
-
 export const fetchFoodWikFromFirebase = async () => {
   //no uuid need because to fetch all data from firebase
   try {
@@ -185,7 +196,7 @@ export const postInventoryUpdateToFirebase = async (
   newItem: FoodDetailsProps[],
 ) => {
   try {
-    // console.log({newItem});
+    console.log('posting data-------------');
     const docRef = doc(db, 'Inventory', currentUid);
     const docSnap = await getDoc(docRef);
     const result = docSnap.data();
@@ -210,7 +221,7 @@ export const updateExistedInventoryItem = async (
     const collection = result.data;
 
     const updateItem = collection.map(item => {
-      if (item.id === newItem.id) {
+      if (item.foodID === newItem.foodID) {
         return {...newItem};
       }
 

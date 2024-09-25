@@ -1,55 +1,65 @@
 import React, {useState, useEffect} from 'react';
+import {StyleSheet, TouchableOpacity, View} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {
-  Modal,
-  Button,
-  FormControl,
-  Input,
+  ScrollView,
   VStack,
   HStack,
   Text,
-  Select,
+  Button,
   Image,
+  FormControl,
+  Input,
+  Select,
+  Icon,
   Center,
-  ScrollView,
 } from 'native-base';
-import {FoodDetailsProps} from '../../../utils/interface';
-import {
-  updateExistedInventoryItem,
-  postInventoryUpdateToFirebase,
-} from '../../../utils/api';
-
-import {useSelector} from 'react-redux';
-import {currentUser} from '../../../redux/reducer';
-import {getImageURL} from '../../../utils/constants';
-import {
-  calculateDaysDifference,
-  convertTimeStringToDate,
-} from '../../../utils/utils';
-
-import {StyleSheet} from 'react-native';
+import {useDispatch, useSelector} from 'react-redux';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import {Icon} from 'native-base';
-import {TouchableOpacity, View} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import DateSelector from '../../DateSelector';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import {updateExistedInventoryItem} from '../../../utils/api';
+import {FoodDetailsProps} from '../../../utils/interface';
+import {
+  calculateDaysDifference,
+  calculateExpirationDate,
+  convertTimeStringToDate,
+} from '../../../utils/utils';
+import OptionSelector from '../../OptionSelector';
+import {currentUser} from '../../../redux/reducer';
+import {defaultFoodImage, getImageURL} from '../../../utils/constants';
+import {
+  selectedFoodDetailsSelector,
+  updateConfirmationList,
+  updateModalConstant,
+} from '../../../redux/reducer/storageReducer';
+import {useMutation, useQueryClient} from '@tanstack/react-query';
 
-const FoodDetailsModal: React.FC<{
+const FoodDetailsEditModal: React.FC<{
   onClose?: () => void;
   foodDetails: FoodDetailsProps | null;
-}> = ({onClose, foodDetails}) => {
-  const [isEditMode, setIsEditMode] = useState(false);
-  const [formData, setFormData] = useState<FoodDetailsProps>(foodDetails);
+  isNewItem?: boolean;
+}> = ({foodDetails, isNewItem}) => {
+  const [nameField, setNameField] = useState<Boolean>(false);
+  const [formData, setFormData] = useState<any>(foodDetails);
+
+  const [storagePL, setStoragePL] = useState('Fridge');
+  const [expiryDate, setExpiryDate] = useState('');
+  const [category, setCategory] = useState(foodDetails?.category);
+  const [reset, setReset] = useState(false);
+
+  const dispatch = useDispatch();
   const currentUserUUID = useSelector(currentUser);
+  const selectedFoodDetails = useSelector(selectedFoodDetailsSelector);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
-    if (foodDetails) {
-      setFormData(foodDetails);
+    if (selectedFoodDetails) {
+      setFormData(selectedFoodDetails);
+      setStoragePL(foodDetails.storagePlace);
+      setExpiryDate(foodDetails.expiryDate);
     }
-  }, [foodDetails]);
-
-  const toggleEditMode = () => setIsEditMode(!isEditMode);
+  }, [dispatch, foodDetails, isNewItem, selectedFoodDetails]);
 
   const handleInputChange = (name: string, value: any) => {
     setFormData(prevData => ({
@@ -58,26 +68,60 @@ const FoodDetailsModal: React.FC<{
     }));
   };
 
-  const handleSave = () => {
-    if (foodDetails) {
-      updateExistedInventoryItem(currentUserUUID, {
-        ...formData,
-        id: foodDetails.id,
-      });
-    } else {
-      postInventoryUpdateToFirebase(currentUserUUID, [
-        {...formData, id: crypto.randomUUID()},
-      ]);
+  useEffect(() => {
+    const {predictedFreshDurations} = formData;
 
-      setIsEditMode(false);
+    let expirationInDays, newExpirationDate;
+
+    if (storagePL === 'Fridge') {
+      expirationInDays = predictedFreshDurations.fridge;
+    } else if (storagePL === 'Freezer') {
+      expirationInDays = predictedFreshDurations.freezer;
+    } else if (storagePL === 'Pantry') {
+      expirationInDays = predictedFreshDurations.room;
+    }
+
+    newExpirationDate = calculateExpirationDate(expirationInDays);
+
+    setExpiryDate(newExpirationDate);
+    handleInputChange('expiryDate', newExpirationDate);
+  }, [storagePL]);
+
+  const updateFoodItem = useMutation({
+    mutationFn: async (postUpdatePayload: any) => {
+      const {userId, data} = postUpdatePayload;
+      return await updateExistedInventoryItem(userId, data);
+    },
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey: ['userInventory']});
+    },
+  });
+
+  const handleSave = () => {
+    if (isNewItem) {
+      dispatch(updateConfirmationList(formData));
+      dispatch(
+        updateModalConstant({
+          modalConstant: 'MANNUAL_INPUT_MODAL',
+          modalProps: {showConfirmation: true},
+        }),
+      );
+    } else {
+      updateExistedInventoryItem(currentUserUUID, formData);
+      updateFoodItem.mutate({userId: currentUserUUID, data: formData});
+      dispatch(
+        updateModalConstant({
+          modalConstant: '',
+        }),
+      );
     }
   };
-
-  let daysLeft = calculateDaysDifference(formData?.expiryDate);
+  const daysLeft = calculateDaysDifference(expiryDate);
 
   return (
-    <SafeAreaView>
-      <ScrollView>
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
         <VStack space={4} px={4} mt={4}>
           <Center>
             <HStack space={4} alignItems="center" justifyContent="center">
@@ -85,45 +129,60 @@ const FoodDetailsModal: React.FC<{
                 <TouchableOpacity style={styles.iconLeftButton}>
                   <Icon
                     as={AntDesign}
-                    name={'shoppingcart'}
+                    name="shoppingcart"
                     size="sm"
-                    color={'black'}
+                    color="black"
                   />
                 </TouchableOpacity>
                 <Text style={styles.iconText}>Add to List</Text>
               </View>
-
               <Image
-                source={{uri: getImageURL(foodDetails.foodPhoto)}}
-                alt={formData.name}
+                source={{uri: getImageURL(formData?.imageName)}}
+                alt={formData?.foodName}
+                defaultSource={{uri: defaultFoodImage}}
                 size="xl"
                 borderRadius={100}
                 mb={4}
               />
-
               <View style={styles.rightIcon}>
                 <TouchableOpacity style={styles.iconRightButton}>
                   <Icon
                     as={MaterialCommunityIcons}
-                    name={'pac-man'}
+                    name="pac-man"
                     size="sm"
-                    color={'black'}
+                    color="black"
                   />
                 </TouchableOpacity>
                 <Text style={styles.iconText}>Eat First</Text>
               </View>
             </HStack>
-
             <View style={styles.foodNameRow}>
               <Text fontSize="2xl" fontWeight="bold">
-                {formData.name}
+                {formData?.foodName}
               </Text>
-              <TouchableOpacity>
+              {/* {nameField ? (
+                <Input
+                  value={formData?.food}
+                  onChangeText={value =>
+                    handleInputChange('storageTips', value)
+                  }
+                  multiline
+                  numberOfLines={4}
+                />
+              ) : (
+                <Text fontSize="2xl" fontWeight="bold">
+                  {formData?.foodName}
+                </Text>
+              )} */}
+              <TouchableOpacity
+                onPress={() => {
+                  setNameField(nameField);
+                }}>
                 <Icon
                   as={FontAwesome5}
-                  name={'pencil-alt'}
+                  name="pencil-alt"
                   size="sm"
-                  color={'black'}
+                  color="black"
                 />
               </TouchableOpacity>
             </View>
@@ -137,89 +196,48 @@ const FoodDetailsModal: React.FC<{
             </View>
             <Text color="green.500">{daysLeft} days left</Text>
           </Center>
-          <HStack space={3} justifyContent="center">
-            <Button
-              colorScheme={
-                formData.storagePlace === 'Fridge' ? 'green' : 'coolGray'
-              }
-              size="sm"
-              onPress={() =>
-                isEditMode && handleInputChange('storagePlace', 'Fridge')
-              }
-              isDisabled={!isEditMode}>
-              Fridge
-            </Button>
-            <Button
-              colorScheme={
-                formData.storagePlace === 'Freezer' ? 'green' : 'coolGray'
-              }
-              size="sm"
-              onPress={() =>
-                isEditMode && handleInputChange('storagePlace', 'Freezer')
-              }
-              isDisabled={!isEditMode}>
-              Freezer
-            </Button>
-            <Button
-              colorScheme={
-                formData.storagePlace === 'Pantry' ? 'green' : 'coolGray'
-              }
-              size="sm"
-              onPress={() =>
-                isEditMode && handleInputChange('storagePlace', 'Pantry')
-              }
-              isDisabled={!isEditMode}>
-              Pantry
-            </Button>
-          </HStack>
-          <FormControl>
-            <FormControl.Label>Expiry Date</FormControl.Label>
-            <Input
-              value={convertTimeStringToDate(formData.expiryDate)}
-              onChangeText={value => handleInputChange('expiryDate', value)}
-              isDisabled={!isEditMode}
-            />
-          </FormControl>
-          <DateSelector
+          <OptionSelector
+            options={['Fridge', 'Freezer', 'Pantry']}
+            onSelectOption={selectedOption => {
+              handleInputChange('storagePlace', selectedOption);
+              setStoragePL(selectedOption);
+              setReset(true);
+            }}
+            isEditMode={true}
+            defaultOption={true}
+          />
+          <OptionSelector
             label="Expiry Date"
-            date={convertTimeStringToDate(formData.expiryDate)}
-            options={['in 3 days', 'in 7 days', 'Custom']}
-            // TODO: Need to review onSelectOption logic
-            onSelectOption={selectedOption =>
-              handleInputChange('expiryDate', selectedOption)
-            }
+            type="date"
+            value={convertTimeStringToDate(expiryDate)}
+            options={[3, 7, 21]}
+            onSelectOption={selectedOption => {
+              setReset(false);
+              const expiryDate = calculateExpirationDate(selectedOption);
+              setExpiryDate(expiryDate);
+              handleInputChange('expiryDate', expiryDate);
+            }}
+            isEditMode={true}
+            reset={reset}
           />
-
-          <FormControl>
-            <FormControl.Label>Reminder</FormControl.Label>
-            <Input
-              value={formData.reminder}
-              onChangeText={value => handleInputChange('reminder', value)}
-              isDisabled={!isEditMode}
-            />
-          </FormControl>
-          <DateSelector
+          {/* <OptionSelector
             label="Reminder Date"
-            date={formData.reminder}
-            options={[
-              '2 days',
-              '3 days',
-              '7 days',
-              '1 month',
-              '2 months',
-              '6 months',
-            ]}
-            // TODO: Need to review onSelectOption logic
-            onSelectOption={selectedOption =>
-              handleInputChange('reminder', selectedOption)
-            }
-          />
+            value={formData?.reminder}
+            options={[2, 3, 7, 30, 60, 180]}
+            onSelectOption={selectedOption => {
+              setReset(false);
+            }}
+            isEditMode={true}
+            reset={reset}
+          /> */}
           <FormControl>
             <FormControl.Label>Category</FormControl.Label>
             <Select
-              selectedValue={formData.category}
-              onValueChange={value => handleInputChange('category', value)}
-              isDisabled={!isEditMode}>
+              selectedValue={category}
+              onValueChange={type => {
+                setCategory(type);
+                handleInputChange('category', type);
+              }}>
               <Select.Item label="Vegetable" value="Vegetable" />
               <Select.Item label="Fruit" value="Fruit" />
               <Select.Item label="Dairy" value="Dairy" />
@@ -229,76 +247,42 @@ const FoodDetailsModal: React.FC<{
           <FormControl>
             <FormControl.Label>Storage Tips</FormControl.Label>
             <Input
-              value={formData.storageTips}
-              onChangeText={value => handleInputChange('storageTips', value)}
-              isDisabled={!isEditMode}
+              value={formData?.storageTips}
+              onChangeText={value => handleInputChange('storageTip', value)}
               multiline
               numberOfLines={4}
             />
           </FormControl>
-        </VStack>
-        <Text style={styles.recordDate}>
-          Recorded on {convertTimeStringToDate(formData.createdAt)}
-        </Text>
-      </ScrollView>
-      <HStack
-        justifyContent="space-between"
-        alignItems="center"
-        px={4}
-        py={4}
-        borderTopWidth={1}
-        borderColor="coolGray.200">
-        <HStack space={1} justifyContent="center" alignItems="center">
-          {isEditMode && (
-            <Button
-              onPress={() =>
-                handleInputChange('quantity', formData.quantity + 1)
-              }
-              variant="ghost"
-              size="sm"
-              isDisabled={!isEditMode}>
-              +
-            </Button>
-          )}
-          <Text fontSize="lg" fontWeight="bold">
-            {formData.quantity}
-            <Text fontSize="sm" fontWeight="normal">
-              {' '}
-              left
-            </Text>
+          <Text style={styles.recordDate}>
+            Recorded on {convertTimeStringToDate(formData?.createdAt)}
           </Text>
-          {isEditMode && (
-            <Button
-              onPress={() =>
-                handleInputChange(
-                  'quantity',
-                  Math.max(formData.quantity - 1, 0),
-                )
-              }
-              variant="ghost"
-              size="sm"
-              isDisabled={!isEditMode}>
-              -
-            </Button>
-          )}
-        </HStack>
-        <HStack space={2}>
-          <Button onPress={onClose} colorScheme="coolGray" rounded="full">
-            Cancel
-          </Button>
-          <Button
-            onPress={isEditMode ? handleSave : toggleEditMode}
-            colorScheme="green"
-            rounded="full">
-            {isEditMode ? 'Save' : 'Edit'}
+        </VStack>
+      </ScrollView>
+      <View style={styles.bottomBar}>
+        <HStack
+          justifyContent="space-between"
+          alignItems="center"
+          px={4}
+          py={4}
+          borderTopWidth={1}
+          borderColor="coolGray.200">
+          <HStack space={1} justifyContent="center" alignItems="center" />
+          <Button onPress={handleSave} colorScheme="green" rounded="full">
+            Save
           </Button>
         </HStack>
-      </HStack>
+      </View>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 80, // Make sure there's space for the bottom bar
+  },
   leftIcon: {
     marginTop: -20,
     alignItems: 'center',
@@ -333,7 +317,6 @@ const styles = StyleSheet.create({
     color: '#666666',
     marginTop: 5,
   },
-
   foodNameRow: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -359,8 +342,17 @@ const styles = StyleSheet.create({
     fontSize: 17,
     alignSelf: 'flex-start',
     marginLeft: 15,
-    marginBottom: 200,
+    marginBottom: 20,
+  },
+  bottomBar: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'white',
+    borderTopWidth: 1,
+    borderColor: 'lightgray',
   },
 });
 
-export default FoodDetailsModal;
+export default FoodDetailsEditModal;

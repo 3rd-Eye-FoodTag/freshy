@@ -15,7 +15,7 @@ const SearchBar: React.FC<SearchBarProps> = ({placeholder, data, onSelect}) => {
   React.useEffect(() => {
     if (query) {
       const filtered = data.filter(item =>
-        item.name.toLowerCase().includes(query.toLowerCase()),
+        item.foodName.toLowerCase().includes(query.toLowerCase()),
       );
       setFilteredData(filtered);
     } else {
@@ -24,7 +24,7 @@ const SearchBar: React.FC<SearchBarProps> = ({placeholder, data, onSelect}) => {
   }, [query, data]);
 
   const handleSelect = (item: {id: string; name: string}) => {
-    setQuery(item.name);
+    setQuery(item.foodName);
     onSelect(item);
   };
 
@@ -47,7 +47,7 @@ const SearchBar: React.FC<SearchBarProps> = ({placeholder, data, onSelect}) => {
           renderItem={({item}) => (
             <TouchableOpacity onPress={() => handleSelect(item)}>
               <Text p={2} borderBottomWidth={1} borderBottomColor="gray.200">
-                {item.name}
+                {item.foodName}
               </Text>
             </TouchableOpacity>
           )}

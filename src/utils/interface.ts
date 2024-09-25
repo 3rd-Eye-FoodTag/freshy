@@ -23,7 +23,7 @@ export interface FoodDetailsProps {
   shared: boolean;
   createdBy: string; // User ID reference
   freshnessScore: number;
-  storagePlace: string;
+  storagePlace: 'Fridge' | 'Freezer' | 'Pantry';
   cost: number;
   groceryStore: string;
   updatedByUser: string; // User ID reference

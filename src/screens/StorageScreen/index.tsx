@@ -9,8 +9,6 @@ import {
   FlatList,
   Dimensions,
 } from 'react-native';
-// import FoodDetailsModal from '../../component/Modal/FoodDetailsModal';
-import FoodDetailsModal from '../../component/Modal/FoodDetailsEditModal';
 import FoodItem from '../../component/FoodItem';
 import {FoodDetailsProps} from '../../utils/interface';
 import ToggleButton from '../../component/ToggleButton';
@@ -33,7 +31,11 @@ import SearchBar from '../../component/SearchBar';
 import foodWikeData from '../../utils/mockData/foodWikiData.json';
 import foodInventoryData from '../../utils/mockData/foodInventoryData.json';
 import ModalContainer from '../../component/Modal';
-import {updateModalConstant} from '../../redux/reducer/storageReducer';
+import {
+  updateModalConstant,
+  updateSelectedFoodDetails,
+} from '../../redux/reducer/storageReducer';
+import {modalConstants} from '../../component/Modal/constants';
 
 const Storage: React.FC = () => {
   const [itemList, setItemList] = useState([]);
@@ -85,7 +87,6 @@ const Storage: React.FC = () => {
           <TouchableOpacity style={styles.icon} />
         </View>
       </View>
-      <ModalContainer />
       <ToggleButton
         options={['All', 'Fridge', 'Freezer', 'Pantry']}
         onSelect={handleSelect}
@@ -94,7 +95,6 @@ const Storage: React.FC = () => {
         placeholder="Search"
         data={foodWikiData.map((item, index) => {
           if (item === undefined) {
-            console.log({item});
           }
           return (
             item && {
@@ -117,9 +117,12 @@ const Storage: React.FC = () => {
               <FoodItem
                 item={item}
                 handleOnClick={() => {
+                  //selectedFood
+                  dispatch(updateSelectedFoodDetails(item));
+                  //open foodDetailItem
                   dispatch(
                     updateModalConstant({
-                      modalConstant: 'FOOD_DETAILS_MODAL',
+                      modalConstant: modalConstants.FOOD_DETAILS_MODAL,
                       modalProps: {
                         foodDetails: item,
                       },
@@ -129,7 +132,7 @@ const Storage: React.FC = () => {
               />
             </View>
           )}
-          keyExtractor={item => item.name}
+          keyExtractor={item => item.foodID}
           contentContainerStyle={styles.itemsContainer}
         />
       )}
