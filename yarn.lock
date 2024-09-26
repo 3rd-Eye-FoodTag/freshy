@@ -8164,7 +8164,7 @@ react-native-picker-select@^9.3.1:
     lodash.isequal "^4.5.0"
     lodash.isobject "^3.0.2"
 
-react-native-reanimated@^3.15.0, react-native-reanimated@>=2.8.0:
+react-native-reanimated@*, react-native-reanimated@^3.15.0, react-native-reanimated@>=2.8.0:
   version "3.15.0"
   dependencies:
     "@babel/plugin-transform-arrow-functions" "^7.0.0-0"
@@ -8201,6 +8201,11 @@ react-native-vector-icons@^10.1.0:
   dependencies:
     prop-types "^15.7.2"
     yargs "^16.1.1"
+
+react-native-vision-camera@^4.5.3:
+  version "4.5.3"
+  resolved "https://registry.npmjs.org/react-native-vision-camera/-/react-native-vision-camera-4.5.3.tgz"
+  integrity sha512-wulpS6ZY6SwuYMDD8csIFMFJ6lXeQq4bJvaAhwEnr0R9cZ53jDUs0/SFZva6UFEPIw64h0IdrrzuVTEufhDSgQ==
 
 react-native-web@^0.17.1:
   version "0.17.7"
