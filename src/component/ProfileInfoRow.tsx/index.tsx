@@ -12,11 +12,11 @@ const ProfileInfoRow: React.FC<ProfileInfoRowProps> = ({ label, value, onChange,
   return (
     <View style={styles.infoRow}>
       <Text style={styles.label}>{label}</Text>
-      <TextInput 
-        style={styles.input} 
-        value={value} 
-        onChangeText={onChange} 
-        secureTextEntry={secureTextEntry} 
+      <TextInput
+        style={styles.input}
+        value={value}
+        onChangeText={onChange}
+        secureTextEntry={secureTextEntry}
         defaultValue={value}
       />
     </View>

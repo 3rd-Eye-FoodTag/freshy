@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { SafeAreaView, Text, StyleSheet, View, TouchableOpacity } from 'react-native';
+import { SafeAreaView, Text, StyleSheet, View, TouchableOpacity, Image } from 'react-native';
 
 const DisplayPreferencesScreen: React.FC = () => {
     const [selectedView, setSelectedView] = useState('Card View');
@@ -17,13 +17,27 @@ const DisplayPreferencesScreen: React.FC = () => {
                     {selectedView === 'Card View' && <Text style={styles.checkMark}>✔️</Text>}
                 </TouchableOpacity>
 
+                {/* Card View Images with Spacing */}
                 <TouchableOpacity
                     style={styles.cardView}
                     onPress={() => setSelectedView('Card View')}
                 >
-                    <View style={styles.card}></View>
-                    <View style={styles.card}></View>
-                    <View style={styles.card}></View>
+                    <Image
+                        style={styles.cardImage}
+                        source={require('../../../../assets/cardView1.jpg')}
+                    />
+                    <View style={styles.imageSpacer} />
+
+                    <Image
+                        style={styles.cardImage}
+                        source={require('../../../../assets/cardView2.jpg')}
+                    />
+                    <View style={styles.imageSpacer} />
+
+                    <Image
+                        style={styles.cardImage}
+                        source={require('../../../../assets/cardView3.jpg')}
+                    />
                 </TouchableOpacity>
 
                 {/* Divider */}
@@ -42,9 +56,20 @@ const DisplayPreferencesScreen: React.FC = () => {
                     style={styles.listView}
                     onPress={() => setSelectedView('List View')}
                 >
-                    <View style={styles.listItem}></View>
-                    <View style={styles.listItem}></View>
-                    <View style={styles.listItem}></View>
+                    <View style={styles.listView}>
+                        <View style={styles.listRow}>
+                            <Text style={styles.listItemText}>照片</Text>
+                        </View>
+                        <View style={styles.listRow}>
+                            <Text style={styles.listItemText}>数量</Text>
+                        </View>
+                        <View style={styles.listRow}>
+                            <Text style={styles.listItemText}>哪天添加的</Text>
+                        </View>
+                        <View style={styles.listRow}>
+                            <Text style={styles.listItemText}>几天后过期</Text>
+                        </View>
+                    </View>
                 </TouchableOpacity>
             </View>
         </SafeAreaView>
@@ -76,16 +101,20 @@ const styles = StyleSheet.create({
     },
     cardView: {
         flexDirection: 'row',
-        justifyContent: 'space-around',
+        justifyContent: 'space-between',
         marginVertical: 20,
     },
-    card: {
+    cardImage: {
         width: 120,
         height: 100,
+        resizeMode: 'cover',
+    },
+    imageSpacer: {
+        width: 2,
         backgroundColor: 'lightgray',
     },
     listView: {
-        marginVertical: 20,
+        marginVertical: 10,
     },
     listItem: {
         height: 35,
@@ -95,6 +124,13 @@ const styles = StyleSheet.create({
     separator: {
         height: 1,
         backgroundColor: 'rgba(211, 211, 211, 0.5)',
+    },
+    listRow: {
+        marginBottom: 15,
+    },
+    listItemText: {
+        fontSize: 16,
+        textAlign: 'left',
     },
 });
 
