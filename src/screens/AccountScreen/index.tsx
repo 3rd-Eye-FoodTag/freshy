@@ -64,7 +64,7 @@ const AccountScreen: React.FC<Props> = ({ navigation }) => {
       <ScrollView>
         <Box style={styles.container}>
           <VStack space={4} alignItems="center" mt={8} style={{ zIndex: 1 }}>
-            <Avatar size="2xl" source={require('../../assets/avater-potato.jpg')} />
+            <Avatar size="2xl" source={require('../../assets/avater.png')} />
             <Text fontSize="lg" fontWeight="bold" color="coolGray.800">
               {isSuccess ? userData?.name : 'Loading...'}
             </Text>

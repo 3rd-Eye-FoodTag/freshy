@@ -84,7 +84,7 @@ const UserProfile: React.FC = () => {
           <Text style={styles.saveText}>Save</Text>
         </TouchableOpacity>
         <View style={styles.header}>
-          <Avatar source={require('../../../assets/avater-potato.jpg')} />
+          <Avatar source={require('../../../assets/avater.png')} />
           <TouchableOpacity style={styles.editButton}>
             <Icon as={FontAwesome5} name={'pencil-alt'} size="sm" color={'white'} />
           </TouchableOpacity>
