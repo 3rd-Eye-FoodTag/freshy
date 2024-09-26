@@ -4,6 +4,19 @@ import { SafeAreaView, Text, StyleSheet, View, TouchableOpacity, Image } from 'r
 const DisplayPreferencesScreen: React.FC = () => {
     const [selectedView, setSelectedView] = useState('Card View');
 
+    const cardImages = [
+        require('../../../../assets/cardView1.jpg'),
+        require('../../../../assets/cardView2.jpg'),
+        require('../../../../assets/cardView3.jpg'),
+    ];
+
+    const listData = [
+        { quantity: '5x', name: 'Potato', addedDate: '09/20', expiry: '7 days', image: require('../../../../assets/cardView1.jpg') },
+        { quantity: '1x', name: 'Potato', addedDate: '10/20', expiry: '20 days', image: require('../../../../assets/cardView1.jpg') },
+        { quantity: '1x', name: 'Cucumber', addedDate: '10/20', expiry: '5 days', image: require('../../../../assets/cardView2.jpg') },
+        { quantity: '1x', name: 'Chili', addedDate: '10/20', expiry: '3 days', image: require('../../../../assets/cardView3.jpg') },
+    ];
+
     return (
         <SafeAreaView style={styles.screen}>
             <View style={styles.container}>
@@ -17,27 +30,21 @@ const DisplayPreferencesScreen: React.FC = () => {
                     {selectedView === 'Card View' && <Text style={styles.checkMark}>✔️</Text>}
                 </TouchableOpacity>
 
-                {/* Card View Images with Spacing */}
                 <TouchableOpacity
                     style={styles.cardView}
                     onPress={() => setSelectedView('Card View')}
                 >
-                    <Image
-                        style={styles.cardImage}
-                        source={require('../../../../assets/cardView1.jpg')}
-                    />
-                    <View style={styles.imageSpacer} />
-
-                    <Image
-                        style={styles.cardImage}
-                        source={require('../../../../assets/cardView2.jpg')}
-                    />
-                    <View style={styles.imageSpacer} />
-
-                    <Image
-                        style={styles.cardImage}
-                        source={require('../../../../assets/cardView3.jpg')}
-                    />
+                    {cardImages.map((imageSrc, index) => (
+                        <React.Fragment key={index}>
+                            <Image
+                                style={styles.cardImage}
+                                source={imageSrc}
+                            />
+                            {index < cardImages.length - 1 && (
+                                <View style={styles.imageSpacer} />
+                            )}
+                        </React.Fragment>
+                    ))}
                 </TouchableOpacity>
 
                 {/* Divider */}
@@ -57,18 +64,14 @@ const DisplayPreferencesScreen: React.FC = () => {
                     onPress={() => setSelectedView('List View')}
                 >
                     <View style={styles.listView}>
-                        <View style={styles.listRow}>
-                            <Text style={styles.listItemText}>照片</Text>
-                        </View>
-                        <View style={styles.listRow}>
-                            <Text style={styles.listItemText}>数量</Text>
-                        </View>
-                        <View style={styles.listRow}>
-                            <Text style={styles.listItemText}>哪天添加的</Text>
-                        </View>
-                        <View style={styles.listRow}>
-                            <Text style={styles.listItemText}>几天后过期</Text>
-                        </View>
+                        {listData.map((item, index) => (
+                            <View key={index} style={styles.listRow}>
+                                <Image source={item.image} style={styles.listImage} />
+                                <Text style={styles.listItemText}>
+                                    {item.quantity} {item.name} from {item.addedDate}, best in {item.expiry}
+                                </Text>
+                            </View>
+                        ))}
                     </View>
                 </TouchableOpacity>
             </View>
@@ -126,11 +129,22 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(211, 211, 211, 0.5)',
     },
     listRow: {
-        marginBottom: 15,
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingVertical: 10,
+        borderWidth: 1,
+        borderColor: 'rgba(211, 211, 211, 0.5)',
+        marginBottom: 5,
+
     },
     listItemText: {
         fontSize: 16,
-        textAlign: 'left',
+        flexShrink: 1,
+    },
+    listImage: {
+        width: 30,
+        height: 30,
+        marginRight: 10,
     },
 });
 
