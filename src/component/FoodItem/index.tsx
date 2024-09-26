@@ -3,7 +3,11 @@ import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import {FoodDetailsProps} from '../../utils/interface';
 import {Image} from 'native-base';
 import {getImageURL} from '../../utils/constants';
-import {calculateDaysDifference, transformDays} from '../../utils/utils';
+import {
+  calculateDaysDifference,
+  convertToMMDDYYYY,
+  transformDays,
+} from '../../utils/utils';
 
 interface FoodItemProps {
   item: FoodDetailsProps;
@@ -30,19 +34,23 @@ const FoodItem: React.FC<FoodItemProps> = ({item, handleOnClick}) => {
           style={[
             styles.itemQuantity,
             {
-              backgroundColor:
-                item.quantity < 0
-                  ? 'red'
-                  : item.quantity <= 2
-                  ? 'orange'
-                  : 'rgb(81, 179, 125)',
+              backgroundColor: 'rgb(81, 179, 125)',
+              // item.quantity < 0
+              //   ? 'red'
+              //   : item.quantity <= 2
+              //   ? 'orange'
+              //   : 'rgb(81, 179, 125)',
             },
           ]}>
           <Text style={styles.itemQuantityText}>x{item.quantity}</Text>
         </View>
       </View>
       <Text style={styles.itemText}>{item.foodName}</Text>
-      {daysLeft < 0 ? (
+      <Text>{convertToMMDDYYYY(item?.createdAt)}</Text>
+      <Text style={[styles.itemStatus, {color: 'green'}]}>
+        in {transformDays(daysLeft)}
+      </Text>
+      {/* {daysLeft < 0 ? (
         <Text style={[styles.itemStatus, {color: 'red'}]}>expired</Text>
       ) : daysLeft <= 2 ? (
         <Text style={[styles.itemStatus, {color: 'orange'}]}>
@@ -52,15 +60,15 @@ const FoodItem: React.FC<FoodItemProps> = ({item, handleOnClick}) => {
         <Text style={[styles.itemStatus, {color: 'green'}]}>
           in {transformDays(daysLeft)}
         </Text>
-        // <View style={styles.progressBarContainer}>
-        //   <View
-        //     style={[
-        //       styles.progressBar,
-        //       {width: `${Math.min((daysLeft / 14) * 100, 100)}%`},
-        //     ]}
-        //   />
-        // </View>
-      )}
+        <View style={styles.progressBarContainer}>
+          <View
+            style={[
+              styles.progressBar,
+              {width: `${Math.min((daysLeft / 14) * 100, 100)}%`},
+            ]}
+          />
+        </View>
+      )} */}
     </TouchableOpacity>
   );
 };
@@ -68,7 +76,7 @@ const FoodItem: React.FC<FoodItemProps> = ({item, handleOnClick}) => {
 const styles = StyleSheet.create({
   item: {
     flex: 1,
-    margin: 10,
+    margin: 5,
     backgroundColor: '#f8f8f8',
     borderRadius: 10,
     padding: 10,

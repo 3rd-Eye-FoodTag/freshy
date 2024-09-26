@@ -28,6 +28,19 @@ export const guidGenerator = () => {
   );
 };
 
+export const convertToDays = (value: number, unit: string): number => {
+  switch (unit) {
+    case 'day':
+      return value; // 1 day is 1 day
+    case 'week':
+      return value * 7; // 1 week is 7 days
+    case 'month':
+      return value * 30; // Approximating 1 month as 30 days
+    default:
+      throw new Error('Invalid unit');
+  }
+};
+
 export const calculateDaysDifference = (
   expirationDate: string,
   createdAt?: string,
@@ -52,6 +65,21 @@ export const calculateDaysDifference = (
 
   return differenceInDays > 0 ? differenceInDays : 0;
 };
+
+export const convertToMMDDYYYY = (dateString: string): string => {
+  const date = new Date(dateString);
+
+  if (isNaN(date.getTime())) {
+    throw new Error('Invalid date format');
+  }
+
+  const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based
+  const day = date.getDate().toString().padStart(2, '0');
+  const year = date.getFullYear();
+
+  return `${month}/${day}/${year}`;
+};
+
 export const convertTimeStringToDate = (timeString: string | Date): string => {
   // Create a Date object from the time string
   const date = new Date(timeString);
