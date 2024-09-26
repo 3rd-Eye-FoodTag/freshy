@@ -8,9 +8,6 @@ import {
   Text,
   Button,
   Image,
-  FormControl,
-  Input,
-  Select,
   Icon,
   Center,
 } from 'native-base';
@@ -47,7 +44,6 @@ const FoodDetailsEditModal: React.FC<{
 
   const [storagePL, setStoragePL] = useState<any>('Fridge');
   const [expiryDate, setExpiryDate] = useState('');
-  const [category, setCategory] = useState(foodDetails?.category);
   const [reset, setReset] = useState(false);
   const [disableButton, setDisableButton] = useState(false);
 
@@ -142,7 +138,7 @@ const FoodDetailsEditModal: React.FC<{
   options = [
     Math.floor(predictedFreshDurations[storeMethod] * 0.75),
     Number(predictedFreshDurations[storeMethod]),
-    Math.ceil(predictedFreshDurations[storeMethod] * 1.25),
+    'Custom',
   ];
 
   return (
@@ -261,33 +257,31 @@ const FoodDetailsEditModal: React.FC<{
             isEditMode={true}
             reset={reset}
           /> */}
-          <FormControl>
-            <FormControl.Label>Category</FormControl.Label>
-            <Select
-              selectedValue={category}
-              onValueChange={type => {
-                setCategory(type);
-                setDisableButton(false);
-                handleInputChange('category', type);
-              }}>
-              <Select.Item label="Vegetable" value="Vegetable" />
-              <Select.Item label="Fruit" value="Fruit" />
-              <Select.Item label="Dairy" value="Dairy" />
-              <Select.Item label="Meat" value="Meat" />
-            </Select>
-          </FormControl>
-          <FormControl>
-            <FormControl.Label>Storage Tips</FormControl.Label>
-            <Input
-              value={formData?.storageTips}
-              onChangeText={value => {
-                setDisableButton(false);
-                handleInputChange('storageTip', value);
-              }}
-              multiline
-              numberOfLines={4}
-            />
-          </FormControl>
+          <OptionSelector
+            type="dropdown"
+            label="Category"
+            options={[
+              {label: 'Vegetable', value: 'Vegetable'},
+              {label: 'Fruit', value: 'Fruit'},
+              {label: 'Dairy', value: 'Dairy'},
+              {label: 'Meat', value: 'Meat'},
+            ]}
+            onSelectOption={category => {
+              setDisableButton(false);
+              handleInputChange('category', category);
+            }}
+            defaultOption={foodDetails?.category}
+          />
+          <OptionSelector
+            type="comment"
+            label="Storage Tips"
+            onSelectOption={value => {
+              console.log({value});
+              setDisableButton(false);
+              handleInputChange('storageTip', value);
+            }}
+            defaultOption={foodDetails.storageTip}
+          />
           <Text style={styles.recordDate}>
             Recorded on {convertTimeStringToDate(formData?.createdAt)}
           </Text>
@@ -301,15 +295,32 @@ const FoodDetailsEditModal: React.FC<{
           py={4}
           borderTopWidth={1}
           borderColor="coolGray.200">
-          <HStack space={1} justifyContent="center" alignItems="center" />
+          <HStack space={3} alignItems="center">
+            <Button
+              disabled={formData?.quantity === 0}
+              onPress={() => {
+                setDisableButton(false);
+                handleInputChange('quantity', formData?.quantity - 1);
+              }}>
+              -
+            </Button>
+            <Text fontSize="lg">{formData?.quantity}</Text>
+            <Button
+              onPress={() => {
+                setDisableButton(false);
+                handleInputChange('quantity', formData?.quantity + 1);
+              }}>
+              +
+            </Button>
+          </HStack>
           <Button
             onPress={handleSave}
             colorScheme="green"
-            rounded="full"
+            minWidth={150}
             isDisabled={disableButton}
-            bg={disableButton ? 'gray.400' : 'green.500'}
+            bg={disableButton ? 'gray.400' : '#00A86B'}
             _disabled={{bg: 'gray.400'}}>
-            Save
+            Finish
           </Button>
         </HStack>
       </View>
