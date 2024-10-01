@@ -1,19 +1,26 @@
-import React from 'react';
-import { StyleSheet, SafeAreaView, ImageBackground } from 'react-native'
-import { Box, Center, Heading, Text, Button, VStack } from 'native-base';
+import React, {useEffect} from 'react';
+import {StyleSheet, SafeAreaView, ImageBackground} from 'react-native';
+import {Box, Center, Heading, Text, Button, VStack} from 'native-base';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import { RootStackParams } from '../../constants';
+import {RootStackParams} from '../../constants';
+import {useSelector} from 'react-redux';
+import {currentUser} from '../../../redux/reducer';
 
 type Props = NativeStackScreenProps<RootStackParams, 'WelcomeScreen'>;
 
-const WelcomeScreen: React.FC<Props> = ({ navigation }) => {
+const WelcomeScreen: React.FC<Props> = ({navigation}) => {
+  const current = useSelector(currentUser);
+  useEffect(() => {
+    navigation.push('HomePage');
+  }, [current, navigation]);
+
   const goToRigsterScreen = () => {
     navigation.push('EmailInputScreen');
-  }
+  };
 
   const goToLoginInScreen = () => {
     navigation.push('LoginScreen');
-  }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -21,15 +28,20 @@ const WelcomeScreen: React.FC<Props> = ({ navigation }) => {
         <Center flex={1}>
           <ImageBackground
             source={require('../../../assets/welcomeBG.png')} // Replace with your image URL
-            style={{ width: '100%', height: 300, top: -60 }}
+            style={{width: '100%', height: 300, top: -60}}
             resizeMode="cover"
           />
-          <VStack w="75%" space={4} mt={8} alignItems="center" justifyContent="center" >
+          <VStack
+            w="75%"
+            space={4}
+            mt={8}
+            alignItems="center"
+            justifyContent="center">
             <Heading size="lg">Welcome to 3rd Eye</Heading>
             <Text fontSize="md" color="gray.500">
               Your Smart Fridge Pal
             </Text>
-            <Button 
+            <Button
               size="lg"
               bg="#00A86B"
               w="75%"
@@ -38,8 +50,9 @@ const WelcomeScreen: React.FC<Props> = ({ navigation }) => {
                 textAlign: 'center',
                 fontWeight: 'bold',
               }}
-              onPress={() => {goToRigsterScreen()}}
-            >
+              onPress={() => {
+                goToRigsterScreen();
+              }}>
               Sign Up
             </Button>
             <Button
@@ -54,8 +67,9 @@ const WelcomeScreen: React.FC<Props> = ({ navigation }) => {
                 textAlign: 'center',
                 fontWeight: 'bold',
               }}
-              onPress={() => {goToLoginInScreen()}}
-            >
+              onPress={() => {
+                goToLoginInScreen();
+              }}>
               Log In
             </Button>
           </VStack>
@@ -68,11 +82,11 @@ const WelcomeScreen: React.FC<Props> = ({ navigation }) => {
 export default WelcomeScreen;
 
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: 'white',
-    },
-    button: {
-      textAlign: "center", 
-    }
-  });
+  container: {
+    flex: 1,
+    backgroundColor: 'white',
+  },
+  button: {
+    textAlign: 'center',
+  },
+});

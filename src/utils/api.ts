@@ -102,11 +102,11 @@ export const fetchUserList = async ({uid}: InventoryProps) => {
 };
 
 export const getProductInfo = async (barcode: string) => {
-  console.log('getProductInfo', {barcode});
   const dataBaseUrl = `https://world.openfoodfacts.org/api/v2/product/${barcode}?fields=product_name,product_name_en,nutriscore_data`;
   const imageUrl = `https://world.openfoodfacts.org/api/v0/product/${barcode}.json}`;
-  const response = await axios.get(dataBaseUrl);
-  const imageResponse = await axios.get(imageUrl);
+  return await axios.get(dataBaseUrl);
+  // const imageResponse = await axios.get(imageUrl);
+  // console.log({data: response.data.product.product_name});
 
   const imageData = imageResponse?.data?.product?.image_front_url;
 };
@@ -145,12 +145,22 @@ export const fetchUserDataFromFirebase = async (currentUid: string) => {
 };
 
 // Update user
-export const updateUserInfoFromFirebase = async (currentUid: string, updatedData: Partial<{  age: string, email: string, gender: string, name: string, phoneNumber: string, zipCode: string, }>) => {
+export const updateUserInfoFromFirebase = async (
+  currentUid: string,
+  updatedData: Partial<{
+    age: string;
+    email: string;
+    gender: string;
+    name: string;
+    phoneNumber: string;
+    zipCode: string;
+  }>,
+) => {
   try {
     const docRef = doc(db, 'Users', currentUid);
 
     await updateDoc(docRef, {
-      ...updatedData, 
+      ...updatedData,
     });
 
     console.log('User information updated successfully');
@@ -190,8 +200,9 @@ export const fetchFoodWikFromFirebase = async () => {
 export const fetchInventoryDataFromeFirebase = async (currentUid: string) => {
   try {
     // return {data: foodInventoryData};
-
+    console.log('fetching ------', currentUid);
     const docRef = doc(db, 'Inventory', currentUid);
+
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
@@ -285,5 +296,3 @@ export const addFoodDataToFirestore = async (foodArray: any) => {
     console.error('Error adding data to Firestore:', error);
   }
 };
-
-//use to updateInventory to user

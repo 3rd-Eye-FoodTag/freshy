@@ -32,7 +32,7 @@ const Router = (): React.JSX.Element => {
 
   useEffect(() => {
     onAuthStateChanged(auth, user => {
-      // console.log("USER IS STILL LOGGsD IN: " , user);
+      console.log('USER IS STILL LOGGsD IN: ', user);
       if (user) {
         setUser(user);
         dispatch(setCurrentUser(user.uid));
@@ -42,7 +42,7 @@ const Router = (): React.JSX.Element => {
     });
   }, [user]);
 
-  return current ? <TabLayout /> : <Stack />;
+  return <Stack />;
 };
 
 const App = (): React.JSX.Element => {

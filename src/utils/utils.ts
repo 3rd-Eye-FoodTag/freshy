@@ -1,3 +1,5 @@
+import {distance} from 'fastest-levenshtein';
+
 export const formattedDataFromFirebase = data => {
   const list = [];
   for (const key in data) {
@@ -135,5 +137,24 @@ export const transformDays = (day: number | string): string => {
     return `${months} month${months !== 1 ? 's' : ''}`;
   } else {
     return `${years} year${years !== 1 ? 's' : ''}`;
+  }
+};
+
+export const findSimilarIds = (
+  collection: any[],
+  targetId: string,
+  threshold: number = 3,
+) => {
+  if (collection.length === 0) {
+    return;
+  } else {
+    return collection?.filter(item => {
+      if (item?.foodName) {
+        const similarity = distance(item?.foodName || null, targetId);
+        return similarity <= threshold;
+      } else {
+        return false;
+      }
+    });
   }
 };
