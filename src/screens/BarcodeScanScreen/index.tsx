@@ -1,66 +1,150 @@
-import React, {useState, useEffect, useRef} from 'react';
-import {
-  View,
-  Text,
-  FlatList,
-  StyleSheet,
-  TouchableOpacity,
-  Alert,
-} from 'react-native';
+import React, {useState, useEffect, useRef, useCallback} from 'react';
+import {View, Text, FlatList, StyleSheet, TouchableOpacity} from 'react-native';
 import {
   Camera,
   useCameraDevice,
   useCodeScanner,
-  // useFrameProcessor,
 } from 'react-native-vision-camera';
-import {runOnJS} from 'react-native-reanimated';
+import type {Code} from 'react-native-vision-camera';
+import {getProductInfo, postInventoryUpdateToFirebase} from '../../utils/api';
+import {useDispatch, useSelector} from 'react-redux';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {calculateExpirationDate, findSimilarIds} from '../../utils/utils';
+import 'react-native-get-random-values';
+import {v4 as uuidv4} from 'uuid';
+import {currentUser} from '../../redux/reducer';
+import {
+  addFoodItemToConfirmationList,
+  confirmationListSelector,
+  resetConfirmationList,
+} from '../../redux/reducer/storageReducer';
+import {useNavigation} from '@react-navigation/native';
 
 const BarcodeScanScreen: React.FC = () => {
   const [scannedCodes, setScannedCodes] = useState<string[]>([]);
+  const [lastScanCode, setLastScanCode] = useState<string | null>(null);
   const cameraRef = useRef<Camera>(null);
   const device = useCameraDevice('back');
+  const scanInterval = 3000; // 3 seconds interval
+  const navigation = useNavigation();
 
-  // Request camera permission on mount
-  // useEffect(() => {
-  //   const requestCameraPermission = async () => {
-  //     const cameraPermission = await Camera.getCameraPermissionStatus();
-  //     if (cameraPermission !== 'authorized') {
-  //       const newCameraPermission = await Camera.requestCameraPermission();
-  //       if (newCameraPermission !== 'authorized') {
-  //         Alert.alert('Error', 'Camera permission is required to scan codes.');
-  //       }
-  //     }
-  //   };
-  //   requestCameraPermission();
-  // }, []);
+  const queryClient = useQueryClient();
+  const confirmationList = useSelector(confirmationListSelector);
+  const currentUserUUID = useSelector(currentUser);
+  const dispatch = useDispatch();
 
-  const codeScanner = useCodeScanner({
-    codeTypes: ['qr', 'ean-13'],
-    onCodeScanned: codes => {
-      console.log({codes}, '--------');
-      console.log(`Scanned ${codes.length} codes!`);
+  const {data: foodWikiData = []} = useQuery({
+    queryKey: ['foodwiki'],
+  });
+
+  // Function to handle scanning the code
+  const onCodeScanned = useCallback(
+    async (codes: Code[]) => {
+      const value = codes[0]?.value;
+      if (value && value !== lastScanCode) {
+        setLastScanCode(value);
+      }
+    },
+    [lastScanCode],
+  );
+
+  // Fetch product info based on last scanned code
+  useEffect(() => {
+    if (!lastScanCode) {
+      return;
+    }
+
+    const intervalID = setInterval(async () => {
+      try {
+        const response = await getProductInfo(lastScanCode);
+        const productName = response?.data?.product?.product_name;
+
+        if (productName) {
+          setScannedCodes(prevCodes => [...prevCodes, productName]);
+        }
+
+        if (foodWikiData.length > 0) {
+          const similarItems = findSimilarIds(foodWikiData, productName, 2);
+          // You can process similarItems or display them if needed
+          const item = similarItems[0];
+          setScannedCodes(prevCodes => [...prevCodes, item]);
+
+          const todayDate = new Date();
+
+          const formattedItem = {
+            foodID: uuidv4(),
+            foodName: item.foodName,
+            quantity: item.quantity || 1,
+            category: item.category,
+            predictedFreshDurations: item?.predictedFreshDurations,
+            consumed: false,
+            share: true,
+            freshnessScore: 100,
+            storagePlace: item?.storagePlace || 'Fridge',
+            cost: 0,
+            groceryStore: '',
+            imageName: item?.imageName,
+            consumedAt: '',
+            updatedByUser: currentUserUUID,
+            createdBy: todayDate.toString(),
+            purchaseDate: todayDate.toString(),
+            createdAt: todayDate.toString(),
+            updatedAt: todayDate.toString(),
+            //going to add recommendated storagePlace
+            foodWikiID: item?.foodWikiID,
+            alternativeNames: item?.alternativeNames,
+            expiryDate: calculateExpirationDate(
+              item?.predictedFreshDurations?.fridge || 0,
+            ),
+            storageTip: item?.comment,
+          };
+
+          dispatch(addFoodItemToConfirmationList(formattedItem));
+        }
+
+        setLastScanCode(null);
+      } catch (error) {
+        console.error('Error fetching product info:', error);
+      }
+    }, scanInterval);
+
+    // Cleanup interval on unmount or when lastScanCode changes
+    return () => clearInterval(intervalID);
+  }, [lastScanCode, foodWikiData, scannedCodes]);
+
+  const addFoodItem = useMutation({
+    mutationFn: async (postPayload: any) => {
+      const {userId, data} = postPayload;
+      return await postInventoryUpdateToFirebase(userId, data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey: ['userInventory']});
+      navigation.navigate('HomePage');
     },
   });
 
-  // const frameProcessor = useFrameProcessor(frame => {
-  //   'worklet';
-  //   const objects = detectObjects(frame);
-  //   const label = objects[0].name;
-  //   console.log(`You're looking at a ${label}.`);
-  // }, []);
-
-  const handleScan = (codes: string[]) => {
-    // Update scanned codes
-    setScannedCodes(prevCodes => [...prevCodes, ...codes]);
+  const handleConfirmationAll = () => {
+    addFoodItem.mutate({userId: currentUserUUID, data: [...confirmationList]});
+    dispatch(resetConfirmationList(''));
   };
 
-  if (device == null) {
-    return <Text>Loading Camera...</Text>;
+  const codeScanner = useCodeScanner({
+    codeTypes: ['qr', 'ean-13'],
+    onCodeScanned: onCodeScanned,
+  });
+
+  if (!device) {
+    return (
+      <View style={styles.loadingContainer}>
+        <Text>Loading Camera...</Text>
+      </View>
+    );
   }
+
+  console.log({confirmationList});
 
   return (
     <View style={styles.container}>
-      {/* Camera with Frame Processor */}
       <Camera
         style={styles.scanner}
         device={device}
@@ -69,27 +153,25 @@ const BarcodeScanScreen: React.FC = () => {
         codeScanner={codeScanner}
       />
 
-      {/* Scanned Codes List */}
       <FlatList
-        data={scannedCodes}
-        keyExtractor={(item, index) => index.toString()}
+        data={scannedCodes.filter(item => typeof item !== 'string')}
+        keyExtractor={(item, index) => `${item.foodName}-${index}`} // Use unique keys for FlatList
         renderItem={({item}) => (
           <View style={styles.item}>
-            <Text>{item}</Text>
+            <Text>{item.foodName}</Text>
           </View>
         )}
         ListEmptyComponent={
           <Text style={styles.tipText}>
-            {/* Tip: You can scan multiple codes at a time */}
+            Tip: You can scan multiple codes at a time.
           </Text>
         }
       />
 
-      {/* Mock Scan Button */}
       <TouchableOpacity
         style={styles.addButton}
-        onPress={() => handleScan(['Manually Scanned Barcode'])}>
-        <Text style={styles.addButtonText}>Mock Scan</Text>
+        onPress={handleConfirmationAll}>
+        <Text style={styles.addButtonText}>Add to Inventory</Text>
       </TouchableOpacity>
     </View>
   );
@@ -103,8 +185,8 @@ const styles = StyleSheet.create({
   },
   scanner: {
     height: 200,
-    // borderWidth: 2,
-    // borderColor: '#000',
+    borderWidth: 2,
+    borderColor: '#000',
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#eee',
@@ -130,6 +212,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#fff',
     fontWeight: 'bold',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

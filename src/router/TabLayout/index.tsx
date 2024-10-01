@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {View, TouchableOpacity, Text, StyleSheet} from 'react-native';
 import {
   createBottomTabNavigator,
@@ -17,6 +17,9 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import CenterMenu from '../../component/CenterMenu';
 import CustomTabBar from './CustomTabBar';
+import {useNavigation} from '@react-navigation/native';
+import {useSelector} from 'react-redux';
+import {currentUser} from '../../redux/reducer';
 
 type RootTabParamList = {
   Home: undefined;
@@ -48,6 +51,13 @@ const PlusMiniusComponent: React.FC<BottomTabBarButtonProps> = ({
 };
 
 const TabLayout = (): React.JSX.Element => {
+  const current = useSelector(currentUser);
+  const navigation = useNavigation();
+  useEffect(() => {
+    if (!current) {
+      navigation.navigate('WelcomeScreen');
+    }
+  }, [current]);
   return (
     <Tab.Navigator
       tabBar={props => <CustomTabBar {...props} />}
