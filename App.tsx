@@ -42,7 +42,7 @@ const Router = (): React.JSX.Element => {
     });
   }, [user]);
 
-  return current ? <TabLayout /> : <Stack />;
+  return <Stack />;
 };
 
 const App = (): React.JSX.Element => {

@@ -1,11 +1,13 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {View, StyleSheet, TouchableOpacity, Text, Modal} from 'react-native';
 import {useDispatch} from 'react-redux';
 import {updateModalConstant} from '../../redux/reducer/storageReducer';
+import {useNavigation} from '@react-navigation/native';
 
 const CenterMenu = ({isMenuVisible, setMenuVisible}) => {
-  const [isSearchModalVisible, setSearchModalVisible] = useState(false);
   const dispatch = useDispatch();
+
+  const navigation = useNavigation();
   const toggleMenu = () => {
     setMenuVisible(!isMenuVisible);
   };
@@ -20,6 +22,7 @@ const CenterMenu = ({isMenuVisible, setMenuVisible}) => {
 
   const handleBarcode = () => {
     console.log('Barcode selected');
+    navigation.navigate('BarcodeScanScreen');
     setMenuVisible(!isMenuVisible);
   };
 
