@@ -1,45 +1,23 @@
-import React, {useState} from 'react';
-import {
-  Box,
-  HStack,
-  VStack,
-  Checkbox,
-  IconButton,
-  Icon,
-  Text,
-  FlatList,
-  Center,
-  Heading,
-  Button,
-} from 'native-base';
-
+import React, { useEffect } from 'react';
+import { Box, HStack, Checkbox, FlatList, Center, Button, Text } from 'native-base';
 import Header from '../../component/Header';
-import {SafeAreaView, StyleSheet} from 'react-native';
-
-type Item = {
-  id: string;
-  name: string;
-  icon: string;
-  isChecked: boolean;
-};
-
-const initialData: Item[] = [
-  {id: '1', name: 'Milk', icon: 'local-drink', isChecked: false},
-  {id: '2', name: 'Egg', icon: 'egg', isChecked: false},
-  {id: '3', name: 'Garlic', icon: 'restaurant', isChecked: false},
-  {id: '4', name: 'Lettuce', icon: 'grass', isChecked: false},
-  {id: '5', name: 'XXX Tofu', icon: 'fastfood', isChecked: false},
-];
+import { SafeAreaView, StyleSheet } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
+import { toggleCheckbox, loadAndSetShoppingList } from '../../redux/reducer/shoppingSlice';
 
 const ShoppingListScreen = () => {
-  const [data, setData] = useState(initialData);
+  const dispatch = useDispatch();
+  const shoppingList = useSelector(state => state.shopping.items);
 
-  const handleCheckboxChange = (id: string) => {
-    setData(prevData =>
-      prevData.map(item =>
-        item.id === id ? {...item, isChecked: !item.isChecked} : item,
-      ),
-    );
+  useEffect(() => {
+    const loadItems = async () => {
+      await dispatch(loadAndSetShoppingList());
+    };
+    loadItems();
+  }, [dispatch]);
+
+  const handleCheckboxChange = (foodName: string) => {
+    dispatch(toggleCheckbox(foodName));
   };
 
   return (
@@ -49,33 +27,31 @@ const ShoppingListScreen = () => {
           <Header />
         </HStack>
         <FlatList
-          data={data}
-          keyExtractor={item => item.id}
-          renderItem={({item}) => (
+          data={shoppingList}
+          keyExtractor={item => item.foodName}
+          renderItem={({ item }) => (
             <HStack
               justifyContent="space-between"
               alignItems="center"
               p={3}
               borderBottomWidth={1}
               borderColor="gray.200">
-              <HStack alignItems="center">
-                <Text
-                  strikeThrough={item.isChecked}
-                  color={item.isChecked ? 'gray.400' : 'black'}
-                  fontSize="md">
-                  {item.foodName}
-                </Text>
-              </HStack>
+              <Text
+                strikeThrough={item.isChecked}
+                color={item.isChecked ? 'gray.400' : 'black'}
+                fontSize="md">
+                {item.foodName}
+              </Text>
               <Checkbox
                 isChecked={item.isChecked}
                 value={item.foodName}
-                onChange={() => handleCheckboxChange(item.id)}
+                onChange={() => handleCheckboxChange(item.foodName)}
                 size="md"
+                aria-label={`Select ${item.foodName}`}
                 _checked={{
                   bg: 'gray.500',
                   borderColor: 'gray.500',
                 }}
-                aria-label={item.foodName}
               />
             </HStack>
           )}
@@ -85,9 +61,10 @@ const ShoppingListScreen = () => {
             w="90%"
             size="lg"
             bg="gray.300"
-            _text={{color: 'black', fontWeight: '500'}}
+            _text={{ color: 'black', fontWeight: '500' }}
             onPress={() => console.log('Add to Inventory')}
-            style={{marginBottom: 100, marginTop: 30}}>
+            aria-label="Add to Inventory"
+            style={{ marginBottom: 100, marginTop: 30 }}>
             Add to Inventory
           </Button>
         </Center>

@@ -1,0 +1,142 @@
+[
+    {
+        "category": "Dairy",
+        "chineseName": "牛奶",
+        "comment": null,
+        "customizeName": null,
+        "foodName": "Milk",
+        "foodWikiID": "a3b1c5e4-5c0d-4e23-89ea-1a2fb63cb123",
+        "fridge": "1 week",
+        "frozen": "3 months",
+        "imageName": "0002_Milk",
+        "predictedFreshDurations": {
+            "room": "1",
+            "fridge": "7",
+            "freezer": "90"
+        },
+        "roomTemperature": "Up to 1 day",
+        "type": "Dairy",
+        "alternativeNames": [
+            "Whole Milk",
+            "Skimmed Milk",
+            "2% Milk"
+        ],
+        "recommendedRecipes": [
+            "Pancakes",
+            "Milkshake",
+            "Cereal"
+        ]
+    },
+    {
+        "category": "Protein",
+        "chineseName": "鸡蛋",
+        "comment": null,
+        "customizeName": null,
+        "foodName": "Egg",
+        "foodWikiID": "b5d9e2f3-7e3d-4a7e-ae16-0c1c5a9c4567",
+        "fridge": "3-5 weeks",
+        "frozen": "1 year",
+        "imageName": "0003_Egg",
+        "predictedFreshDurations": {
+            "room": "7",
+            "fridge": "30",
+            "freezer": "365"
+        },
+        "roomTemperature": "Up to 7 days",
+        "type": "Protein",
+        "alternativeNames": [
+            "Brown Egg",
+            "White Egg",
+            "Farm Fresh Egg"
+        ],
+        "recommendedRecipes": [
+            "Omelette",
+            "Boiled Egg",
+            "Egg Salad"
+        ]
+    },
+    {
+        "category": "Vegetable",
+        "chineseName": "大蒜",
+        "comment": null,
+        "customizeName": null,
+        "foodName": "Garlic",
+        "foodWikiID": "c7a8d4b1-6b4d-44d1-8b57-0f2b5a8e9023",
+        "fridge": "3-4 months",
+        "frozen": "6-12 months",
+        "imageName": "0004_Garlic",
+        "predictedFreshDurations": {
+            "room": "90",
+            "fridge": "120",
+            "freezer": "365"
+        },
+        "roomTemperature": "Up to 3 months",
+        "type": "Vegetable",
+        "alternativeNames": [
+            "Clove Garlic",
+            "Elephant Garlic",
+            "Organic Garlic"
+        ],
+        "recommendedRecipes": [
+            "Garlic Bread",
+            "Roasted Garlic",
+            "Garlic Butter"
+        ]
+    },
+    {
+        "category": "Vegetable",
+        "chineseName": "生菜",
+        "comment": null,
+        "customizeName": null,
+        "foodName": "Lettuce",
+        "foodWikiID": "d2b7f3c4-5d8f-47f8-923a-1f8c0a1c3456",
+        "fridge": "1-2 weeks",
+        "frozen": "Not recommended",
+        "imageName": "0005_Lettuce",
+        "predictedFreshDurations": {
+            "room": "3",
+            "fridge": "14",
+            "freezer": "0"
+        },
+        "roomTemperature": "Up to 3 days",
+        "type": "Vegetable",
+        "alternativeNames": [
+            "Iceberg Lettuce",
+            "Romaine Lettuce",
+            "Butterhead Lettuce"
+        ],
+        "recommendedRecipes": [
+            "Caesar Salad",
+            "Lettuce Wrap",
+            "BLT Sandwich"
+        ]
+    },
+    {
+        "category": "Protein",
+        "chineseName": "XX豆腐",
+        "comment": null,
+        "customizeName": null,
+        "foodName": "XX Tofu",
+        "foodWikiID": "e1b8c5d2-7e1c-4e58-9c56-3f6b7a1c7890",
+        "fridge": "1 week",
+        "frozen": "3 months",
+        "imageName": "0006_XX_Tofu",
+        "predictedFreshDurations": {
+            "room": "2",
+            "fridge": "7",
+            "freezer": "90"
+        },
+        "roomTemperature": "Up to 2 days",
+        "type": "Protein",
+        "alternativeNames": [
+            "Firm Tofu",
+            "Silken Tofu",
+            "XX Organic Tofu"
+        ],
+        "recommendedRecipes": [
+            "Stir-fried Tofu",
+            "Tofu Salad",
+            "Tofu Soup"
+        ]
+    }
+]
