@@ -33,6 +33,7 @@ const CenterMenu = ({isMenuVisible, setMenuVisible}) => {
 
   const handleReceipt = () => {
     console.log('Receipt selected');
+    navigation.navigate('ReceiptScreen');
     setMenuVisible(!isMenuVisible);
   };
 
