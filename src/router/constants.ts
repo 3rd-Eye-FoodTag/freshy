@@ -20,6 +20,7 @@ export type RootStackParams = {
   ShareFamilyScreen: undefined;
   HomePage: undefined;
   BarcodeScanScreen: undefined;
+  ReceiptScreen: undefined;
 };
 
 export type AuthenticationStackParams = {

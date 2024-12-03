@@ -8,6 +8,7 @@ import MoreInfoInputScreen from '../Authentication/RegisterScreen/MoreInfoInputS
 import LoginScreen from '../Authentication/LoginScreen';
 import TabLayout from '../TabLayout';
 import BarcodeScanScreen from '../../screens/BarcodeScanScreen';
+import ReceiptScreen from '../../screens/ReciptScreen';
 
 const RootStackNavigator = createStackNavigator<RootStackParams>();
 const {Navigator, Screen} = RootStackNavigator;
@@ -67,6 +68,14 @@ const Stack: React.FC = () => {
         component={BarcodeScanScreen}
         options={{
           headerTitle: 'Barcode Scan',
+          headerBackTitle: 'Back',
+        }}
+      />
+      <Screen
+        name="ReceiptScreen"
+        component={ReceiptScreen}
+        options={{
+          headerTitle: '',
           headerBackTitle: 'Back',
         }}
       />
