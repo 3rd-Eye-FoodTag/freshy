@@ -94,11 +94,24 @@ const ReceiptScreen = () => {
         messages: [
           {
             role: 'user',
-            content: `Here is the raw OCR text from a receipt:\n\n${rawText}\n\nPlease extract and format the structured fields as JSON, including fields like store name, date, items, and total.`,
+            content: `Here is the raw OCR text from a receipt:\n\n${rawText}\n\n
+            Please extract the data into the following JSON format:
+            {
+              "storeName": "string", // Name of the store or "Unknown Store" if not found
+              "date": "string", // Date in YYYY-MM-DD or "Unknown Date" if not found
+              "total": number, // Total amount as a number
+              "items": [
+                {
+                  "name": "string", // Item name or "Unknown Item" if not found
+                  "quantity": number, // Quantity (default 1)
+                  "price": number // Price per unit (default 0.0)
+                }
+              ]
+            }
+            Ensure the response strictly adheres to this format, even if some fields are missing.`,
           },
         ],
       };
-
       const response = await axios.post(
         'https://api.openai.com/v1/chat/completions',
         requestBody,
@@ -173,14 +186,18 @@ const ReceiptScreen = () => {
               <Text>${item.price}</Text>
             </HStack>
           ))}
-          <HStack justifyContent="space-between" style={styles.row}>
-            <Text bold>Tax:</Text>
-            <Text>${structuredData.tax}</Text>
-          </HStack>
-          <HStack justifyContent="space-between" style={styles.row}>
-            <Text bold>Total:</Text>
-            <Text>${structuredData.total}</Text>
-          </HStack>
+          {structuredData.tax && (
+            <HStack justifyContent="space-between" style={styles.row}>
+              <Text bold>Tax:</Text>
+              <Text>${structuredData.tax}</Text>
+            </HStack>
+          )}
+          {structuredData.total && (
+            <HStack justifyContent="space-between" style={styles.row}>
+              <Text bold>Total:</Text>
+              <Text>${structuredData.total}</Text>
+            </HStack>
+          )}
         </VStack>
       </ScrollView>
     );
@@ -195,7 +212,7 @@ const ReceiptScreen = () => {
         onPress={handleImageProcessing}
         disabled={loading}
       />
-      {renderReceiptData()}
+      {!loading && renderReceiptData()}
     </View>
   );
 };
