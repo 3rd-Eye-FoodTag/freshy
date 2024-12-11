@@ -1,14 +1,34 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {View, Button, Image, StyleSheet, Alert} from 'react-native';
 import {launchImageLibrary} from 'react-native-image-picker';
-import axios from 'axios';
-import {Text, VStack, HStack, ScrollView} from 'native-base';
-import Config from 'react-native-config';
+import {ScrollView, VStack, HStack, Text} from 'native-base';
+import useGoogleVisionApi from '../../hooks/useGoogleVisionApi';
+import useChatGptApi from '../../hooks/useChatGptApi';
+import useHandleAddItem from '../../hooks/useHandleAddItem';
+import ConfirmationList from '../../component/ConfirmationList';
+import {useNavigation} from '@react-navigation/native';
 
 const ReceiptScreen = () => {
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [structuredData, setStructuredData] = useState<any | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [isConfirmationVisible, setConfirmationVisible] = useState(false);
+  const navigation = useNavigation();
+
+  const {extractTextFromImage, isLoading: googleLoading} = useGoogleVisionApi();
+  const {processReceiptText, isLoading: chatGptLoading} = useChatGptApi();
+  const {
+    addArrayToConfirmationList,
+    confirmationList,
+    addFoodToInventory,
+    updateQuantity,
+  } = useHandleAddItem();
+
+  const handleConfirmationAll = () => {
+    addFoodToInventory();
+    navigation.navigate('HomePage');
+    setConfirmationVisible(false);
+  };
 
   const selectImage = () => {
     launchImageLibrary({mediaType: 'photo'}, response => {
@@ -22,112 +42,19 @@ const ReceiptScreen = () => {
     });
   };
 
-  const convertImageToBase64 = async (
-    imageUri: string,
-  ): Promise<string | null> => {
+  const convertImageToBase64 = async (uri: string): Promise<string | null> => {
     try {
-      const response = await fetch(imageUri);
+      const response = await fetch(uri);
       const blob = await response.blob();
-      const reader = new FileReader();
-
       return new Promise((resolve, reject) => {
-        reader.onloadend = () => {
-          resolve(reader.result as string);
-        };
-        reader.onerror = error => reject(error);
-
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.onerror = reject;
         reader.readAsDataURL(blob);
       });
     } catch (error) {
       console.error('Error converting image to base64:', error);
-      Alert.alert('Error', 'Failed to process the image.');
       return null;
-    }
-  };
-
-  const extractTextFromVisionAPI = async (
-    base64Image: string,
-  ): Promise<string> => {
-    try {
-      const requestBody = {
-        requests: [
-          {
-            image: {
-              content: base64Image.split(',')[1],
-            },
-            features: [
-              {
-                type: 'DOCUMENT_TEXT_DETECTION',
-              },
-            ],
-          },
-        ],
-      };
-
-      const response = await axios.post(
-        `https://vision.googleapis.com/v1/images:annotate?key=${Config.GOOGLE_VISION_API_KEY}`,
-        requestBody,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        },
-      );
-
-      const textAnnotations = response.data.responses[0].textAnnotations;
-      if (textAnnotations && textAnnotations.length > 0) {
-        return textAnnotations[0].description;
-      } else {
-        throw new Error('No text found in the image.');
-      }
-    } catch (error) {
-      console.error('Google Vision API Error:', error);
-      Alert.alert('Error', 'Failed to extract text using Google Vision API.');
-      throw error;
-    }
-  };
-
-  const processTextWithChatGPT = async (rawText: string): Promise<any> => {
-    try {
-      const requestBody = {
-        model: 'gpt-4',
-        messages: [
-          {
-            role: 'user',
-            content: `Here is the raw OCR text from a receipt:\n\n${rawText}\n\n
-            Please extract the data into the following JSON format:
-            {
-              "storeName": "string", // Name of the store or "Unknown Store" if not found
-              "date": "string", // Date in YYYY-MM-DD or "Unknown Date" if not found
-              "total": number, // Total amount as a number
-              "items": [
-                {
-                  "name": "string", // Item name or "Unknown Item" if not found
-                  "quantity": number, // Quantity (default 1)
-                  "price": number // Price per unit (default 0.0)
-                }
-              ]
-            }
-            Ensure the response strictly adheres to this format, even if some fields are missing.`,
-          },
-        ],
-      };
-      const response = await axios.post(
-        'https://api.openai.com/v1/chat/completions',
-        requestBody,
-        {
-          headers: {
-            Authorization: `Bearer ${Config.CHATGPT_API_KEY}`,
-            'Content-Type': 'application/json',
-          },
-        },
-      );
-
-      return JSON.parse(response.data.choices[0].message.content);
-    } catch (error) {
-      console.error('ChatGPT API Error:', error);
-      Alert.alert('Error', 'Failed to process text using ChatGPT.');
-      throw error;
     }
   };
 
@@ -145,13 +72,11 @@ const ReceiptScreen = () => {
         throw new Error('Failed to convert image to base64.');
       }
 
-      const rawText = await extractTextFromVisionAPI(base64Image);
-      console.log('Raw OCR Text:', rawText);
-
-      const structuredData = await processTextWithChatGPT(rawText);
-      console.log('Structured Data:', structuredData);
+      const rawText = await extractTextFromImage(base64Image);
+      const structuredData = await processReceiptText(rawText);
 
       setStructuredData(structuredData);
+      addArrayToConfirmationList(structuredData.items);
     } catch (error) {
       console.error('Error processing image:', error);
     } finally {
@@ -175,29 +100,23 @@ const ReceiptScreen = () => {
             <Text bold>Date:</Text>
             <Text>{structuredData.date}</Text>
           </HStack>
-          {structuredData.items.map((item: any, index: number) => (
-            <HStack
-              justifyContent="space-between"
-              key={index}
-              style={styles.row}>
-              <Text>
-                {item.name} x {item.quantity}
-              </Text>
-              <Text>${item.price}</Text>
-            </HStack>
-          ))}
-          {structuredData.tax && (
-            <HStack justifyContent="space-between" style={styles.row}>
-              <Text bold>Tax:</Text>
-              <Text>${structuredData.tax}</Text>
-            </HStack>
-          )}
-          {structuredData.total && (
-            <HStack justifyContent="space-between" style={styles.row}>
-              <Text bold>Total:</Text>
-              <Text>${structuredData.total}</Text>
-            </HStack>
-          )}
+          {structuredData.items.map((item: any, index: number) => {
+            return (
+              <HStack
+                key={index}
+                justifyContent="space-between"
+                style={styles.row}>
+                <Text>
+                  {item.foodName} x {item.quantity}
+                </Text>
+                <Text>${item.cost.toFixed(2)}</Text>
+              </HStack>
+            );
+          })}
+          <HStack justifyContent="space-between" style={styles.row}>
+            <Text bold>Total:</Text>
+            <Text>${structuredData.total.toFixed(2)}</Text>
+          </HStack>
         </VStack>
       </ScrollView>
     );
@@ -205,14 +124,31 @@ const ReceiptScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Button title="Pick an Image" onPress={selectImage} />
-      {imageUri && <Image source={{uri: imageUri}} style={styles.image} />}
-      <Button
-        title={loading ? 'Processing...' : 'Process Receipt'}
-        onPress={handleImageProcessing}
-        disabled={loading}
-      />
-      {!loading && renderReceiptData()}
+      {isConfirmationVisible ? (
+        <ConfirmationList
+          confirmationList={confirmationList}
+          updateQuantity={updateQuantity}
+          onConfirmAll={handleConfirmationAll}
+        />
+      ) : (
+        <>
+          <Button title="Pick an Image" onPress={selectImage} />
+          {imageUri && <Image source={{uri: imageUri}} style={styles.image} />}
+          <Button
+            title={loading ? 'Processing...' : 'Process Receipt'}
+            onPress={handleImageProcessing}
+            disabled={loading || googleLoading || chatGptLoading}
+          />
+          {confirmationList.length > 0 && (
+            <Button
+              title="Add to Inventory"
+              onPress={() => setConfirmationVisible(true)}
+              disabled={loading}
+            />
+          )}
+          {!loading && renderReceiptData()}
+        </>
+      )}
     </View>
   );
 };

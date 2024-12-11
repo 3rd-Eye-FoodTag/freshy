@@ -141,6 +141,8 @@ const FoodDetailsEditModal: React.FC<{
     'Custom',
   ];
 
+  console.log(predictedFreshDurations[storeMethod], expiryDate);
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -159,7 +161,9 @@ const FoodDetailsEditModal: React.FC<{
                 <Text style={styles.iconText}>Add to List</Text>
               </View>
               <Image
-                source={{uri: getImageURL(formData?.imageName)}}
+                source={{
+                  uri: getImageURL(formData?.imageName) || defaultFoodImage,
+                }}
                 alt={formData?.foodName}
                 defaultSource={{uri: defaultFoodImage}}
                 size="xl"
@@ -243,9 +247,7 @@ const FoodDetailsEditModal: React.FC<{
             }}
             isEditMode={true}
             reset={reset}
-            defaultOption={
-              isNewItem && Number(predictedFreshDurations[storeMethod])
-            }
+            defaultOption={Number(predictedFreshDurations[storeMethod])}
           />
           {/* <OptionSelector
             label="Reminder Date"
@@ -276,7 +278,6 @@ const FoodDetailsEditModal: React.FC<{
             type="comment"
             label="Storage Tips"
             onSelectOption={value => {
-              console.log({value});
               setDisableButton(false);
               handleInputChange('storageTip', value);
             }}

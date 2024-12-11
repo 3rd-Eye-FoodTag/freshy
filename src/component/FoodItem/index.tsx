@@ -2,7 +2,7 @@ import React from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import {FoodDetailsProps} from '../../utils/interface';
 import {Image} from 'native-base';
-import {getImageURL} from '../../utils/constants';
+import {defaultFoodImage, getImageURL} from '../../utils/constants';
 import {
   calculateDaysDifference,
   convertToMMDDYYYY,
@@ -22,7 +22,7 @@ const FoodItem: React.FC<FoodItemProps> = ({item, handleOnClick}) => {
       <View style={styles.itemImageContainer}>
         <Image
           source={{
-            uri: getImageURL(item.imageName),
+            uri: getImageURL(item.imageName) || defaultFoodImage,
           }}
           alt={'item.food'}
           size="lg"
