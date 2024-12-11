@@ -141,6 +141,8 @@ const FoodDetailsEditModal: React.FC<{
     'Custom',
   ];
 
+  console.log(predictedFreshDurations[storeMethod], expiryDate);
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -245,9 +247,7 @@ const FoodDetailsEditModal: React.FC<{
             }}
             isEditMode={true}
             reset={reset}
-            defaultOption={
-              isNewItem && Number(predictedFreshDurations[storeMethod])
-            }
+            defaultOption={Number(predictedFreshDurations[storeMethod])}
           />
           {/* <OptionSelector
             label="Reminder Date"

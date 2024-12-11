@@ -5,16 +5,30 @@ import {ScrollView, VStack, HStack, Text} from 'native-base';
 import useGoogleVisionApi from '../../hooks/useGoogleVisionApi';
 import useChatGptApi from '../../hooks/useChatGptApi';
 import useHandleAddItem from '../../hooks/useHandleAddItem';
+import ConfirmationList from '../../component/ConfirmationList';
+import {useNavigation} from '@react-navigation/native';
 
 const ReceiptScreen = () => {
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [structuredData, setStructuredData] = useState<any | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [isConfirmationVisible, setConfirmationVisible] = useState(false);
+  const navigation = useNavigation();
 
   const {extractTextFromImage, isLoading: googleLoading} = useGoogleVisionApi();
   const {processReceiptText, isLoading: chatGptLoading} = useChatGptApi();
-  const {addArrayToConfirmationList, confirmationList, addFoodToInventory} =
-    useHandleAddItem();
+  const {
+    addArrayToConfirmationList,
+    confirmationList,
+    addFoodToInventory,
+    updateQuantity,
+  } = useHandleAddItem();
+
+  const handleConfirmationAll = () => {
+    addFoodToInventory();
+    navigation.navigate('HomePage');
+    setConfirmationVisible(false);
+  };
 
   const selectImage = () => {
     launchImageLibrary({mediaType: 'photo'}, response => {
@@ -110,21 +124,31 @@ const ReceiptScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Button title="Pick an Image" onPress={selectImage} />
-      {imageUri && <Image source={{uri: imageUri}} style={styles.image} />}
-      <Button
-        title={loading ? 'Processing...' : 'Process Receipt'}
-        onPress={handleImageProcessing}
-        disabled={loading || googleLoading || chatGptLoading}
-      />
-      {confirmationList.length > 0 && (
-        <Button
-          title="Submit"
-          onPress={addFoodToInventory}
-          disabled={loading}
+      {isConfirmationVisible ? (
+        <ConfirmationList
+          confirmationList={confirmationList}
+          updateQuantity={updateQuantity}
+          onConfirmAll={handleConfirmationAll}
         />
+      ) : (
+        <>
+          <Button title="Pick an Image" onPress={selectImage} />
+          {imageUri && <Image source={{uri: imageUri}} style={styles.image} />}
+          <Button
+            title={loading ? 'Processing...' : 'Process Receipt'}
+            onPress={handleImageProcessing}
+            disabled={loading || googleLoading || chatGptLoading}
+          />
+          {confirmationList.length > 0 && (
+            <Button
+              title="Add to Inventory"
+              onPress={() => setConfirmationVisible(true)}
+              disabled={loading}
+            />
+          )}
+          {!loading && renderReceiptData()}
+        </>
       )}
-      {!loading && renderReceiptData()}
     </View>
   );
 };

@@ -1,4 +1,3 @@
-// ManualInputModal.tsx
 import React, {useState, useEffect} from 'react';
 import {
   View,
@@ -13,8 +12,7 @@ import {useQuery} from '@tanstack/react-query';
 
 import {getImageURL} from '../../../utils/constants';
 import {useDispatch, useSelector} from 'react-redux';
-import ItemDetailsRow from '../../ItemDetailsRow';
-import 'react-native-get-random-values';
+import ConfirmationList from '../../ConfirmationList';
 import {confirmationListSelector} from '../../../redux/reducer/storageReducer';
 import useHandleAddItem from '../../../hooks/useHandleAddItem';
 
@@ -41,8 +39,7 @@ const ManualInputModal: React.FC<{showConfirmation: boolean}> = ({
     }
   }, [dispatch, foodWikiData, showConfirmation]);
 
-  // Function to handle adding selected items to the confirmation list
-  const handleAddItem = item => {
+  const handleAddItem = (item: any) => {
     addFoodItemToConfirmationList(item);
     setConfirmationVisible(true);
   };
@@ -52,11 +49,7 @@ const ManualInputModal: React.FC<{showConfirmation: boolean}> = ({
     setConfirmationVisible(false);
   };
 
-  // Filtered items based on search input
   const filteredItems = recommendedList.filter(item => {
-    if (!item.id) {
-      // console.log('null------', item);
-    }
     return (
       item.type === 'Fruit' &&
       item?.foodName?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -65,7 +58,7 @@ const ManualInputModal: React.FC<{showConfirmation: boolean}> = ({
 
   return (
     <View style={styles.modalContent}>
-      {!isConfirmationVisible && (
+      {!isConfirmationVisible ? (
         <View>
           <View style={styles.header}>
             <TextInput
@@ -75,24 +68,19 @@ const ManualInputModal: React.FC<{showConfirmation: boolean}> = ({
               onChangeText={setSearchTerm}
             />
           </View>
-
           <FlatList
             style={styles.recommendationContainer}
             data={filteredItems}
             numColumns={3}
-            keyExtractor={(item, index) => {
-              return `${item.id?.toString()} + ${index}`;
-            }}
-            renderItem={({item}) => {
-              return (
-                <FoodIcon
-                  name={item.foodName}
-                  url={getImageURL(item.imageName)}
-                  selected={item.selected}
-                  onClick={() => handleAddItem(item)}
-                />
-              );
-            }}
+            keyExtractor={(item, index) => `${item.id?.toString()} + ${index}`}
+            renderItem={({item}) => (
+              <FoodIcon
+                name={item.foodName}
+                url={getImageURL(item.imageName)}
+                selected={item.selected}
+                onClick={() => handleAddItem(item)}
+              />
+            )}
             ListEmptyComponent={
               <View style={styles.emptyComponent}>
                 <Text style={styles.noItemText}>Cannot find the item.</Text>
@@ -104,35 +92,13 @@ const ManualInputModal: React.FC<{showConfirmation: boolean}> = ({
               </View>
             }
           />
-          {/* <TouchableOpacity style={styles.addButton} onPress={handleAddItem}>
-            <Text style={styles.addButtonText}>Add</Text>
-          </TouchableOpacity> */}
         </View>
-      )}
-
-      {isConfirmationVisible && (
-        <View style={styles.confirmationContainer}>
-          <Text style={styles.header}>Confirm Adding to Inventory</Text>
-          <FlatList
-            data={[...confirmationList]}
-            keyExtractor={(item, index) => index.toString()}
-            contentContainerStyle={{paddingBottom: 16}} // Adjust bottom padding if needed
-            renderItem={({item, index}) => {
-              return (
-                <ItemDetailsRow
-                  onClick={updateQuantity}
-                  itemDetails={item}
-                  index={index}
-                />
-              );
-            }}
-          />
-          <TouchableOpacity
-            style={styles.confirmButton}
-            onPress={handleConfirmationAll}>
-            <Text style={styles.confirmButtonText}>Confirm All</Text>
-          </TouchableOpacity>
-        </View>
+      ) : (
+        <ConfirmationList
+          confirmationList={confirmationList}
+          updateQuantity={updateQuantity}
+          onConfirmAll={handleConfirmationAll}
+        />
       )}
     </View>
   );
