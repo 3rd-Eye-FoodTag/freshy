@@ -9,37 +9,26 @@ import {
   FlatList,
 } from 'react-native';
 import FoodIcon from '../../FoodIcon';
-import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {useQuery} from '@tanstack/react-query';
 
 import {getImageURL} from '../../../utils/constants';
-import _filter from 'lodash/filter';
-import {calculateExpirationDate} from '../../../utils/utils';
 import {useDispatch, useSelector} from 'react-redux';
-import {currentUser} from '../../../redux/reducer';
-import {postInventoryUpdateToFirebase} from '../../../utils/api';
 import ItemDetailsRow from '../../ItemDetailsRow';
 import 'react-native-get-random-values';
-import {v4 as uuidv4} from 'uuid';
-import {
-  addFoodItemToConfirmationList,
-  confirmationListSelector,
-  resetConfirmationList,
-  updateConfirmationList,
-  updateModalConstant,
-} from '../../../redux/reducer/storageReducer';
+import {confirmationListSelector} from '../../../redux/reducer/storageReducer';
+import useHandleAddItem from '../../../hooks/useHandleAddItem';
 
 const ManualInputModal: React.FC<{showConfirmation: boolean}> = ({
   showConfirmation,
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedItems, setSelectedItems] = useState<any>([]);
   const [isConfirmationVisible, setConfirmationVisible] = useState(false);
   const [recommendedList, setRecommendedList] = useState<any>([]);
-  const currentUserUUID = useSelector(currentUser);
-  const todayDate = new Date();
   const confirmationList = useSelector(confirmationListSelector);
-  const queryClient = useQueryClient();
   const dispatch = useDispatch();
+
+  const {addFoodToInventory, addFoodItemToConfirmationList, updateQuantity} =
+    useHandleAddItem();
 
   const {data: foodWikiData = []} = useQuery({
     queryKey: ['foodwiki'],
@@ -50,107 +39,17 @@ const ManualInputModal: React.FC<{showConfirmation: boolean}> = ({
     if (showConfirmation) {
       setConfirmationVisible(true);
     }
-  }, [foodWikiData, showConfirmation]);
-
-  // Function to handle hiding the modal with animation
-  const handleHideModal = () => {
-    setRecommendedList(pre => [
-      ...pre.map(item => {
-        return {...item, selected: false};
-      }),
-    ]);
-
-    setSelectedItems([]);
-    dispatch(updateModalConstant({modalConstant: ''}));
-  };
+  }, [dispatch, foodWikiData, showConfirmation]);
 
   // Function to handle adding selected items to the confirmation list
   const handleAddItem = item => {
-    dispatch(addFoodItemToConfirmationList(item));
+    addFoodItemToConfirmationList(item);
     setConfirmationVisible(true);
-
-    //will comment out this part when we select mutliple items
-
-    // if (selectedItems.length > 0) {
-    //   setConfirmationVisible(true);
-    // }
   };
-
-  // Function to handle updating the quantity of items
-  const updateQuantity = (listIndex: number, change: number) => {
-    const newData = confirmationList.find(item => item.foodID === listIndex);
-    dispatch(
-      updateConfirmationList({
-        ...newData,
-        quantity: Math.max((newData.quantity || 0) + change, 0),
-      }),
-    );
-  };
-
-  // Function to select an item from the list
-  const handleAddFoodToList = (selectedFood: any) => {
-    const isSelectedFood = selectedItems.some(item => {
-      return item.foodID === selectedFood.foodID;
-    });
-    if (!isSelectedFood) {
-      setSelectedItems(pre => [...pre, {...selectedFood, selected: true}]);
-    } else {
-      setSelectedItems(pre => {
-        return [
-          ..._filter(pre, item => {
-            return item.foodID !== selectedFood.foodID;
-          }),
-        ];
-      });
-    }
-
-    const item = {...selectedFood};
-
-    const formattedItem = {
-      foodID: uuidv4(),
-      foodName: item.foodName,
-      quantity: item.quantity || 1,
-      category: item.category,
-      predictedFreshDurations: item?.predictedFreshDurations,
-      consumed: false,
-      share: true,
-      freshnessScore: 100,
-      storagePlace: item?.storagePlace || 'Fridge',
-      cost: 0,
-      groceryStore: '',
-      imageName: item?.imageName,
-      consumedAt: '',
-      updatedByUser: currentUserUUID,
-      createdBy: todayDate.toString(),
-      purchaseDate: todayDate.toString(),
-      createdAt: todayDate.toString(),
-      updatedAt: todayDate.toString(),
-      //going to add recommendated storagePlace
-      foodWikiID: item?.foodWikiID,
-      alternativeNames: item?.alternativeNames,
-      expiryDate: calculateExpirationDate(item?.predictedFreshDurations.fridge),
-      storageTip: item?.comment,
-    };
-
-    handleAddItem(formattedItem);
-  };
-
-  const addFoodItem = useMutation({
-    mutationFn: async (postPayload: any) => {
-      const {userId, data} = postPayload;
-      return await postInventoryUpdateToFirebase(userId, data);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({queryKey: ['userInventory']});
-    },
-  });
 
   const handleConfirmationAll = () => {
-    addFoodItem.mutate({userId: currentUserUUID, data: [...confirmationList]});
-    dispatch(resetConfirmationList(''));
-
+    addFoodToInventory();
     setConfirmationVisible(false);
-    handleHideModal();
   };
 
   // Filtered items based on search input
@@ -190,9 +89,7 @@ const ManualInputModal: React.FC<{showConfirmation: boolean}> = ({
                   name={item.foodName}
                   url={getImageURL(item.imageName)}
                   selected={item.selected}
-                  onClick={() => {
-                    handleAddFoodToList(item);
-                  }}
+                  onClick={() => handleAddItem(item)}
                 />
               );
             }}
@@ -207,11 +104,9 @@ const ManualInputModal: React.FC<{showConfirmation: boolean}> = ({
               </View>
             }
           />
-          {selectedItems.length > 0 && (
-            <TouchableOpacity style={styles.addButton} onPress={handleAddItem}>
-              <Text style={styles.addButtonText}>Add</Text>
-            </TouchableOpacity>
-          )}
+          {/* <TouchableOpacity style={styles.addButton} onPress={handleAddItem}>
+            <Text style={styles.addButtonText}>Add</Text>
+          </TouchableOpacity> */}
         </View>
       )}
 

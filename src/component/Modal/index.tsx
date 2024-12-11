@@ -5,6 +5,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {ModalContent} from './constants';
 import {
   modalSelector,
+  resetConfirmationList,
   updateModalConstant,
 } from '../../redux/reducer/storageReducer';
 
@@ -18,6 +19,7 @@ const ModalContainer: React.FC<ModalContainerProps> = ({children}) => {
 
   const handleCloseModal = () => {
     dispatch(updateModalConstant(''));
+    dispatch(resetConfirmationList(''));
   };
 
   return (

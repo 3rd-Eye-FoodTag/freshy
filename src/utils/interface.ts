@@ -34,3 +34,33 @@ export interface FoodDetailsProps {
   foodID: string;
   selected?: boolean;
 }
+
+export interface FoodItem {
+  foodName: string;
+  quantity?: number;
+  category: string;
+  predictedFreshDurations?: {fridge?: number};
+  storagePlace?: string;
+  imageName?: string;
+  foodWikiID?: string;
+  alternativeNames?: string[];
+  comment?: string;
+}
+
+export interface AddFoodRequestBody extends FoodItem {
+  foodID: string;
+  consumed: boolean;
+  share: boolean;
+  freshnessScore: number;
+  storagePlace: string;
+  cost: number;
+  groceryStore: string;
+  consumedAt: string;
+  updatedByUser: string;
+  createdBy: string;
+  purchaseDate: string;
+  createdAt: string;
+  updatedAt: string;
+  expiryDate: string;
+  storageTip?: string;
+}
