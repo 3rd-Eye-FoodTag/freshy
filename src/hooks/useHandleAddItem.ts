@@ -107,75 +107,83 @@ const useHandleAddItem = () => {
   const addArrayToConfirmationList = (foodArray: FoodItem[]) => {
     const todayDate = new Date();
     const mockFood = [...foodArray];
+
+    let input = [];
+
+    const confirmation = mockFood.map(item => {
+      const foodFromWiki = foodWikiData.find(food => {
+        const a = food?.foodName?.toLowerCase() || '';
+        const b = item?.foodName?.toLowerCase() || '';
+        return a === b;
+      });
+
+      return {...(foodFromWiki || item), isFoodFromWiki: !!foodFromWiki};
+    });
+
     let inFoodWikiFood = mockFood.filter(item => item.foodName === 'Lemon');
     let notInfoodWikifood = mockFood.filter(item => item.foodName !== 'Lemon');
 
-    if (inFoodWikiFood.length > 0) {
-      inFoodWikiFood = [...inFoodWikiFood].map(item => {
-        const selectedFood = foodWikiData.find(
-          food => food.foodName === item.foodName,
-        );
-
-        return {
-          foodID: uuidv4(),
-          foodName: selectedFood?.foodName || selectedFood?.name || 'undefined',
-          quantity: selectedFood.quantity || 1,
-          category: selectedFood.category,
-          predictedFreshDurations: selectedFood.predictedFreshDurations,
-          consumed: false,
-          share: true,
-          freshnessScore: 100,
-          storagePlace: selectedFood.storagePlace || 'Fridge',
-          cost: item.price,
-          groceryStore: '',
-          imageName: selectedFood.imageName,
-          consumedAt: '',
-          updatedByUser: currentUserUUID,
-          createdBy: todayDate.toISOString(),
-          purchaseDate: todayDate.toISOString(),
-          createdAt: todayDate.toISOString(),
-          updatedAt: todayDate.toISOString(),
-          foodWikiID: selectedFood.foodWikiID,
-          alternativeNames: selectedFood.alternativeNames,
-          expiryDate: calculateExpirationDate(
-            selectedFood.predictedFreshDurations?.fridge || 0,
-          ),
-          storageTip: selectedFood.comment,
-        };
+    if (confirmation.length > 0) {
+      input = [...confirmation].map(item => {
+        if (item?.isFoodFromWiki) {
+          return {
+            foodID: uuidv4(),
+            foodName: item?.foodName || item?.name || 'undefined',
+            quantity: item.quantity || 1,
+            category: item.category,
+            predictedFreshDurations: item.predictedFreshDurations,
+            consumed: false,
+            share: true,
+            freshnessScore: 100,
+            storagePlace: item.storagePlace || 'Fridge',
+            cost: item.price || 0,
+            groceryStore: '',
+            imageName: item.imageName,
+            consumedAt: '',
+            updatedByUser: currentUserUUID,
+            createdBy: todayDate.toISOString(),
+            purchaseDate: todayDate.toISOString(),
+            createdAt: todayDate.toISOString(),
+            updatedAt: todayDate.toISOString(),
+            foodWikiID: item.foodWikiID,
+            alternativeNames: item.alternativeNames,
+            expiryDate: calculateExpirationDate(
+              item.predictedFreshDurations?.fridge || 0,
+            ),
+            storageTip: item.comment,
+            isFoodFromWiki: item?.isFoodFromWiki,
+          };
+        } else {
+          return {
+            foodID: uuidv4(),
+            foodName: item?.foodName || item?.name || 'undefined',
+            quantity: item?.quantity || 1,
+            category: item?.category,
+            predictedFreshDurations: item.predictedFreshDurations || {},
+            consumed: false,
+            share: true,
+            freshnessScore: 100,
+            storagePlace: 'Fridge',
+            cost: item.cost || 0,
+            groceryStore: '',
+            imageName: '',
+            consumedAt: '',
+            updatedByUser: currentUserUUID,
+            createdBy: todayDate.toISOString(),
+            purchaseDate: todayDate.toISOString(),
+            createdAt: todayDate.toISOString(),
+            updatedAt: todayDate.toISOString(),
+            // foodWikiID: item?.foodWikiID,
+            alternativeNames: [],
+            expiryDate: 'Fri Dec 27 2024 22:20:11 GMT-0800',
+            storageTip: '',
+            isFoodFromWiki: item?.isFoodFromWiki,
+          };
+        }
       });
     }
 
-    if (notInfoodWikifood.length > 0) {
-      notInfoodWikifood = [...notInfoodWikifood].map(item => {
-        //hardcode here, going to change the chatgpt work
-        return {
-          foodID: uuidv4(),
-          foodName: item?.foodName || item?.name || 'undefined',
-          quantity: item?.quantity || 1,
-          category: item?.category,
-          predictedFreshDurations: item.predictedFreshDurations || {},
-          consumed: false,
-          share: true,
-          freshnessScore: 100,
-          storagePlace: 'Fridge',
-          cost: item.cost || 0,
-          groceryStore: '',
-          imageName: '',
-          consumedAt: '',
-          updatedByUser: currentUserUUID,
-          createdBy: todayDate.toISOString(),
-          purchaseDate: todayDate.toISOString(),
-          createdAt: todayDate.toISOString(),
-          updatedAt: todayDate.toISOString(),
-          // foodWikiID: item?.foodWikiID,
-          alternativeNames: [],
-          expiryDate: 'Fri Dec 27 2024 22:20:11 GMT-0800',
-          storageTip: '',
-        };
-      });
-    }
-
-    [...inFoodWikiFood, ...notInfoodWikifood].forEach(requestBoday => {
+    [...input].forEach(requestBoday => {
       dispatch(addFoodItemToConfirmationList(requestBoday));
     });
   };

@@ -286,6 +286,11 @@ const FoodDetailsEditModal: React.FC<{
           <Text style={styles.recordDate}>
             Recorded on {convertTimeStringToDate(formData?.createdAt)}
           </Text>
+          <Text style={styles.recordDate}>
+            {formData.isFoodFromWiki
+              ? 'Food is in FoodWIki'
+              : 'Food is not In FoodWiki'}
+          </Text>
         </VStack>
       </ScrollView>
       <View style={styles.bottomBar}>
