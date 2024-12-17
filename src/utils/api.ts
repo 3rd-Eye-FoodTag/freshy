@@ -179,20 +179,26 @@ export const handleUpdateInventory = async (uid: string, data: any) => {
 
 //FoodWiki
 export const fetchFoodWikFromFirebase = async () => {
-  //no uuid need because to fetch all data from firebase
   try {
-    return foodWikiData;
-    // console.log('fetchFoodWikFromFirebase');
-    // const querySnapshot = await getDocs(collection(db, 'FoodWiki2'));
-    // const foodWikiData = [];
-    // querySnapshot.forEach(doc => {
-    //   // console.log(doc.id, " => ", doc.data());
-    //   foodWikiData.push(doc.data());
-    // });
+    // Create a query to filter documents where 'type' === 'Fruit'
+    const fruitsQuery = query(
+      collection(db, 'FoodWiki2'),
+      where('type', '==', 'Fruit'),
+    );
 
-    // return foodWikiData;
+    // Fetch the filtered documents
+    const querySnapshot = await getDocs(fruitsQuery);
+
+    // Map through the snapshot and extract data
+    const fruitsData = querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    return fruitsData; // Return the filtered result
   } catch (error) {
-    console.log(error);
+    console.error('Error fetching FoodWiki2 data: ', error);
+    throw new Error('Failed to fetch data from FoodWiki2');
   }
 };
 
@@ -276,6 +282,26 @@ export const postMockData = async (data: any) => {
     // const inventoryupdate = doc(db, "Inventory", currentUid);
   } catch (error) {
     console.log(error);
+  }
+};
+
+export const addFoodItemsToFirebase = async (items: any[]) => {
+  try {
+    // Create an array of promises to add each item
+    console.log('adding to wiki');
+    const addItemPromises = items.map(async item => {
+      const docRef = await addDoc(collection(db, 'FoodWiki2'), item);
+      // console.log('Document added with ID:', docRef.id);
+      return {id: docRef.id, ...item};
+    });
+
+    // Wait for all items to be added
+    const addedItems = await Promise.all(addItemPromises);
+    console.log('All items added successfully:', addedItems);
+    return addedItems; // Return all added items with their IDs
+  } catch (error) {
+    console.error('Error adding items to FoodWiki2: ', error);
+    throw new Error('Failed to add items to FoodWiki2');
   }
 };
 

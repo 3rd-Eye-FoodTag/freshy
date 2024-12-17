@@ -63,4 +63,5 @@ export interface AddFoodRequestBody extends FoodItem {
   updatedAt: string;
   expiryDate: string;
   storageTip?: string;
+  isFoodFromWiki?: boolean;
 }
