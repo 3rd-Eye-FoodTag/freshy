@@ -35,5 +35,6 @@ export const chatGptQuestion = (rawText: string) => {
             1. If exact predictedFreshDurations data is not available, generate reasonable estimates based on food category and type.
             2. All fields are included, even if they are null or empty.
             3. The response strictly adheres to this format.
-            4. Only the JSON object is returned without any additional explanation.`;
+            4. Only the JSON object is returned without any additional explanation.
+            5. Merge Duplicate item to same item`;
 };

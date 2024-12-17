@@ -96,7 +96,7 @@ const BarcodeScanScreen: React.FC = () => {
             expiryDate: calculateExpirationDate(
               item?.predictedFreshDurations?.fridge || 0,
             ),
-            storageTip: item?.comment,
+            storageTip: item?.comment || '',
           };
 
           dispatch(addFoodItemToConfirmationList(formattedItem));

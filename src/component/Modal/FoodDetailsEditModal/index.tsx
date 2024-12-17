@@ -288,8 +288,8 @@ const FoodDetailsEditModal: React.FC<{
           </Text>
           <Text style={styles.recordDate}>
             {formData.isFoodFromWiki
-              ? 'Food is in FoodWIki'
-              : 'Food is not In FoodWiki'}
+              ? 'Food is in our FoodWIki'
+              : 'First time to see this food in our wiki'}
           </Text>
         </VStack>
       </ScrollView>

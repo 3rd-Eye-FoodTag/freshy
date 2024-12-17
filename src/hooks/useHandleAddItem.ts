@@ -1,3 +1,4 @@
+import {useEffect, useState} from 'react';
 import {v4 as uuidv4} from 'uuid';
 import {calculateExpirationDate} from '../utils/utils';
 import {
@@ -8,26 +9,33 @@ import {
   updateModalConstant,
 } from '../redux/reducer/storageReducer';
 import {useQueryClient, useMutation, useQuery} from '@tanstack/react-query';
-import {postInventoryUpdateToFirebase} from '../utils/api';
+import {
+  postInventoryUpdateToFirebase,
+  addFoodItemsToFirebase,
+} from '../utils/api';
 import {useDispatch, useSelector} from 'react-redux';
 import {FoodItem, AddFoodRequestBody} from '../utils/interface';
-import {useEffect, useState} from 'react';
 import {currentUser} from '../redux/reducer';
 
 const useHandleAddItem = () => {
   const queryClient = useQueryClient();
   const confirmationList = useSelector(confirmationListSelector);
   const currentUserUUID = useSelector(currentUser);
-  const [checkWiki, setCheckWiki] = useState(false);
+  const [notInfoodWiki, setNotInfoodWiki] = useState([]);
+
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    setNotInfoodWiki([]);
+  }, []);
 
   const {data: foodWikiData = []} = useQuery<{data: any[]}>({
     queryKey: ['foodwiki'],
   });
-  useEffect(() => {
-    if (checkWiki) {
-    }
-  }, [checkWiki]);
+
+  const {mutate: postToFoodWIki, error: postFoodWikiError} = useMutation({
+    mutationFn: (newItems: any[]) => addFoodItemsToFirebase(newItems),
+  });
 
   // Handle submission process to inventory
   const {error, isPending, mutate} = useMutation({
@@ -73,9 +81,10 @@ const useHandleAddItem = () => {
    */
   const addConfirmationList = (selectedFood: FoodItem) => {
     const todayDate = new Date();
+    const foodWikiID = uuidv4();
     const addFoodRequestBody: AddFoodRequestBody = {
-      foodID: uuidv4(),
-      foodName: selectedFood?.foodName,
+      foodID: foodWikiID,
+      foodName: selectedFood?.foodName || selectedFood?.food,
       quantity: selectedFood.quantity || 1,
       category: selectedFood.category,
       predictedFreshDurations: selectedFood.predictedFreshDurations,
@@ -92,12 +101,13 @@ const useHandleAddItem = () => {
       purchaseDate: todayDate.toISOString(),
       createdAt: todayDate.toISOString(),
       updatedAt: todayDate.toISOString(),
-      foodWikiID: selectedFood.foodWikiID,
+      foodWikiID: selectedFood?.foodWikiID || foodWikiID,
       alternativeNames: selectedFood.alternativeNames,
       expiryDate: calculateExpirationDate(
         selectedFood.predictedFreshDurations?.fridge || 0,
       ),
-      storageTip: selectedFood.comment,
+      storageTip: selectedFood.comment || '',
+      isFoodFromWiki: true,
     };
 
     return addFoodRequestBody;
@@ -110,25 +120,32 @@ const useHandleAddItem = () => {
 
     let input = [];
 
+    const foodWikiMap = new Map<string, any>();
+
+    foodWikiData.forEach(food => {
+      const key =
+        food?.foodName?.toLowerCase() || food?.food?.toLowerCase() || '';
+      foodWikiMap.set(key, food);
+    });
+
     const confirmation = mockFood.map(item => {
-      const foodFromWiki = foodWikiData.find(food => {
-        const a = food?.foodName?.toLowerCase() || '';
-        const b = item?.foodName?.toLowerCase() || '';
-        return a === b;
-      });
+      // Build a lookup map for foodWikiData to optimize search
+
+      // Map through mockFood and check against the lookup map
+      const key =
+        item?.foodName?.toLowerCase() || item?.food?.toLowerCase() || '';
+      const foodFromWiki = foodWikiMap.get(key);
 
       return {...(foodFromWiki || item), isFoodFromWiki: !!foodFromWiki};
     });
 
-    let inFoodWikiFood = mockFood.filter(item => item.foodName === 'Lemon');
-    let notInfoodWikifood = mockFood.filter(item => item.foodName !== 'Lemon');
-
     if (confirmation.length > 0) {
       input = [...confirmation].map(item => {
+        const foodWikiID = uuidv4();
         if (item?.isFoodFromWiki) {
           return {
             foodID: uuidv4(),
-            foodName: item?.foodName || item?.name || 'undefined',
+            foodName: item?.foodName || item?.name || item?.food || 'undefined',
             quantity: item.quantity || 1,
             category: item.category,
             predictedFreshDurations: item.predictedFreshDurations,
@@ -145,13 +162,14 @@ const useHandleAddItem = () => {
             purchaseDate: todayDate.toISOString(),
             createdAt: todayDate.toISOString(),
             updatedAt: todayDate.toISOString(),
-            foodWikiID: item.foodWikiID,
+            foodWikiID: item.foodWikiID || foodWikiID,
             alternativeNames: item.alternativeNames,
             expiryDate: calculateExpirationDate(
               item.predictedFreshDurations?.fridge || 0,
             ),
-            storageTip: item.comment,
+            storageTip: item.comment || '',
             isFoodFromWiki: item?.isFoodFromWiki,
+            type: item.category,
           };
         } else {
           return {
@@ -173,11 +191,12 @@ const useHandleAddItem = () => {
             purchaseDate: todayDate.toISOString(),
             createdAt: todayDate.toISOString(),
             updatedAt: todayDate.toISOString(),
-            // foodWikiID: item?.foodWikiID,
+            foodWikiID: item.foodWikiID || foodWikiID,
             alternativeNames: [],
             expiryDate: 'Fri Dec 27 2024 22:20:11 GMT-0800',
             storageTip: '',
             isFoodFromWiki: item?.isFoodFromWiki,
+            type: item.category,
           };
         }
       });
@@ -186,10 +205,23 @@ const useHandleAddItem = () => {
     [...input].forEach(requestBoday => {
       dispatch(addFoodItemToConfirmationList(requestBoday));
     });
+
+    const foodNotInWiki = input.filter(item => !item.isFoodFromWiki);
+
+    if (foodNotInWiki.length > 0) {
+      setNotInfoodWiki(foodNotInWiki);
+    }
   };
 
+  console.log({notInfoodWiki});
+
   return {
-    addFoodToInventory: () => mutate({data: [...confirmationList]}),
+    addFoodToInventory: () => {
+      mutate({data: [...confirmationList]});
+      if (notInfoodWiki.length > 0) {
+        postToFoodWIki(notInfoodWiki);
+      }
+    },
     addFoodItemToConfirmationList: (selectedFood: FoodItem) => {
       const addFoodRequestBody = addConfirmationList(selectedFood);
 

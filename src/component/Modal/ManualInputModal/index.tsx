@@ -50,10 +50,7 @@ const ManualInputModal: React.FC<{showConfirmation: boolean}> = ({
   };
 
   const filteredItems = recommendedList.filter(item => {
-    return (
-      item.type === 'Fruit' &&
-      item?.foodName?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    return item?.food?.toLowerCase().includes(searchTerm.toLowerCase());
   });
 
   return (
@@ -75,7 +72,7 @@ const ManualInputModal: React.FC<{showConfirmation: boolean}> = ({
             keyExtractor={(item, index) => `${item.id?.toString()} + ${index}`}
             renderItem={({item}) => (
               <FoodIcon
-                name={item.foodName}
+                name={item?.foodName || item?.food}
                 url={getImageURL(item.imageName)}
                 selected={item.selected}
                 onClick={() => handleAddItem(item)}
