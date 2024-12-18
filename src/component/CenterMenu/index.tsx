@@ -39,6 +39,7 @@ const CenterMenu = ({isMenuVisible, setMenuVisible}) => {
 
   const handleCreateNewItem = () => {
     console.log('Create a new item selected');
+    dispatch(updateModalConstant({modalConstant: 'CREATE_NEW_FOOD_ITEM'}));
     setMenuVisible(!isMenuVisible);
   };
 

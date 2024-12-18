@@ -190,10 +190,13 @@ export const fetchFoodWikFromFirebase = async () => {
     const querySnapshot = await getDocs(fruitsQuery);
 
     // Map through the snapshot and extract data
-    const fruitsData = querySnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
+    const fruitsData = querySnapshot.docs.map(doc => {
+      // console.log('Document ID:', doc.id); // Log each document ID
+      return {
+        id: doc.id,
+        ...doc.data(),
+      };
+    });
 
     return fruitsData; // Return the filtered result
   } catch (error) {
