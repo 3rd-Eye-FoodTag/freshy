@@ -413,30 +413,30 @@ export const dummyFoodData: FoodDetailsProps[] = [
   },
 ];
 
-export const emptyFoodDetails: FoodDetailsProps = {
-  name: '',
-  foodWikiId: undefined, // Optional reference
-  quantity: 0,
-  purchaseDate: new Date().toISOString(), // Default to current date
-  expiryDate: new Date().toISOString(), // Default to current date
+export const emptyFoodDetails: any = {
+  category: 'Vegetable',
   consumed: false,
-  category: '',
-  shared: false,
-  createdBy: '',
-  freshnessScore: 0,
-  storagePlace: 'Fridge', // Default to 'Fridge'
+  consumedAt: '',
   cost: 0,
-  groceryStore: '',
-  updatedByUser: '',
-  consumedAt: null, // No consumption date
-  foodPhoto: '',
-  createdAt: new Date().toISOString(), // Default to current date
-  updatedAt: new Date().toISOString(), // Default to current date
+  createdAt: new Date().toISOString(),
+  createdBy: new Date().toISOString(),
+  expiryDate: '',
   foodID: '',
-  selected: false, // Optional field
+  foodName: 'Unknown',
+  foodWikiID: '',
+  freshnessScore: 100,
+  groceryStore: '',
+  imageName: '0001_Apple',
   predictedFreshDurations: {
-    fridge: 14, // Optional fridge duration
-    freezer: 180, // Optional freezer duration
-    room: 7, // Optional room temperature duration
+    freezer: 240,
+    fridge: 21,
+    room: 7,
   },
+  purchaseDate: new Date().toISOString(),
+  quantity: 0,
+  share: true,
+  storagePlace: 'Freezer',
+  storageTip: 'N/A',
+  updatedAt: new Date().toISOString(),
+  updatedByUser: '',
 };

@@ -40,7 +40,6 @@ const OptionSelector: React.FC<OptionSelectorProps> = ({
   }, [customDate, duration, timeUnit]);
 
   const handlePress = (option?: string | number, index?: number) => {
-    console.log(duration, timeUnit);
     if (option === 'Custom') {
       setCustomDate(true);
       setSelectedOption(option);

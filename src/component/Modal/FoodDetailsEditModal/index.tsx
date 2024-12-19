@@ -10,6 +10,7 @@ import {
   Image,
   Icon,
   Center,
+  Input,
 } from 'native-base';
 import {useDispatch, useSelector} from 'react-redux';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
@@ -33,6 +34,7 @@ import {
 } from '../../../redux/reducer/storageReducer';
 import {useMutation, useQueryClient} from '@tanstack/react-query';
 import _uniq from 'lodash/uniq';
+import useHandleAddItem from '../../../hooks/useHandleAddItem';
 
 const FoodDetailsEditModal: React.FC<{
   onClose?: () => void;
@@ -53,6 +55,10 @@ const FoodDetailsEditModal: React.FC<{
   const queryClient = useQueryClient();
   const {predictedFreshDurations} = foodDetails;
 
+  const {addFoodToInventory} = useHandleAddItem();
+
+  const handleDisable = formData.foodName === 'Unknown';
+
   useEffect(() => {
     if (!isNewItem) {
       setDisableButton(true);
@@ -61,7 +67,7 @@ const FoodDetailsEditModal: React.FC<{
   }, []);
 
   useEffect(() => {
-    if (selectedFoodDetails) {
+    if (selectedFoodDetails && !isNewItem) {
       setFormData(selectedFoodDetails);
       setStoragePL(foodDetails.storagePlace);
       setExpiryDate(foodDetails.expiryDate);
@@ -70,7 +76,7 @@ const FoodDetailsEditModal: React.FC<{
 
   const handleInputChange = (name: string, value: any) => {
     setFormData(prevData => ({
-      ...prevData,
+      ...(prevData || {}),
       [name]: value,
     }));
   };
@@ -105,13 +111,14 @@ const FoodDetailsEditModal: React.FC<{
 
   const handleSave = () => {
     if (isNewItem) {
-      dispatch(updateConfirmationList(formData));
-      dispatch(
-        updateModalConstant({
-          modalConstant: 'MANNUAL_INPUT_MODAL',
-          modalProps: {showConfirmation: true},
-        }),
-      );
+      // dispatch(updateConfirmationList(formData));
+      addFoodToInventory(true, [formData]);
+      // dispatch(
+      //   updateModalConstant({
+      //     modalConstant: 'MANNUAL_INPUT_MODAL',
+      //     modalProps: {showConfirmation: true},
+      //   }),
+      // );
     } else {
       updateExistedInventoryItem(currentUserUUID, formData);
       updateFoodItem.mutate({userId: currentUserUUID, data: formData});
@@ -141,7 +148,7 @@ const FoodDetailsEditModal: React.FC<{
     'Custom',
   ];
 
-  console.log(predictedFreshDurations[storeMethod], expiryDate);
+  // console.log({formData});
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -162,7 +169,9 @@ const FoodDetailsEditModal: React.FC<{
               </View>
               <Image
                 source={{
-                  uri: getImageURL(formData?.imageName) || defaultFoodImage,
+                  uri:
+                    (!isNewItem && getImageURL(formData?.imageName)) ||
+                    defaultFoodImage,
                 }}
                 alt={formData?.foodName}
                 defaultSource={{uri: defaultFoodImage}}
@@ -183,26 +192,25 @@ const FoodDetailsEditModal: React.FC<{
               </View>
             </HStack>
             <View style={styles.foodNameRow}>
-              <Text fontSize="2xl" fontWeight="bold">
-                {formData?.foodName}
-              </Text>
-              {/* {nameField ? (
-                <Input
-                  value={formData?.food}
-                  onChangeText={value =>
-                    handleInputChange('storageTips', value)
-                  }
-                  multiline
-                  numberOfLines={4}
-                />
-              ) : (
+              {!nameField ? (
                 <Text fontSize="2xl" fontWeight="bold">
-                  {formData?.foodName}
+                  {formData?.foodName || 'New Food'}
                 </Text>
-              )} */}
+              ) : (
+                <Input
+                  variant="underlined"
+                  placeholder="Type Food Name"
+                  value={formData.foodName}
+                  onChangeText={text => {
+                    handleInputChange('foodName', text); // Update `formData.foodName`
+                  }}
+                  size="2xl"
+                  w="30%"
+                />
+              )}
               <TouchableOpacity
                 onPress={() => {
-                  setNameField(nameField);
+                  setNameField(!nameField);
                 }}>
                 <Icon
                   as={FontAwesome5}
@@ -212,6 +220,7 @@ const FoodDetailsEditModal: React.FC<{
                 />
               </TouchableOpacity>
             </View>
+
             {/* <View style={styles.progressBarContainer}>
               <View
                 style={[
@@ -323,7 +332,7 @@ const FoodDetailsEditModal: React.FC<{
             onPress={handleSave}
             colorScheme="green"
             minWidth={150}
-            isDisabled={disableButton}
+            isDisabled={disableButton || handleDisable}
             bg={disableButton ? 'gray.400' : '#00A86B'}
             _disabled={{bg: 'gray.400'}}>
             Finish

@@ -49,8 +49,8 @@ const CreateNewFoodItem: React.FC<CreateNewFoodItemProps> = ({
     setFrozenDuration('');
   };
 
-  return null;
-  // return <FoodDetailsEditModal foodDetails={emptyFoodDetails} isNewItem />;
+  // return null;
+  return <FoodDetailsEditModal foodDetails={emptyFoodDetails} isNewItem />;
 };
 
 export default CreateNewFoodItem;

@@ -213,11 +213,14 @@ const useHandleAddItem = () => {
     }
   };
 
-  console.log({notInfoodWiki});
-
   return {
-    addFoodToInventory: () => {
-      mutate({data: [...confirmationList]});
+    addFoodToInventory: (isNew?: boolean, data?: any) => {
+      if (isNew) {
+        mutate({data: [...data]});
+      } else {
+        mutate({data: [...confirmationList]});
+      }
+
       if (notInfoodWiki.length > 0) {
         postToFoodWIki(notInfoodWiki);
       }

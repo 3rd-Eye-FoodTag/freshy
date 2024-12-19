@@ -231,7 +231,7 @@ export const postInventoryUpdateToFirebase = async (
   newItem: FoodDetailsProps[],
 ) => {
   try {
-    console.log('posting data-------------');
+    console.log('posting food to Inventory-------------');
     const docRef = doc(db, 'Inventory', currentUid);
     const docSnap = await getDoc(docRef);
     const result = docSnap.data();
@@ -240,6 +240,7 @@ export const postInventoryUpdateToFirebase = async (
     await updateDoc(inventoryupdate, {
       data: [...result?.data, ...newItem],
     });
+    console.log('succuessfully add to inventory');
   } catch (error) {
     console.log('cannot add new item normally', error);
   }
