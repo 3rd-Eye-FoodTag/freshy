@@ -3,6 +3,8 @@ import {View, StyleSheet, TouchableOpacity, Text, Modal} from 'react-native';
 import {useDispatch} from 'react-redux';
 import {updateModalConstant} from '../../redux/reducer/storageReducer';
 import {useNavigation} from '@react-navigation/native';
+import {modalConstants} from '../Modal/constants';
+import {emptyFoodDetails} from '../../utils/constants';
 
 const CenterMenu = ({isMenuVisible, setMenuVisible}) => {
   const dispatch = useDispatch();
@@ -39,6 +41,15 @@ const CenterMenu = ({isMenuVisible, setMenuVisible}) => {
 
   const handleCreateNewItem = () => {
     console.log('Create a new item selected');
+    dispatch(
+      updateModalConstant({
+        modalConstant: modalConstants.FOOD_DETAILS_MODAL,
+        modalProps: {
+          foodDetails: emptyFoodDetails,
+          isNewItem: true,
+        },
+      }),
+    );
     setMenuVisible(!isMenuVisible);
   };
 

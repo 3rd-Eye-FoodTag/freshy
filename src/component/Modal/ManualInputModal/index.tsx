@@ -10,11 +10,15 @@ import {
 import FoodIcon from '../../FoodIcon';
 import {useQuery} from '@tanstack/react-query';
 
-import {getImageURL} from '../../../utils/constants';
+import {emptyFoodDetails, getImageURL} from '../../../utils/constants';
 import {useDispatch, useSelector} from 'react-redux';
 import ConfirmationList from '../../ConfirmationList';
-import {confirmationListSelector} from '../../../redux/reducer/storageReducer';
+import {
+  confirmationListSelector,
+  updateModalConstant,
+} from '../../../redux/reducer/storageReducer';
 import useHandleAddItem from '../../../hooks/useHandleAddItem';
+import {modalConstants} from '../constants';
 
 const ManualInputModal: React.FC<{showConfirmation: boolean}> = ({
   showConfirmation,
@@ -81,7 +85,19 @@ const ManualInputModal: React.FC<{showConfirmation: boolean}> = ({
             ListEmptyComponent={
               <View style={styles.emptyComponent}>
                 <Text style={styles.noItemText}>Cannot find the item.</Text>
-                <TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    console.log('click');
+                    dispatch(
+                      updateModalConstant({
+                        modalConstant: modalConstants.FOOD_DETAILS_MODAL,
+                        modalProps: {
+                          foodDetails: emptyFoodDetails,
+                          isNewItem: true,
+                        },
+                      }),
+                    );
+                  }}>
                   <Text style={styles.createNewItemText}>
                     Create a new item
                   </Text>

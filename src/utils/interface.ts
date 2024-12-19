@@ -1,17 +1,3 @@
-// export interface FoodDetailsProps {
-//     id: string | number,
-//     name: string;
-//     imageUrl?: string;
-//     daysLeft?: number;
-//     location: 'Fridge' | 'Freezer' | 'Pantry';
-//     expiryDate?: string;
-//     reminder?: string;
-//     category?: string;
-//     others?: string;
-//     storageTips?: string;
-//     quantity: number;
-// }
-
 export interface FoodDetailsProps {
   name: string;
   foodWikiId?: string; // Optional reference to FoodWiki
@@ -33,6 +19,11 @@ export interface FoodDetailsProps {
   updatedAt: string; // ISO date string
   foodID: string;
   selected?: boolean;
+  predictedFreshDurations: {
+    fridge?: number;
+    freezer?: number;
+    room?: number;
+  };
 }
 
 export interface FoodItem {

@@ -412,3 +412,31 @@ export const dummyFoodData: FoodDetailsProps[] = [
     quantity: 1,
   },
 ];
+
+export const emptyFoodDetails: any = {
+  category: 'Vegetable',
+  consumed: false,
+  consumedAt: '',
+  cost: 0,
+  createdAt: new Date().toISOString(),
+  createdBy: new Date().toISOString(),
+  expiryDate: '',
+  foodID: '',
+  foodName: 'Unknown',
+  foodWikiID: '',
+  freshnessScore: 100,
+  groceryStore: '',
+  imageName: '0001_Apple',
+  predictedFreshDurations: {
+    freezer: 240,
+    fridge: 21,
+    room: 7,
+  },
+  purchaseDate: new Date().toISOString(),
+  quantity: 0,
+  share: true,
+  storagePlace: 'Freezer',
+  storageTip: 'N/A',
+  updatedAt: new Date().toISOString(),
+  updatedByUser: '',
+};
