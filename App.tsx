@@ -22,6 +22,7 @@ import TabLayout from './src/router/TabLayout';
 import Stack from './src/router/stack';
 import ModalContainer from './src/component/Modal';
 import {View, Text} from 'react-native';
+import './global.css';
 
 const queryClient = new QueryClient();
 
@@ -43,11 +44,7 @@ const Router = (): React.JSX.Element => {
     });
   }, [user]);
 
-  return (
-    <View className="flex-1 justify-center items-center bg-red-500">
-      <Text className="text-lg text-white font-bold">Hello, Tailwind!</Text>
-    </View>
-  );
+  return <Stack />;
 };
 
 const App = (): React.JSX.Element => {

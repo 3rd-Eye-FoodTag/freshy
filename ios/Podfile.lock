@@ -1059,7 +1059,7 @@ PODS:
     - React-Core
   - react-native-get-random-values (1.11.0):
     - React-Core
-  - react-native-image-picker (7.2.2):
+  - react-native-image-picker (7.2.3):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1773,7 +1773,7 @@ SPEC CHECKSUMS:
   React-Mapbuffer: 6c1cacdbf40b531f549eba249e531a7d0bfd8e7f
   react-native-config: 8f7283449bbb048902f4e764affbbf24504454af
   react-native-get-random-values: 21325b2244dfa6b58878f51f9aa42821e7ba3d06
-  react-native-image-picker: dd85e2530d366acf77745830b053294afed66339
+  react-native-image-picker: fb0c2b3adc3eff6caa3cd6a507a34b9dcc9238dd
   react-native-safe-area-context: 141eca0fd4e4191288dfc8b96a7c7e1c2983447a
   react-native-worklets-core: e0a05ed7887519277942efc866fd2785a24c86db
   React-nativeconfig: ba9a2e54e2f0882cf7882698825052793ed4c851
