@@ -1,26 +1,30 @@
 import React, {useState} from 'react';
 import {
   Box,
-  Heading,
-  VStack,
-  FormControl,
-  Input,
-  Button,
-  Select,
-  CheckIcon,
-  WarningOutlineIcon,
   Text,
-  HStack,
-} from 'native-base';
-import {StyleSheet} from 'react-native';
+  VStack,
+  Input,
+  InputField,
+  Button,
+  ButtonText,
+  Select,
+  SelectTrigger,
+  SelectInput,
+  SelectIcon,
+  SelectPortal,
+  SelectBackdrop,
+  SelectContent,
+  SelectDragIndicatorWrapper,
+  SelectDragIndicator,
+  SelectItem,
+} from '@/components/ui'; // Adjust imports for Gluestack-UI
+import {useSelector} from 'react-redux';
 import {auth} from '../../../../config/firebase';
 import {createUserWithEmailAndPassword} from 'firebase/auth';
-import {useSelector} from 'react-redux';
 import {registerAuth} from '../../../../redux/reducer';
-import {v4 as uuidv4} from 'uuid';
-
-import {doc, setDoc, collection, onSnapshot} from 'firebase/firestore';
+import {doc, setDoc} from 'firebase/firestore';
 import {db} from '../../../../config/firebase';
+import IconComponent from 'react-native-vector-icons/MaterialIcons';
 
 const MoreInfoInputScreen: React.FC = () => {
   const [error, setError] = useState('');
@@ -29,10 +33,9 @@ const MoreInfoInputScreen: React.FC = () => {
     age: '',
     gender: '',
     zipCode: '',
-    uuid: '',
   });
-  const user = useSelector(registerAuth);
 
+  const user = useSelector(registerAuth);
   const {name, age, gender, zipCode} = userInfo;
   const {email, password} = user;
 
@@ -47,13 +50,12 @@ const MoreInfoInputScreen: React.FC = () => {
 
       // Set user information in Firestore
       await setDoc(doc(db, 'Users', user.uid), {
-        name: name,
-        age: age,
-        zipCode: zipCode,
-        gender: gender,
+        name,
+        age,
+        zipCode,
+        gender,
         email: user.email,
         uid: user.uid,
-        phoneNumber: user.phoneNumber,
         createdAt: new Date(),
       });
 
@@ -68,121 +70,145 @@ const MoreInfoInputScreen: React.FC = () => {
   };
 
   return (
-    <Box flex={1} px={6} py={6} bg="white" justifyContent="flex-start">
-      <Heading
-        size="md"
-        fontWeight="600"
-        color="coolGray.800"
-        textAlign="center"
-        mb={2}>
+    <Box className="flex-1 px-6 py-6 bg-white">
+      {/* Heading */}
+      <Text className="text-lg font-bold text-gray-800 text-center mb-2">
         Tell us a bit more
-      </Heading>
-      <Text fontSize="sm" textAlign="center" mb={8} color="gray.500">
+      </Text>
+      <Text className="text-sm text-gray-500 text-center mb-8">
         Just need to answer a few more questions to satisfy your personal needs
       </Text>
-      <VStack space={4}>
-        <FormControl isInvalid={!!error}>
-          <FormControl.Label fontSize="sm">Your Name</FormControl.Label>
-          <Input
-            placeholder="Your Name"
-            value={name}
-            onChangeText={value =>
-              setUserInfo(state => ({
-                ...state,
-                name: value,
-              }))
-            }
-            borderColor="coolGray.300"
-            borderRadius="8"
-            fontSize="md"
-            _focus={{
-              borderColor: 'coolGray.500',
-            }}
-          />
-        </FormControl>
-        <HStack space={3} alignItems="center">
-          <FormControl flex={1}>
-            <FormControl.Label fontSize="sm">Age</FormControl.Label>
-            <Input
-              placeholder="Age"
-              value={age}
+
+      {/* Form */}
+      <VStack className="space-y-6">
+        {/* Your Name */}
+        <Box>
+          <Text className="text-sm text-gray-600 mb-2">Your Name</Text>
+          <Input className="border border-gray-300 rounded px-3 py-2">
+            <InputField
+              placeholder="Your Name"
+              value={name}
               onChangeText={value =>
                 setUserInfo(state => ({
                   ...state,
-                  age: value,
+                  name: value,
+                }))
+              }
+              className="text-gray-800 placeholder-gray-400"
+            />
+          </Input>
+        </Box>
+
+        {/* Age and Gender */}
+        <Box className="flex flex-row space-x-3">
+          <Box className="flex-1">
+            <Text className="text-sm text-gray-600 mb-2">Age</Text>
+            <Input className="border border-gray-300 rounded px-3 py-2">
+              <InputField
+                placeholder="Age"
+                value={age}
+                onChangeText={value =>
+                  setUserInfo(state => ({
+                    ...state,
+                    age: value,
+                  }))
+                }
+                keyboardType="numeric"
+                className="text-gray-800 placeholder-gray-400"
+              />
+            </Input>
+          </Box>
+          <Box className="flex-1">
+            <Text className="text-sm text-gray-600 mb-2">Gender</Text>
+            <Select>
+              <SelectTrigger>
+                <SelectInput
+                  value={gender}
+                  placeholder="Gender"
+                  onValueChange={value =>
+                    setUserInfo(state => ({
+                      ...state,
+                      gender: value,
+                    }))
+                  }
+                />
+                <SelectIcon as={IconComponent} name="arrow-drop-down" />
+              </SelectTrigger>
+              <SelectPortal>
+                <SelectBackdrop />
+                <SelectContent>
+                  <SelectDragIndicatorWrapper>
+                    <SelectDragIndicator />
+                  </SelectDragIndicatorWrapper>
+                  <SelectItem
+                    label="Male"
+                    value="Male"
+                    onPress={() =>
+                      setUserInfo(state => ({
+                        ...state,
+                        gender: 'Male',
+                      }))
+                    }
+                  />
+                  <SelectItem
+                    label="Female"
+                    value="Female"
+                    onPress={() =>
+                      setUserInfo(state => ({
+                        ...state,
+                        gender: 'Female',
+                      }))
+                    }
+                  />
+                  <SelectItem
+                    label="Prefer not to say"
+                    value="not_specified"
+                    onPress={() =>
+                      setUserInfo(state => ({
+                        ...state,
+                        gender: 'Prefer not to say',
+                      }))
+                    }
+                  />
+                </SelectContent>
+              </SelectPortal>
+            </Select>
+          </Box>
+        </Box>
+
+        {/* Zip Code */}
+        <Box>
+          <Text className="text-sm text-gray-600 mb-2">Zip Code</Text>
+          <Input className="border border-gray-300 rounded px-3 py-2">
+            <InputField
+              placeholder="Zip Code"
+              value={zipCode}
+              onChangeText={value =>
+                setUserInfo(state => ({
+                  ...state,
+                  zipCode: value,
                 }))
               }
               keyboardType="numeric"
-              borderColor="coolGray.300"
-              borderRadius="8"
-              fontSize="md"
-              _focus={{
-                borderColor: 'coolGray.500',
-              }}
+              className="text-gray-800 placeholder-gray-400"
             />
-          </FormControl>
-          <FormControl flex={1}>
-            <FormControl.Label fontSize="sm">Gender</FormControl.Label>
-            <Select
-              selectedValue={gender}
-              placeholder="Gender"
-              onValueChange={value =>
-                setUserInfo(state => ({
-                  ...state,
-                  gender: value,
-                }))
-              }
-              borderColor="coolGray.300"
-              borderRadius="8"
-              fontSize="md"
-              _selectedItem={{
-                bg: 'teal.600',
-                endIcon: <CheckIcon size="5" />,
-              }}>
-              <Select.Item label="Male" value="Male" />
-              <Select.Item label="Female" value="Female" />
-              <Select.Item label="Prefer not to say" value="not_specified" />
-            </Select>
-          </FormControl>
-        </HStack>
-        <FormControl>
-          <FormControl.Label fontSize="sm">Zip Code</FormControl.Label>
-          <Input
-            placeholder="Zip Code"
-            value={zipCode}
-            onChangeText={value =>
-              setUserInfo(state => ({
-                ...state,
-                zipCode: value,
-              }))
-            }
-            keyboardType="numeric"
-            borderColor="coolGray.300"
-            borderRadius="8"
-            fontSize="md"
-            _focus={{
-              borderColor: 'coolGray.500',
-            }}
-          />
-        </FormControl>
+          </Input>
+        </Box>
+
+        {/* Continue Button */}
         <Button
-          mt={8}
-          bg={'#00A86B'}
-          _text={{color: 'white', fontSize: 'md'}}
-          borderRadius="8"
+          className={`bg-[#00A86B] rounded px-4 py-3 my-8 ${
+            !name || !age || !gender || !zipCode ? 'opacity-50' : ''
+          }`}
           onPress={handleContinue}
-          isDisabled={!name || !gender || !gender || !zipCode}>
-          Continue
+          isDisabled={!name || !age || !gender || !zipCode}>
+          <ButtonText className="text-white text-sm font-bold text-center ">
+            Continue
+          </ButtonText>
         </Button>
       </VStack>
     </Box>
   );
 };
-
-const styles = StyleSheet.create({
-  inputHalfWidth: {
-    flex: 1,
-  },
-});
 
 export default MoreInfoInputScreen;
