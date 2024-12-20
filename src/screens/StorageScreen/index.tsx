@@ -90,6 +90,14 @@ const Storage: React.FC = () => {
   };
 
   return (
+    <SafeAreaView>
+      <View className="flex-1 justify-center items-center bg-blue-100">
+        <Text className="text-lg font-bold text-white">Hello, Tailwind!</Text>
+      </View>
+    </SafeAreaView>
+  );
+
+  return (
     <SafeAreaView style={styles.screen}>
       <View style={styles.arcContainer}>
         <View style={styles.arcBackground} />
