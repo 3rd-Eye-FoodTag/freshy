@@ -3,7 +3,7 @@ import React, {useState} from 'react';
 import {View, TouchableOpacity, Text, StyleSheet} from 'react-native';
 import {BottomTabBarProps} from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/FontAwesome'; // Import FontAwesome icons
-import CenterMenu from '../../../component/CenterMenu';
+import CenterMenu from '../../../components/CenterMenu';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const iconMapping: {[key: string]: string} = {

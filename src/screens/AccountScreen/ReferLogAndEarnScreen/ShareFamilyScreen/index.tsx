@@ -1,6 +1,6 @@
 import React from 'react';
 import { SafeAreaView, View, Text, StyleSheet, Image } from 'react-native';
-import UnstyleButton from '../../../../component/UnstyleButton';
+import UnstyleButton from '../../../../components/UnstyleButton';
 
 const ShareFamilyScreen: React.FC = () => {
     return (

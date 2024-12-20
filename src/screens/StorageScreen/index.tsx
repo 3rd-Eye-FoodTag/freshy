@@ -8,10 +8,11 @@ import {
   TextInput,
   FlatList,
   Dimensions,
+  Button,
 } from 'react-native';
-import FoodItem from '../../component/FoodItem';
+import FoodItem from '../../components/FoodItem';
 import {FoodDetailsProps} from '../../utils/interface';
-import ToggleButton from '../../component/ToggleButton';
+import ToggleButton from '../../components/ToggleButton';
 import {useDispatch, useSelector} from 'react-redux';
 import {currentUser} from '../../redux/reducer';
 import {
@@ -23,19 +24,17 @@ import {
   addFoodDataToFirestore,
 } from '../../utils/api';
 import {useQuery} from '@tanstack/react-query';
-import {Button} from 'native-base';
-import {ScrollView} from 'react-native-gesture-handler';
 import {dummyFoodData} from '../../utils/constants';
-import SearchBar from '../../component/SearchBar';
+import SearchBar from '../../components/SearchBar';
 //test
 import foodWikeData from '../../utils/mockData/foodWikiData.json';
 import foodInventoryData from '../../utils/mockData/foodInventoryData.json';
-import ModalContainer from '../../component/Modal';
+import ModalContainer from '../../components/Modal';
 import {
   updateModalConstant,
   updateSelectedFoodDetails,
 } from '../../redux/reducer/storageReducer';
-import {modalConstants} from '../../component/Modal/constants';
+import {modalConstants} from '../../components/Modal/constants';
 
 const Storage: React.FC = () => {
   const [itemList, setItemList] = useState([]);
@@ -88,6 +87,24 @@ const Storage: React.FC = () => {
     }
     setStoreMethod(selectedOption);
   };
+
+  // const [isRed, setIsRed] = useState(false);
+  // return (
+  //   <SafeAreaView>
+  //     <View className="flex-1 justify-center items-center" />
+  //     <Text
+  //       className={`text-xl font-bold ${
+  //         isRed ? 'text-red-500' : 'text-blue-500'
+  //       }`}>
+  //       Click the Button!
+  //     </Text>
+  //     <Button
+  //       title="Toggle Color"
+  //       onPress={() => setIsRed(!isRed)}
+  //       className="mt-4 bg-gray-800 px-4 py-2 rounded"
+  //     />
+  //   </SafeAreaView>
+  // );
 
   return (
     <SafeAreaView style={styles.screen}>

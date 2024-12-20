@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { SafeAreaView, StyleSheet, View, TouchableOpacity, ScrollView, Text, Alert } from 'react-native';
-import Avatar from '../../../component/Avater';
+import Avatar from '../../../components/Avater';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import ProfileInfoRow from '../../../component/ProfileInfoRow.tsx';
+import ProfileInfoRow from '../../../components/ProfileInfoRow.tsx';
 import { Icon } from 'native-base';
 import { auth } from '../../../config/firebase';
 import { useQuery } from '@tanstack/react-query';

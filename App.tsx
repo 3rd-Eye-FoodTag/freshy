@@ -17,10 +17,13 @@ import {NativeBaseProvider} from 'native-base';
 import {currentUser, setCurrentUser} from './src/redux/reducer';
 import {onAuthStateChanged} from '@firebase/auth';
 import {auth} from './src/config/firebase';
+import {GluestackUIProvider} from './src/components/ui/gluestack-ui-provider';
 
 import TabLayout from './src/router/TabLayout';
 import Stack from './src/router/stack';
-import ModalContainer from './src/component/Modal';
+import ModalContainer from './src/components/Modal';
+import {View, Text} from 'react-native';
+import './global.css';
 
 const queryClient = new QueryClient();
 
@@ -51,11 +54,13 @@ const App = (): React.JSX.Element => {
       <Provider store={store}>
         <GestureHandlerRootView>
           <NavigationContainer>
-            <NativeBaseProvider>
-              <ModalContainer>
-                <Router />
-              </ModalContainer>
-            </NativeBaseProvider>
+            <GluestackUIProvider>
+              <NativeBaseProvider>
+                <ModalContainer>
+                  <Router />
+                </ModalContainer>
+              </NativeBaseProvider>
+            </GluestackUIProvider>
           </NavigationContainer>
         </GestureHandlerRootView>
       </Provider>

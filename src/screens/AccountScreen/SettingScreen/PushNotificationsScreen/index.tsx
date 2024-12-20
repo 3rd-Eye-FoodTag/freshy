@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { SafeAreaView, Text, StyleSheet, View, TouchableOpacity } from 'react-native';
-import SettingSwitchItem from '../../../../component/SettingSwitchItem';
-import ReminderTimeDropDown from '../../../../component/ReminderTimeDropDown';
+import SettingSwitchItem from '../../../../components/SettingSwitchItem';
+import ReminderTimeDropDown from '../../../../components/ReminderTimeDropDown';
 
 const PushNotificationsScreen: React.FC = () => {
     const [isPushNotificationEnabled, setIsPushNotificationEnabled] = useState(true);

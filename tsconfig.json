@@ -1,7 +1,10 @@
 {
   "compilerOptions": {
     "paths": {
-      "@firebase/auth": ["./node_modules/@firebase/auth/dist/index.rn.d.ts"]
+      "@firebase/auth": [
+        "./node_modules/@firebase/auth/dist/index.rn.d.ts"
+      ],
+      "@/*": ["src/*"] // Add relative path
     }
   },
   "extends": "expo/tsconfig.base",
@@ -9,6 +12,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".expo/types/**/*.ts",
-    "expo-env.d.ts"
+    "expo-env.d.ts",
+    "nativewind-env.d.ts"
   ]
 }

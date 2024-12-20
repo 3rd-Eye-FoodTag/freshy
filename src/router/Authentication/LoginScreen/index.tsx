@@ -1,25 +1,38 @@
-import React, { useState } from 'react';
-import { SafeAreaView, StyleSheet } from 'react-native';
-import { Box, Heading, VStack, FormControl, Input, Button, Link, IconButton, Icon, WarningOutlineIcon } from 'native-base';
-import  MaterialIcons  from 'react-native-vector-icons/MaterialIcons'; 
-import { useSelector, useDispatch } from 'react-redux';
-import { useQueryClient } from '@tanstack/react-query';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../../../config/firebase';
+import React, {useState} from 'react';
+import {SafeAreaView, StyleSheet} from 'react-native';
+import {
+  Box,
+  Text,
+  Heading,
+  VStack,
+  Input,
+  InputField,
+  InputSlot,
+  InputIcon,
+  Button,
+  ButtonText,
+  FormControl,
+  Link,
+  LinkText,
+} from '@/components/ui'; // Adjust imports based on your Gluestack setup
+import {useQueryClient} from '@tanstack/react-query';
+import {signInWithEmailAndPassword} from 'firebase/auth';
+import {auth} from '../../../config/firebase';
+import EyeIcon from 'react-native-vector-icons/MaterialIcons';
+import EyeOffIcon from 'react-native-vector-icons/MaterialIcons';
 
 const LoginScreen: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false); // 控制密码显示的状态
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
-  const dispatch = useDispatch();
   const queryClient = useQueryClient();
 
   const handleLogin = async () => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       queryClient.invalidateQueries(); // Invalidate and refetch the auth query
-    } catch (err) {
+    } catch (err: any) {
       setError(err.message);
       console.log(err.message);
     }
@@ -27,62 +40,71 @@ const LoginScreen: React.FC = () => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <Box flex={1} px={4} py={8} bg="white" justifyContent="flex-start">
-        <Heading size="lg" fontWeight="600" color="coolGray.800" textAlign="center" mb={6}>
+      <Box className="flex-1 px-4 py-8 bg-white">
+        {/* Heading */}
+        <Heading className="text-center text-lg font-bold mb-6">
           Welcome Back!
         </Heading>
-        <VStack space={4}>
+
+        {/* Form */}
+        <VStack className="space-y-4">
+          {/* Email Field */}
           <FormControl isInvalid={!!error}>
-            <FormControl.Label>Email</FormControl.Label>
-            <Input
-              placeholder="Enter your email"
-              value={email}
-              onChangeText={(text) => setEmail(text)}
-              keyboardType="email-address"
-              autoCapitalize="none"
-              borderColor="coolGray.300"
-              _focus={{
-                borderColor: 'coolGray.500',
-              }}
-            />
+            <Text className="text-sm mb-2">Email</Text>
+            <Input className="border border-gray-300 rounded px-3 py-2">
+              <InputField
+                placeholder="Enter your email"
+                value={email}
+                onChangeText={text => setEmail(text)}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                className="text-gray-800 placeholder-gray-400"
+              />
+            </Input>
           </FormControl>
+
+          {/* Password Field */}
           <FormControl isInvalid={!!error}>
-            <FormControl.Label>Password</FormControl.Label>
-            <Input
-              placeholder="Enter your password"
-              value={password}
-              onChangeText={(text) => setPassword(text)}
-              borderColor="coolGray.300"
-              _focus={{
-                borderColor: 'coolGray.500',
-              }}
-              autoCapitalize="none"
-              secureTextEntry={!showPassword} // 控制密码是否以星号显示
-              InputRightElement={
-                <IconButton
-                  icon={
-                    <Icon
-                      as={MaterialIcons}
-                      name={showPassword ? "visibility" : "visibility-off"}
-                      size="sm"
-                      color="coolGray.500"
-                    />
-                  }
-                  onPress={() => setShowPassword(!showPassword)} // 切换显示/隐藏密码
+            <Text className="text-sm mb-2 mt-8">Password</Text>
+            <Input className="border border-gray-300 rounded px-3 py-2">
+              <InputField
+                placeholder="Enter your password"
+                value={password}
+                onChangeText={text => setPassword(text)}
+                autoCapitalize="none"
+                secureTextEntry={!showPassword}
+                className="text-gray-800 placeholder-gray-400"
+              />
+              <InputSlot onPress={() => setShowPassword(!showPassword)}>
+                <InputIcon
+                  as={showPassword ? EyeIcon : EyeOffIcon}
+                  name={showPassword ? 'visibility' : 'visibility-off'}
+                  size={20}
+                  color="#6B7280" // CoolGray
                 />
-              }
-            />
-            {error ? (
-              <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-                {error}
-              </FormControl.ErrorMessage>
-            ) : null}
+              </InputSlot>
+            </Input>
+            {error && (
+              <Text className="text-xs text-red-500 mt-2">{error}</Text>
+            )}
           </FormControl>
-          <Button mt={4} bg="#00A86B" _text={{ color: 'white' }} onPress={handleLogin}>
-            Login
+
+          {/* Login Button */}
+          <Button
+            className="bg-[#00A86B] rounded px-4 my-4"
+            onPress={handleLogin}>
+            <ButtonText className="text-white text-sm font-bold text-center">
+              Login
+            </ButtonText>
           </Button>
-          <Link mt={4} textAlign="center" _text={{ color: '#1E90FF' }}>
-            Forgot password?
+
+          {/* Forgot Password Link */}
+          <Link
+            className="mt-4 text-center text-blue-500"
+            onPress={() => {
+              console.log('Forgot password pressed');
+            }}>
+            <LinkText> Forgot password?</LinkText>
           </Link>
         </VStack>
       </Box>

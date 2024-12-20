@@ -15,7 +15,7 @@ import MealPlanScreen from '../../screens/MealPlanScreen';
 
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
-import CenterMenu from '../../component/CenterMenu';
+import CenterMenu from '../../components/CenterMenu';
 import CustomTabBar from './CustomTabBar';
 import {useNavigation} from '@react-navigation/native';
 import {useSelector} from 'react-redux';

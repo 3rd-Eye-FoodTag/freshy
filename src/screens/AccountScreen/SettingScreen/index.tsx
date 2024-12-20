@@ -1,6 +1,6 @@
 import React from 'react';
 import { SafeAreaView, Text, StyleSheet, View, TouchableOpacity } from 'react-native';
-import AccountFlatList from '../../../component/AccountFlatList';
+import AccountFlatList from '../../../components/AccountFlatList';
 import { useNavigation } from '@react-navigation/native';
 import { RootStackParams } from '../../../router/constants';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
