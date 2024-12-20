@@ -1,7 +1,7 @@
 import React from 'react';
 import { SafeAreaView, View, Text, StyleSheet, TouchableOpacity, Alert, Clipboard } from 'react-native';
 
-import UnstyleButton from '../../../component/UnstyleButton';
+import UnstyleButton from '../../../components/UnstyleButton';
 import { Icon } from 'native-base';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Octicons from 'react-native-vector-icons/Octicons';

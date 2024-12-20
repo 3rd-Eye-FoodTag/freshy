@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { SafeAreaView, Text, StyleSheet, TouchableOpacity, FlatList, View } from 'react-native';
-import Avatar from '../../../component/Avater';
+import Avatar from '../../../components/Avater';
 import  FontAwesome5  from 'react-native-vector-icons/FontAwesome5';
 import { Icon } from 'native-base';
-import UnstyleButton from '../../../component/UnstyleButton';
+import UnstyleButton from '../../../components/UnstyleButton';
 
 const initialMembers = [
   { key: 'ABC DDD 1', role: 'Host' },

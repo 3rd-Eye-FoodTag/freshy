@@ -1,6 +1,6 @@
 import React from 'react';
 import { SafeAreaView, View, Text, StyleSheet, Image, TouchableOpacity, } from 'react-native';
-import UnstyleButton from '../../../component/UnstyleButton';
+import UnstyleButton from '../../../components/UnstyleButton';
 
 import { useNavigation } from '@react-navigation/native';
 import { RootStackParams } from '../../../router/constants';

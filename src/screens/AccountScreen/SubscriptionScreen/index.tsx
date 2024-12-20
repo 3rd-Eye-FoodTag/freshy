@@ -1,7 +1,7 @@
 import React from 'react';
 import { SafeAreaView, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
-import UnstyleButton from '../../../component/UnstyleButton';
+import UnstyleButton from '../../../components/UnstyleButton';
 
 const SubscriptionScreen: React.FC = () => {
     return (

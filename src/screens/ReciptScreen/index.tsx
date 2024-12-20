@@ -5,7 +5,7 @@ import {ScrollView, VStack, HStack, Text} from 'native-base';
 import useGoogleVisionApi from '../../hooks/useGoogleVisionApi';
 import useChatGptApi from '../../hooks/useChatGptApi';
 import useHandleAddItem from '../../hooks/useHandleAddItem';
-import ConfirmationList from '../../component/ConfirmationList';
+import ConfirmationList from '../../components/ConfirmationList';
 import {useNavigation} from '@react-navigation/native';
 
 const ReceiptScreen = () => {

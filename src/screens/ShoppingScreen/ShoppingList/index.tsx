@@ -8,7 +8,6 @@ import {
   View,
   Animated,
 } from 'react-native';
-import {Checkbox} from 'native-base';
 // import ShoppingListDeleteIcon from '../icons/ShoppingListDeleteIcon';
 
 interface Props {
@@ -38,7 +37,7 @@ const ShoppingList: React.FC<Props> = ({data, renderItem, keyExtractor}) => {
       <Pressable
         style={[styles.checkboxBase, checked && styles.checkboxChecked]}
         onPress={() => toggleCheckbox(key)}>
-        {checked && <Checkbox value="test" isChecked={checkedItems[key]} />}
+        {/* {checked && <Checkbox value="test" isChecked={checkedItems[key]} />} */}
       </Pressable>
     );
   };

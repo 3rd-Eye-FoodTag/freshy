@@ -13,7 +13,7 @@ import {
   Button,
 } from 'native-base';
 
-import Header from '../../component/Header';
+import Header from '../../components/Header';
 import {SafeAreaView, StyleSheet} from 'react-native';
 
 type Item = {
