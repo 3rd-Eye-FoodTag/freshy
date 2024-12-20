@@ -8,6 +8,7 @@ import {
   TextInput,
   FlatList,
   Dimensions,
+  Button,
 } from 'react-native';
 import FoodItem from '../../component/FoodItem';
 import {FoodDetailsProps} from '../../utils/interface';
@@ -23,7 +24,7 @@ import {
   addFoodDataToFirestore,
 } from '../../utils/api';
 import {useQuery} from '@tanstack/react-query';
-import {Button} from 'native-base';
+// import {Button} from 'native-base';
 import {ScrollView} from 'react-native-gesture-handler';
 import {dummyFoodData} from '../../utils/constants';
 import SearchBar from '../../component/SearchBar';
@@ -89,13 +90,23 @@ const Storage: React.FC = () => {
     setStoreMethod(selectedOption);
   };
 
-  return (
-    <SafeAreaView>
-      <View className="flex-1 justify-center items-center bg-blue-100">
-        <Text className="text-lg font-bold text-white">Hello, Tailwind!</Text>
-      </View>
-    </SafeAreaView>
-  );
+  // const [isRed, setIsRed] = useState(false);
+  // return (
+  //   <SafeAreaView>
+  //     <View className="flex-1 justify-center items-center" />
+  //     <Text
+  //       className={`text-xl font-bold ${
+  //         isRed ? 'text-red-500' : 'text-blue-500'
+  //       }`}>
+  //       Click the Button!
+  //     </Text>
+  //     <Button
+  //       title="Toggle Color"
+  //       onPress={() => setIsRed(!isRed)}
+  //       className="mt-4 bg-gray-800 px-4 py-2 rounded"
+  //     />
+  //   </SafeAreaView>
+  // );
 
   return (
     <SafeAreaView style={styles.screen}>
