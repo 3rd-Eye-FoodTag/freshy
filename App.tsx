@@ -21,6 +21,8 @@ import {auth} from './src/config/firebase';
 import TabLayout from './src/router/TabLayout';
 import Stack from './src/router/stack';
 import ModalContainer from './src/component/Modal';
+import {SafeAreaView, Text, View, Button} from 'react-native';
+import './global.css';
 
 const queryClient = new QueryClient();
 
