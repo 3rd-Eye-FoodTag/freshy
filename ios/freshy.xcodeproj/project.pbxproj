@@ -30,9 +30,9 @@
 		1EE655842C8C1FA600BC7EAE /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1EE655702C8C1FA600BC7EAE /* Octicons.ttf */; };
 		1EE655852C8C1FA600BC7EAE /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1EE655712C8C1FA600BC7EAE /* SimpleLineIcons.ttf */; };
 		1EE655862C8C1FA600BC7EAE /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1EE655722C8C1FA600BC7EAE /* Zocial.ttf */; };
-		6FD19FDD5D906864CA6DD4A3 /* Pods_freshy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 720E666AB5EC9927C73C4145 /* Pods_freshy.framework */; };
+		4007E38781B61843F327D907 /* libPods-freshy-freshyTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB798AC2B2389DB9AAAA211B /* libPods-freshy-freshyTests.a */; };
+		4567AA63EB663EDB9C3FFC0D /* libPods-freshy.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 162B50D33318BB6B736EBB88 /* libPods-freshy.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
-		DAB9514957D7F30B20F847B0 /* Pods_freshy_freshyTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCC5F9FCBF82EED8BF18947E /* Pods_freshy_freshyTests.framework */; };
 		FC792831156A237F35BBE18A /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = B236D943B27EE0B3BE21B508 /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
 
@@ -57,6 +57,7 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = freshy/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = freshy/main.m; sourceTree = "<group>"; };
 		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = freshy/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		162B50D33318BB6B736EBB88 /* libPods-freshy.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-freshy.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1EE655602C8C1FA600BC7EAE /* AntDesign.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = AntDesign.ttf; sourceTree = "<group>"; };
 		1EE655612C8C1FA600BC7EAE /* Entypo.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Entypo.ttf; sourceTree = "<group>"; };
 		1EE655622C8C1FA600BC7EAE /* EvilIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = EvilIcons.ttf; sourceTree = "<group>"; };
@@ -79,11 +80,10 @@
 		3B4392A12AC88292D35C810B /* Pods-freshy.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-freshy.debug.xcconfig"; path = "Target Support Files/Pods-freshy/Pods-freshy.debug.xcconfig"; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-freshy.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-freshy.release.xcconfig"; path = "Target Support Files/Pods-freshy/Pods-freshy.release.xcconfig"; sourceTree = "<group>"; };
 		5B7EB9410499542E8C5724F5 /* Pods-freshy-freshyTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-freshy-freshyTests.debug.xcconfig"; path = "Target Support Files/Pods-freshy-freshyTests/Pods-freshy-freshyTests.debug.xcconfig"; sourceTree = "<group>"; };
-		720E666AB5EC9927C73C4145 /* Pods_freshy.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_freshy.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = freshy/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-freshy-freshyTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-freshy-freshyTests.release.xcconfig"; path = "Target Support Files/Pods-freshy-freshyTests/Pods-freshy-freshyTests.release.xcconfig"; sourceTree = "<group>"; };
 		B236D943B27EE0B3BE21B508 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = freshy/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		BCC5F9FCBF82EED8BF18947E /* Pods_freshy_freshyTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_freshy_freshyTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		BB798AC2B2389DB9AAAA211B /* libPods-freshy-freshyTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-freshy-freshyTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -92,7 +92,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DAB9514957D7F30B20F847B0 /* Pods_freshy_freshyTests.framework in Frameworks */,
+				4007E38781B61843F327D907 /* libPods-freshy-freshyTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -100,7 +100,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6FD19FDD5D906864CA6DD4A3 /* Pods_freshy.framework in Frameworks */,
+				4567AA63EB663EDB9C3FFC0D /* libPods-freshy.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -171,8 +171,8 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				720E666AB5EC9927C73C4145 /* Pods_freshy.framework */,
-				BCC5F9FCBF82EED8BF18947E /* Pods_freshy_freshyTests.framework */,
+				162B50D33318BB6B736EBB88 /* libPods-freshy.a */,
+				BB798AC2B2389DB9AAAA211B /* libPods-freshy-freshyTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -482,7 +482,6 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-freshy-freshyTests/Pods-freshy-freshyTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
