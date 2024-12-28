@@ -17,7 +17,10 @@ import {useDispatch, useSelector} from 'react-redux';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {updateExistedInventoryItem} from '../../../utils/api';
+import {
+  removeInventoryItem,
+  updateExistedInventoryItem,
+} from '../../../utils/api';
 import {FoodDetailsProps} from '../../../utils/interface';
 import {
   calculateDaysDifference,
@@ -109,6 +112,22 @@ const FoodDetailsEditModal: React.FC<{
     },
   });
 
+  const removeFoodItem = useMutation({
+    mutationFn: async (postUpdatePayload: any) => {
+      const {userId} = postUpdatePayload;
+      return await removeInventoryItem(userId, selectedFoodDetails.foodID);
+    },
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey: ['userInventory']});
+      dispatch(
+        updateModalConstant({
+          modalConstant: '',
+        }),
+      );
+    },
+  });
+
   const handleSave = () => {
     if (isNewItem) {
       addFoodToInventory(true, [formData]);
@@ -148,11 +167,16 @@ const FoodDetailsEditModal: React.FC<{
           <Center>
             <HStack space="lg" className="item-center justify-center">
               <View className="items-center justify-center">
-                <TouchableOpacity className="w-12 h-12 bg-white border border-gray-300 flex justify-center items-center rounded-md">
+                <TouchableOpacity
+                  className="w-12 h-12 bg-white border border-gray-300 flex justify-center items-center rounded-md"
+                  onPress={() => {
+                    // console.log(`remove ${selectedFoodDetails.foodID}`);
+                    removeFoodItem.mutate({userId: currentUserUUID});
+                  }}>
                   <Icon as={AntDesign} name="delete" size="lg" color="black" />
                 </TouchableOpacity>
                 <Text className="text-sm font-normal text-gray-500 mt-1">
-                  Add to List
+                  Remove
                 </Text>
               </View>
               <Image
@@ -202,8 +226,7 @@ const FoodDetailsEditModal: React.FC<{
               </TouchableOpacity>
             </View>
             <Text className="text-green-500">
-              {daysLeft}
-              {/* {transformDays(daysLeft)} days left */}
+              {transformDays(daysLeft)} days left
             </Text>
           </Center>
           <OptionSelector

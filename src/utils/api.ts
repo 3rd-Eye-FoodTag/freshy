@@ -274,6 +274,35 @@ export const updateExistedInventoryItem = async (
   }
 };
 
+export const removeInventoryItem = async (
+  currentUid: string,
+  foodID: string,
+) => {
+  try {
+    const docRef = doc(db, 'Inventory', currentUid);
+    const docSnap = await getDoc(docRef);
+
+    if (!docSnap.exists()) {
+      throw new Error('Inventory does not exist');
+    }
+
+    const result = docSnap.data();
+    const collection = result.data;
+
+    const updatedCollection = collection.filter(item => item.foodID !== foodID);
+
+    const inventoryUpdate = doc(db, 'Inventory', currentUid);
+
+    await updateDoc(inventoryUpdate, {
+      data: updatedCollection,
+    });
+
+    console.log(`Item with foodID ${foodID} has been removed successfully.`);
+  } catch (error) {
+    console.error('Error removing item:', error);
+  }
+};
+
 export const postMockData = async (data: any) => {
   try {
     console.log({data});
@@ -289,12 +318,14 @@ export const postMockData = async (data: any) => {
   }
 };
 
+const foodWiki = 'FoodWiki2';
+
 export const addFoodItemsToFirebase = async (items: any[]) => {
   try {
     // Create an array of promises to add each item
     console.log('adding to wiki');
     const addItemPromises = items.map(async item => {
-      const docRef = await addDoc(collection(db, 'FoodWiki2'), item);
+      const docRef = await addDoc(collection(db, foodWiki), item);
       // console.log('Document added with ID:', docRef.id);
       return {id: docRef.id, ...item};
     });
@@ -304,8 +335,8 @@ export const addFoodItemsToFirebase = async (items: any[]) => {
     console.log('All items added successfully:', addedItems);
     return addedItems; // Return all added items with their IDs
   } catch (error) {
-    console.error('Error adding items to FoodWiki2: ', error);
-    throw new Error('Failed to add items to FoodWiki2');
+    console.error(`Error adding items to Foo${foodWiki}: `, error);
+    throw new Error(`Failed to add items to ${foodWiki}`);
   }
 };
 
