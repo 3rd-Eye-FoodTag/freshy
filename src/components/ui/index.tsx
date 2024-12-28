@@ -9,6 +9,7 @@ import {
 import {Center} from '@/components/ui/center';
 import {FormControl} from '@/components/ui/form-control';
 import {Input, InputField, InputIcon, InputSlot} from '@/components/ui/input';
+import {Image} from '@/components/ui/image';
 import {Icon} from '@/components/ui/icon';
 import {Heading} from '@/components/ui/heading';
 import {Link, LinkText} from '@/components/ui/link';
@@ -42,6 +43,7 @@ export {
   InputIcon,
   InputSlot,
   Icon,
+  Image,
   Heading,
   HStack,
   Link,

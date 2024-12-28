@@ -35,6 +35,7 @@ import {
   updateSelectedFoodDetails,
 } from '../../redux/reducer/storageReducer';
 import {modalConstants} from '../../components/Modal/constants';
+import {sortFoodStartFromSpoil} from '@/utils/utils';
 
 const Storage: React.FC = () => {
   const [itemList, setItemList] = useState([]);
@@ -88,24 +89,6 @@ const Storage: React.FC = () => {
     setStoreMethod(selectedOption);
   };
 
-  // const [isRed, setIsRed] = useState(false);
-  // return (
-  //   <SafeAreaView>
-  //     <View className="flex-1 justify-center items-center" />
-  //     <Text
-  //       className={`text-xl font-bold ${
-  //         isRed ? 'text-red-500' : 'text-blue-500'
-  //       }`}>
-  //       Click the Button!
-  //     </Text>
-  //     <Button
-  //       title="Toggle Color"
-  //       onPress={() => setIsRed(!isRed)}
-  //       className="mt-4 bg-gray-800 px-4 py-2 rounded"
-  //     />
-  //   </SafeAreaView>
-  // );
-
   return (
     <SafeAreaView style={styles.screen}>
       <View style={styles.arcContainer}>
@@ -138,16 +121,14 @@ const Storage: React.FC = () => {
       />
       {isSuccess && (
         <FlatList
-          data={filteredData}
+          data={sortFoodStartFromSpoil(filteredData)}
           numColumns={3}
           renderItem={({item}) => (
             <View style={styles.itemContainer}>
               <FoodItem
                 item={item}
                 handleOnClick={() => {
-                  //selectedFood
                   dispatch(updateSelectedFoodDetails(item));
-                  //open foodDetailItem
                   dispatch(
                     updateModalConstant({
                       modalConstant: modalConstants.FOOD_DETAILS_MODAL,

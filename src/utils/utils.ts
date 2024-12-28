@@ -1,4 +1,5 @@
 import {distance} from 'fastest-levenshtein';
+import {FoodDetailsProps} from './interface';
 
 export const formattedDataFromFirebase = data => {
   const list = [];
@@ -157,4 +158,12 @@ export const findSimilarIds = (
       }
     });
   }
+};
+
+export const sortFoodStartFromSpoil = (foodGroup: FoodDetailsProps[]) => {
+  return foodGroup.sort(
+    (a: FoodDetailsProps, b: FoodDetailsProps) =>
+      calculateDaysDifference(a?.expiryDate) -
+      calculateDaysDifference(b?.expiryDate),
+  );
 };
