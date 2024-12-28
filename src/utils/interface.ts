@@ -24,6 +24,8 @@ export interface FoodDetailsProps {
     freezer?: number;
     room?: number;
   };
+  foodName?: string;
+  imageName?: string;
 }
 
 export interface FoodItem {

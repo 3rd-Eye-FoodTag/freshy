@@ -1,22 +1,26 @@
 import React, {useState, useEffect} from 'react';
-import {StyleSheet, TouchableOpacity, View} from 'react-native';
+import {TouchableOpacity, View, ScrollView} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {
-  ScrollView,
   VStack,
   HStack,
   Text,
   Button,
+  ButtonText,
   Image,
   Icon,
   Center,
   Input,
-} from 'native-base';
+  InputField,
+} from '@/components/ui';
 import {useDispatch, useSelector} from 'react-redux';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {updateExistedInventoryItem} from '../../../utils/api';
+import {
+  removeInventoryItem,
+  updateExistedInventoryItem,
+} from '../../../utils/api';
 import {FoodDetailsProps} from '../../../utils/interface';
 import {
   calculateDaysDifference,
@@ -29,7 +33,6 @@ import {currentUser} from '../../../redux/reducer';
 import {defaultFoodImage, getImageURL} from '../../../utils/constants';
 import {
   selectedFoodDetailsSelector,
-  updateConfirmationList,
   updateModalConstant,
 } from '../../../redux/reducer/storageReducer';
 import {useMutation, useQueryClient} from '@tanstack/react-query';
@@ -109,16 +112,25 @@ const FoodDetailsEditModal: React.FC<{
     },
   });
 
+  const removeFoodItem = useMutation({
+    mutationFn: async (postUpdatePayload: any) => {
+      const {userId} = postUpdatePayload;
+      return await removeInventoryItem(userId, selectedFoodDetails.foodID);
+    },
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey: ['userInventory']});
+      dispatch(
+        updateModalConstant({
+          modalConstant: '',
+        }),
+      );
+    },
+  });
+
   const handleSave = () => {
     if (isNewItem) {
-      // dispatch(updateConfirmationList(formData));
       addFoodToInventory(true, [formData]);
-      // dispatch(
-      //   updateModalConstant({
-      //     modalConstant: 'MANNUAL_INPUT_MODAL',
-      //     modalProps: {showConfirmation: true},
-      //   }),
-      // );
     } else {
       updateExistedInventoryItem(currentUserUUID, formData);
       updateFoodItem.mutate({userId: currentUserUUID, data: formData});
@@ -148,24 +160,24 @@ const FoodDetailsEditModal: React.FC<{
     'Custom',
   ];
 
-  // console.log({formData});
-
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <VStack space={4} px={4} mt={4}>
+    <SafeAreaView className="flex-1 bg-white-700">
+      <ScrollView className="pb-20">
+        <VStack space="lg" className="px-4 mt-4">
           <Center>
-            <HStack space={4} alignItems="center" justifyContent="center">
-              <View style={styles.leftIcon}>
-                <TouchableOpacity style={styles.iconLeftButton}>
-                  <Icon
-                    as={AntDesign}
-                    name="shoppingcart"
-                    size="sm"
-                    color="black"
-                  />
+            <HStack space="lg" className="item-center justify-center">
+              <View className="items-center justify-center">
+                <TouchableOpacity
+                  className="w-12 h-12 bg-white border border-gray-300 flex justify-center items-center rounded-md"
+                  onPress={() => {
+                    // console.log(`remove ${selectedFoodDetails.foodID}`);
+                    removeFoodItem.mutate({userId: currentUserUUID});
+                  }}>
+                  <Icon as={AntDesign} name="delete" size="lg" color="black" />
                 </TouchableOpacity>
-                <Text style={styles.iconText}>Add to List</Text>
+                <Text className="text-sm font-normal text-gray-500 mt-1">
+                  Remove
+                </Text>
               </View>
               <Image
                 source={{
@@ -174,41 +186,34 @@ const FoodDetailsEditModal: React.FC<{
                     defaultFoodImage,
                 }}
                 alt={formData?.foodName}
-                defaultSource={{uri: defaultFoodImage}}
-                size="xl"
-                borderRadius={100}
-                mb={4}
+                className="w-48 h-48 m-4 rounded-full"
               />
-              <View style={styles.rightIcon}>
-                <TouchableOpacity style={styles.iconRightButton}>
-                  <Icon
-                    as={MaterialCommunityIcons}
-                    name="pac-man"
-                    size="sm"
-                    color="black"
-                  />
-                </TouchableOpacity>
-                <Text style={styles.iconText}>Eat First</Text>
-              </View>
             </HStack>
-            <View style={styles.foodNameRow}>
+            <View className="flex flex-row justify-center items-center">
               {!nameField ? (
-                <Text fontSize="2xl" fontWeight="bold">
+                <Text className="text-2xl font-bold">
                   {formData?.foodName || 'New Food'}
                 </Text>
               ) : (
                 <Input
-                  variant="underlined"
-                  placeholder="Type Food Name"
-                  value={formData.foodName}
-                  onChangeText={text => {
-                    handleInputChange('foodName', text); // Update `formData.foodName`
-                  }}
-                  size="2xl"
-                  w="30%"
-                />
+                  className="w-1/2"
+                  variant="rounded"
+                  isDisabled={false}
+                  isInvalid={false}
+                  isReadOnly={false}>
+                  <InputField
+                    placeholder="Type Food Name"
+                    value={formData.foodName}
+                    onChangeText={text => {
+                      handleInputChange('foodName', text);
+                    }}
+                    size="xl"
+                    className="text-2xl font-bold"
+                  />
+                </Input>
               )}
               <TouchableOpacity
+                className="ml-4"
                 onPress={() => {
                   setNameField(!nameField);
                 }}>
@@ -220,16 +225,9 @@ const FoodDetailsEditModal: React.FC<{
                 />
               </TouchableOpacity>
             </View>
-
-            {/* <View style={styles.progressBarContainer}>
-              <View
-                style={[
-                  styles.progressBar,
-                  {width: `${Math.max((daysLeft / 14) * 100, 0)}%`},
-                ]}
-              />
-            </View> */}
-            <Text color="green.500">{transformDays(daysLeft)} left</Text>
+            <Text className="text-green-500">
+              {transformDays(daysLeft)} days left
+            </Text>
           </Center>
           <OptionSelector
             options={['Fridge', 'Freezer', 'Pantry']}
@@ -258,16 +256,6 @@ const FoodDetailsEditModal: React.FC<{
             reset={reset}
             defaultOption={Number(predictedFreshDurations[storeMethod])}
           />
-          {/* <OptionSelector
-            label="Reminder Date"
-            value={formData?.reminder}
-            options={[2, 3, 7, 30, 60, 180]}
-            onSelectOption={selectedOption => {
-              setReset(false);
-            }}
-            isEditMode={true}
-            reset={reset}
-          /> */}
           <OptionSelector
             type="dropdown"
             label="Category"
@@ -290,136 +278,52 @@ const FoodDetailsEditModal: React.FC<{
               setDisableButton(false);
               handleInputChange('storageTip', value);
             }}
-            defaultOption={foodDetails.storageTip}
+            defaultOption={foodDetails?.storageTip}
           />
-          <Text style={styles.recordDate}>
+          <Text className="mt-5 text-gray-400 text-base font-normal self-start ml-4 mb-5">
             Recorded on {convertTimeStringToDate(formData?.createdAt)}
           </Text>
-          <Text style={styles.recordDate}>
+          <Text className="mt-5 text-gray-400 text-base font-normal self-start ml-4 mb-5">
             {formData.isFoodFromWiki
-              ? 'Food is in our FoodWIki'
-              : 'First time to see this food in our wiki'}
+              ? 'Food is in our FoodWiki'
+              : 'First time seeing this food in our wiki'}
           </Text>
         </VStack>
       </ScrollView>
-      <View style={styles.bottomBar}>
-        <HStack
-          justifyContent="space-between"
-          alignItems="center"
-          px={4}
-          py={4}
-          borderTopWidth={1}
-          borderColor="coolGray.200">
-          <HStack space={3} alignItems="center">
+      <View className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-300 px-4 py-4">
+        <HStack className="item-center justify-between">
+          <HStack space="lg" className="item-center">
             <Button
               disabled={formData?.quantity === 0}
               onPress={() => {
                 setDisableButton(false);
                 handleInputChange('quantity', formData?.quantity - 1);
-              }}>
-              -
+              }}
+              className="bg-orange-300 w-12 h-12 rounded-md">
+              <ButtonText>-</ButtonText>
             </Button>
-            <Text fontSize="lg">{formData?.quantity}</Text>
+            <Text className="text-xl">{formData?.quantity}</Text>
             <Button
               onPress={() => {
                 setDisableButton(false);
                 handleInputChange('quantity', formData?.quantity + 1);
-              }}>
-              +
+              }}
+              className="bg-orange-300 w-12 h-12 rounded-md">
+              <ButtonText>+</ButtonText>
             </Button>
           </HStack>
           <Button
             onPress={handleSave}
-            colorScheme="green"
-            minWidth={150}
-            isDisabled={disableButton || handleDisable}
-            bg={disableButton ? 'gray.400' : '#00A86B'}
-            _disabled={{bg: 'gray.400'}}>
-            Finish
+            className={`min-w-[150px] ${
+              disableButton || handleDisable ? 'bg-gray-400' : 'bg-green-500'
+            }`}
+            isDisabled={disableButton || handleDisable}>
+            <ButtonText>Finish</ButtonText>
           </Button>
         </HStack>
       </View>
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingBottom: 80, // Make sure there's space for the bottom bar
-  },
-  leftIcon: {
-    marginTop: -20,
-    alignItems: 'center',
-  },
-  rightIcon: {
-    marginTop: -20,
-    alignItems: 'center',
-  },
-  iconLeftButton: {
-    width: 55,
-    height: 40,
-    backgroundColor: 'rgb(255, 255, 255)',
-    borderWidth: 1,
-    borderColor: 'lightgray',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 5,
-  },
-  iconRightButton: {
-    width: 55,
-    height: 40,
-    backgroundColor: 'white',
-    borderWidth: 1,
-    borderColor: 'lightgray',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 5,
-  },
-  iconText: {
-    fontSize: 17,
-    fontFamily: 'PingFang SC',
-    color: '#666666',
-    marginTop: 5,
-  },
-  foodNameRow: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 10,
-  },
-  progressBarContainer: {
-    marginTop: 15,
-    marginBottom: 15,
-    width: 350,
-    height: 6,
-    backgroundColor: 'lightgrey',
-    overflow: 'hidden',
-  },
-  progressBar: {
-    height: 6,
-    backgroundColor: 'rgb(81, 179, 125)',
-  },
-  recordDate: {
-    marginTop: 20,
-    color: '#999',
-    fontFamily: 'PingFang SC',
-    fontSize: 17,
-    alignSelf: 'flex-start',
-    marginLeft: 15,
-    marginBottom: 20,
-  },
-  bottomBar: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: 'white',
-    borderTopWidth: 1,
-    borderColor: 'lightgray',
-  },
-});
 
 export default FoodDetailsEditModal;
