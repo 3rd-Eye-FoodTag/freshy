@@ -1,6 +1,6 @@
 // CustomTabBar.tsx
 import React, {useState} from 'react';
-import {View, TouchableOpacity, Text, StyleSheet} from 'react-native';
+import {View, TouchableOpacity, Text} from 'react-native';
 import {BottomTabBarProps} from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/FontAwesome'; // Import FontAwesome icons
 import CenterMenu from '../../../components/CenterMenu';
@@ -38,7 +38,7 @@ const CustomTabBar: React.FC<BottomTabBarProps> = props => {
   };
 
   return (
-    <View style={styles.tabBarContainer}>
+    <View className="flex-row h-15 bg-white border-t border-gray-300 items-center justify-around relative">
       {props.state.routes.map((route, index) => {
         const isFocused = props.state.index === index;
 
@@ -51,7 +51,7 @@ const CustomTabBar: React.FC<BottomTabBarProps> = props => {
               accessibilityRole="button"
               accessibilityStates={isFocused ? ['selected'] : []}
               onPress={() => props.navigation.navigate(route.name)}
-              style={styles.tabButton}
+              className="flex-1 items-center py-2"
             />
           );
         }
@@ -62,21 +62,23 @@ const CustomTabBar: React.FC<BottomTabBarProps> = props => {
             accessibilityRole="button"
             accessibilityStates={isFocused ? ['selected'] : []}
             onPress={() => props.navigation.navigate(route.name)}
-            style={styles.tabButton}>
+            className="flex-1 items-center py-2">
             {iconFunc(iconName, isFocused)}
-            <Text style={{color: isFocused ? '#673ab7' : '#222'}}>
+            <Text className={isFocused ? 'text-purple-700' : 'text-gray-800'}>
               {route.name}
             </Text>
           </TouchableOpacity>
         );
       })}
 
-      <TouchableOpacity style={styles.customButton} onPress={toggleMenu}>
+      <TouchableOpacity
+        className="absolute bottom-2 right-3 bg-[#00A86B] rounded-full w-24 h-24 justify-center items-center z-10"
+        onPress={toggleMenu}>
         <MaterialCommunityIcons
           name="plus-minus-variant"
-          size={32}
+          size={40}
           color="white"
-          style={styles.iconCenter} // Ensures the icon is perfectly centered
+          className="flex-1 top-1/4"
         />
         <CenterMenu
           isMenuVisible={isMenuVisible}
@@ -86,44 +88,5 @@ const CustomTabBar: React.FC<BottomTabBarProps> = props => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  tabBarContainer: {
-    flexDirection: 'row',
-    height: 60,
-    backgroundColor: '#fff',
-    borderTopWidth: 1,
-    borderTopColor: '#ddd',
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    position: 'relative',
-  },
-  tabButton: {
-    flex: 1,
-    alignItems: 'center',
-    paddingVertical: 10,
-  },
-  customButton: {
-    position: 'absolute',
-    bottom: 10,
-    backgroundColor: '#4CAF50',
-    borderRadius: 50,
-    width: 70,
-    height: 70,
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 10,
-    left: '50%',
-    transform: [{translateX: -35}],
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
-    elevation: 5,
-  },
-  iconCenter: {
-    top: 17,
-  },
-});
 
 export default CustomTabBar;

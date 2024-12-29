@@ -160,10 +160,21 @@ export const findSimilarIds = (
   }
 };
 
-export const sortFoodStartFromSpoil = (foodGroup: FoodDetailsProps[]) => {
-  return foodGroup.sort(
-    (a: FoodDetailsProps, b: FoodDetailsProps) =>
-      calculateDaysDifference(a?.expiryDate) -
-      calculateDaysDifference(b?.expiryDate),
-  );
+export const sortFoodStartFromSpoil = (
+  foodGroup: FoodDetailsProps[],
+  order?: number,
+) => {
+  if (order < 0) {
+    return foodGroup.sort(
+      (a: FoodDetailsProps, b: FoodDetailsProps) =>
+        calculateDaysDifference(b?.expiryDate) -
+        calculateDaysDifference(a?.expiryDate),
+    );
+  } else {
+    return foodGroup.sort(
+      (a: FoodDetailsProps, b: FoodDetailsProps) =>
+        calculateDaysDifference(a?.expiryDate) -
+        calculateDaysDifference(b?.expiryDate),
+    );
+  }
 };

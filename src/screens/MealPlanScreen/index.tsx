@@ -7,6 +7,7 @@ import {useQuery} from '@tanstack/react-query';
 import {useSelector} from 'react-redux';
 import FoodItem from '@/components/FoodItem';
 import {currentUser} from '@/redux/reducer';
+import {sortFoodStartFromSpoil} from '@/utils/utils';
 
 interface FoodItem {
   name: string;
@@ -21,14 +22,19 @@ interface Section {
 const initialData: Section[] = [
   {category: 'Dessert'},
   {category: 'Carbs'},
+  {category: 'Dessert'},
   {category: 'Protein'},
+  {category: 'Fruit'},
   {category: 'Fruit'},
   {category: 'Fruits'},
 ];
 
-const SectionComponent: React.FC<{section: Section}> = ({section}) => {
+const SectionComponent: React.FC<{section: Section; drag?: () => void}> = ({
+  section,
+  drag,
+}) => {
   const [isScrolling, setIsScrolling] = useState(false);
-  const [foodData, setFoodData] = useState<FoodItem[]>([]);
+  const [foodData, setFoodData] = useState<any>([]);
   const currentUserUUID = useSelector(currentUser);
 
   const {data: userData = []} = useQuery({
@@ -36,19 +42,23 @@ const SectionComponent: React.FC<{section: Section}> = ({section}) => {
   });
 
   useEffect(() => {
-    if (userData) {
-      setFoodData(() =>
-        userData.data.filter(
-          ({category}: {category: string}) => category === section.category,
-        ),
-      );
+    if (userData && userData?.data) {
+      setFoodData(() => {
+        const filteredCollection = userData.data.filter(
+          (item: {category: string}) => item.category === section.category,
+        );
+
+        return sortFoodStartFromSpoil(filteredCollection, -1);
+      });
     }
   }, [userData, section.category]);
 
   return (
     foodData?.length > 0 && (
       <View className="mb-4 p-4 flex-1">
-        <View className="flex flex-row justify-between items-center">
+        <View
+          className="flex flex-row justify-between items-center"
+          onTouchStart={drag}>
           <Text className="text-lg font-bold text-gray-800">
             {section.category}
           </Text>
@@ -80,9 +90,8 @@ const WhatToEatScreen: React.FC = () => {
     <View
       className={`mb-4 rounded-lg ${
         isActive ? 'bg-gray-200' : 'bg-white'
-      } shadow-md`}
-      onTouchStart={drag}>
-      <SectionComponent section={item} />
+      } shadow-md`}>
+      <SectionComponent section={item} drag={drag} />
     </View>
   );
 

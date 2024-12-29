@@ -66,12 +66,12 @@ const TabLayout = (): React.JSX.Element => {
       }}>
       <Tab.Screen name="Home" component={Storage} />
       <Tab.Screen name="Eats" component={MealPlanScreen} />
+      <Tab.Screen name="Account" component={AccountStackNavigator} />
       <Tab.Screen
         name="Add"
         component={HomeScreen} // Change this to your desired screen
       />
-      <Tab.Screen name="Shopping" component={ShoppingScreen} />
-      <Tab.Screen name="Account" component={AccountStackNavigator} />
+      {/* <Tab.Screen name="Shopping" component={ShoppingScreen} /> */}
     </Tab.Navigator>
   );
 };
