@@ -1,6 +1,12 @@
-import React, { useState } from 'react';
-import { SafeAreaView, View, Text, StyleSheet } from 'react-native';
-import DraggableFlatList, { RenderItemParams } from 'react-native-draggable-flatlist';
+import React, {useEffect, useState} from 'react';
+import {SafeAreaView, View, Text, ScrollView} from 'react-native';
+import DraggableFlatList, {
+  RenderItemParams,
+} from 'react-native-draggable-flatlist';
+import {useQuery} from '@tanstack/react-query';
+import {useSelector} from 'react-redux';
+import FoodItem from '@/components/FoodItem';
+import {currentUser} from '@/redux/reducer';
 
 interface FoodItem {
   name: string;
@@ -8,141 +14,89 @@ interface FoodItem {
 }
 
 interface Section {
-  title: string;
-  data: FoodItem[];
+  category: string;
+  data?: FoodItem[];
 }
 
 const initialData: Section[] = [
-  {
-    title: 'Carbs',
-    data: [
-      { name: 'Bread', daysLeft: 0 },
-      { name: 'Bagel', daysLeft: 1 },
-    ],
-  },
-  {
-    title: 'Protein',
-    data: [
-      { name: 'Egg', daysLeft: 0 },
-      { name: 'Ham', daysLeft: 1 },
-    ],
-  },
-  {
-    title: 'Vegetables & Fruits',
-    data: [
-      { name: 'Lettuce', daysLeft: 1 },
-      { name: 'Strawberry', daysLeft: 2 },
-      { name: 'Blueberry', daysLeft: 3 },
-    ],
-  },
-  {
-    title: 'Drinks',
-    data: [{ name: 'Milk', daysLeft: 0 }],
-  },
+  {category: 'Dessert'},
+  {category: 'Carbs'},
+  {category: 'Protein'},
+  {category: 'Fruit'},
+  {category: 'Fruits'},
 ];
 
-const SectionComponent: React.FC<{ section: Section }> = ({ section }) => {
+const SectionComponent: React.FC<{section: Section}> = ({section}) => {
+  const [isScrolling, setIsScrolling] = useState(false);
+  const [foodData, setFoodData] = useState<FoodItem[]>([]);
+  const currentUserUUID = useSelector(currentUser);
+
+  const {data: userData = []} = useQuery({
+    queryKey: ['userInventory', currentUserUUID],
+  });
+
+  useEffect(() => {
+    if (userData) {
+      setFoodData(() =>
+        userData.data.filter(
+          ({category}: {category: string}) => category === section.category,
+        ),
+      );
+    }
+  }, [userData, section.category]);
+
   return (
-    <View style={styles.sectionContainer}>
-      <Text style={styles.sectionTitle}>{section.title}</Text><Text style={styles.dragHandleText}>≡</Text>
-      <View style={styles.itemsContainer}>
-        {section.data.map((item) => (
-          <View key={item.foodName} style={styles.itemContainer}>
-            <Text style={styles.itemName}>{item.foodName}</Text>
-            <Text style={styles.itemDaysLeft}>in {item.daysLeft} day{item.daysLeft !== 1 ? 's' : ''}</Text>
-          </View>
-        ))}
+    foodData?.length > 0 && (
+      <View className="mb-4 p-4 flex-1">
+        <View className="flex flex-row justify-between items-center">
+          <Text className="text-lg font-bold text-gray-800">
+            {section.category}
+          </Text>
+          <Text className="text-gray-400">≡</Text>
+        </View>
+        <ScrollView
+          horizontal
+          className="mt-2"
+          showsHorizontalScrollIndicator={false}
+          onTouchStart={() => setIsScrolling(true)} // Block DraggableFlatList drag
+          onTouchEnd={() => setIsScrolling(false)} // Re-enable DraggableFlatList drag
+          onScrollEndDrag={() => setIsScrolling(false)} // Extra safeguard
+        >
+          {foodData.map((item, index) => (
+            <View className="flex-1 max-w-1/3 m-1" key={index}>
+              <FoodItem item={item} />
+            </View>
+          ))}
+        </ScrollView>
       </View>
-    </View>
+    )
   );
 };
 
 const WhatToEatScreen: React.FC = () => {
   const [data, setData] = useState(initialData);
 
-  const renderSection = ({ item, drag, isActive }: RenderItemParams<Section>) => {
-    return (
-      <View
-        style={[
-          styles.sectionWrapper,
-          { backgroundColor: isActive ? '#f0f0f0' : '#fff' },
-        ]}
-      >
-        <View
-          style={styles.dragHandle}
-          onTouchStart={drag}
-        >
-          <Text style={styles.dragHandleText}>≡</Text>
-        </View>
-        <SectionComponent section={item} />
-      </View>
-    );
-  };
+  const renderSection = ({item, drag, isActive}: RenderItemParams<Section>) => (
+    <View
+      className={`mb-4 rounded-lg ${
+        isActive ? 'bg-gray-200' : 'bg-white'
+      } shadow-md`}
+      onTouchStart={drag}>
+      <SectionComponent section={item} />
+    </View>
+  );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView className="flex-1 bg-gray-50 p-6 h-full">
       <DraggableFlatList
         data={data}
         renderItem={renderSection}
-        keyExtractor={(item) => item.title}
-        onDragEnd={({ data }) => setData(data)}
+        keyExtractor={(item, index) => `${item.category}-${index}`} // Unique key extractor
+        onDragEnd={({data}) => setData(data)}
+        ListFooterComponent={<View className={'h-screen bg-transparent'} />}
       />
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 10,
-    backgroundColor: '#f9f9f9',
-  },
-  sectionWrapper: {
-    marginBottom: 10,
-    borderRadius: 10,
-    borderColor: '#ddd',
-    borderWidth: 1,
-    overflow: 'hidden',
-  },
-  dragHandle: {
-    padding: 10,
-    backgroundColor: '#e0e0e0',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  dragHandleText: {
-    fontSize: 20,
-    color: '#888',
-  },
-  sectionContainer: {
-    padding: 10,
-    backgroundColor: '#fff',
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    color: '#333',
-  },
-  itemsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-  },
-  itemContainer: {
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    margin: 5,
-    borderRadius: 15,
-    backgroundColor: '#f0f0f0',
-  },
-  itemName: {
-    fontSize: 14,
-    color: '#333',
-  },
-  itemDaysLeft: {
-    fontSize: 12,
-    color: '#888',
-  },
-});
 
 export default WhatToEatScreen;

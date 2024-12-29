@@ -29,6 +29,8 @@ const firebaseUrl = (JQ: string) => {
   return 'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=' + JQ;
 };
 
+const collectionWiki = 'FoodWiki2';
+
 const DATA_BASE_URL = 'https://thirdeyes-37f5d-default-rtdb.firebaseio.com';
 
 type AuthenProps = {
@@ -182,7 +184,7 @@ export const fetchFoodWikFromFirebase = async () => {
   try {
     // Create a query to filter documents where 'type' === 'Fruit'
     const fruitsQuery = query(
-      collection(db, 'FoodWiki2'),
+      collection(db, collectionWiki),
       where('type', '==', 'Fruit'),
     );
 
@@ -200,8 +202,8 @@ export const fetchFoodWikFromFirebase = async () => {
 
     return fruitsData; // Return the filtered result
   } catch (error) {
-    console.error('Error fetching FoodWiki2 data: ', error);
-    throw new Error('Failed to fetch data from FoodWiki2');
+    console.error(`Error fetching ${collectionWiki} data: `, error);
+    throw new Error(`Failed to fetch data from ${collectionWiki}`);
   }
 };
 
@@ -318,14 +320,12 @@ export const postMockData = async (data: any) => {
   }
 };
 
-const foodWiki = 'FoodWiki2';
-
 export const addFoodItemsToFirebase = async (items: any[]) => {
   try {
     // Create an array of promises to add each item
     console.log('adding to wiki');
     const addItemPromises = items.map(async item => {
-      const docRef = await addDoc(collection(db, foodWiki), item);
+      const docRef = await addDoc(collection(db, collectionWiki), item);
       // console.log('Document added with ID:', docRef.id);
       return {id: docRef.id, ...item};
     });
@@ -335,21 +335,19 @@ export const addFoodItemsToFirebase = async (items: any[]) => {
     console.log('All items added successfully:', addedItems);
     return addedItems; // Return all added items with their IDs
   } catch (error) {
-    console.error(`Error adding items to Foo${foodWiki}: `, error);
-    throw new Error(`Failed to add items to ${foodWiki}`);
+    console.error(`Error adding items to Foo${collectionWiki}: `, error);
+    throw new Error(`Failed to add items to ${collectionWiki}`);
   }
 };
 
 //use to updateFoodWiki
 export const addFoodDataToFirestore = async (foodArray: any) => {
-  const collectionName = 'FoodWiki2'; // Collection name
-
   try {
     // Loop through the array and add each item as a document
     console.log('start adding');
     for (const item of foodArray) {
       // Add each document with its foodID as the document ID
-      // await addDoc(collection(db, collectionName), { ...item })
+      // await addDoc(collection(db, collectionWiki), { ...item })
     }
 
     console.log('Data successfully added to Firestore!');

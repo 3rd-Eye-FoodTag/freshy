@@ -16,8 +16,17 @@ interface FoodItemProps {
 
 const FoodItem: React.FC<FoodItemProps> = ({item, handleOnClick}) => {
   const daysLeft = calculateDaysDifference(item?.expiryDate);
-  const badgeColor =
-    daysLeft < 3 ? 'red-500' : daysLeft <= 7 ? 'orange-400' : 'green-500';
+
+  let statusColor = 'bg-green-500';
+  let textColor = 'text-green-500';
+
+  if (daysLeft < 3) {
+    statusColor = 'bg-red-500';
+    textColor = 'text-red-500';
+  } else if (daysLeft <= 7) {
+    statusColor = 'bg-orange-500';
+    textColor = 'text-orange-500';
+  }
 
   return (
     <TouchableOpacity
@@ -33,7 +42,7 @@ const FoodItem: React.FC<FoodItemProps> = ({item, handleOnClick}) => {
           resizeMode="cover"
         />
         <View
-          className={`absolute top-0 right-0 w-6 h-6 rounded-full bg-${badgeColor} flex items-center justify-center`}>
+          className={`absolute top-0 right-0 w-6 h-6 rounded-full ${statusColor} flex items-center justify-center`}>
           <Text className="text-xs text-white font-bold">x{item.quantity}</Text>
         </View>
       </View>
@@ -43,7 +52,7 @@ const FoodItem: React.FC<FoodItemProps> = ({item, handleOnClick}) => {
       <Text className="text-gray-500 text-xs">
         {convertToMMDDYYYY(item?.createdAt)}
       </Text>
-      <Text className={`text-center text-xs text-${badgeColor}`}>
+      <Text className={`text-center text-xs ${textColor}`}>
         {daysLeft < 0 ? 'expired' : `in ${transformDays(daysLeft)}`}
       </Text>
     </TouchableOpacity>
