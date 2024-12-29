@@ -8,7 +8,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 
 const iconMapping: {[key: string]: string} = {
   Home: 'home',
-  Storage: 'archive',
+  Eats: 'pac-man',
   Add: 'plus-circle',
   Shopping: 'shopping-cart',
   Account: 'user',
@@ -19,6 +19,22 @@ const CustomTabBar: React.FC<BottomTabBarProps> = props => {
 
   const toggleMenu = () => {
     setMenuVisible(!isMenuVisible);
+  };
+
+  const iconFunc = (iconName, isFocused) => {
+    if (iconName === 'pac-man') {
+      return (
+        <MaterialCommunityIcons
+          name="pac-man"
+          size={24}
+          color={isFocused ? '#673ab7' : '#222'}
+        />
+      );
+    }
+
+    return (
+      <Icon name={iconName} size={24} color={isFocused ? '#673ab7' : '#222'} />
+    );
   };
 
   return (
@@ -47,11 +63,7 @@ const CustomTabBar: React.FC<BottomTabBarProps> = props => {
             accessibilityStates={isFocused ? ['selected'] : []}
             onPress={() => props.navigation.navigate(route.name)}
             style={styles.tabButton}>
-            <Icon
-              name={iconName}
-              size={24}
-              color={isFocused ? '#673ab7' : '#222'}
-            />
+            {iconFunc(iconName, isFocused)}
             <Text style={{color: isFocused ? '#673ab7' : '#222'}}>
               {route.name}
             </Text>
