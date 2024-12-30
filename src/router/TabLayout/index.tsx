@@ -65,12 +65,13 @@ const TabLayout = (): React.JSX.Element => {
         tabBarActiveTintColor: '#00B578',
       }}>
       <Tab.Screen name="Home" component={Storage} />
-      <Tab.Screen name="Eats" component={MealPlanScreen} />
-      <Tab.Screen name="Account" component={AccountStackNavigator} />
+      {/* <Tab.Screen name="Eats" component={MealPlanScreen} /> */}
       <Tab.Screen
         name="Add"
-        component={HomeScreen} // Change this to your desired screen
+        component={Storage} // Change this to your desired screen
       />
+      <Tab.Screen name="Account" component={AccountStackNavigator} />
+
       {/* <Tab.Screen name="Shopping" component={ShoppingScreen} /> */}
     </Tab.Navigator>
   );

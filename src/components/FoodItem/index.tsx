@@ -118,7 +118,7 @@ const FoodItem: React.FC<FoodItemProps> = ({
         ],
       }}>
       <TouchableOpacity
-        className="flex-1 bg-gray-100 rounded-lg p-3 items-center justify-between h-42"
+        className="bg-gray-100 rounded-lg p-3 items-center justify-between h-42"
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
         onBlur={() => console.log('hello')}

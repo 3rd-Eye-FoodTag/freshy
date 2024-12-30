@@ -29,7 +29,7 @@ const firebaseUrl = (JQ: string) => {
   return 'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=' + JQ;
 };
 
-const collectionWiki = 'FoodWiki2';
+const collectionWiki = 'FoodWiki3';
 
 const DATA_BASE_URL = 'https://thirdeyes-37f5d-default-rtdb.firebaseio.com';
 
@@ -185,7 +185,7 @@ export const fetchFoodWikFromFirebase = async () => {
     // Create a query to filter documents where 'type' === 'Fruit'
     const fruitsQuery = query(
       collection(db, collectionWiki),
-      where('type', '==', 'Fruit'),
+      // where('type', '==', 'Fruit'),
     );
 
     // Fetch the filtered documents

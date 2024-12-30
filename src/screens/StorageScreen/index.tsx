@@ -15,6 +15,8 @@ import {currentUser} from '../../redux/reducer';
 import {
   fetchInventoryDataFromeFirebase,
   fetchFoodWikFromFirebase,
+  addFoodDataToFirestore,
+  addFoodItemsToFirebase,
 } from '../../utils/api';
 import {useQuery} from '@tanstack/react-query';
 import SearchBar from '../../components/SearchBar';
@@ -25,6 +27,8 @@ import {
 } from '../../redux/reducer/storageReducer';
 import {modalConstants} from '../../components/Modal/constants';
 import {sortFoodStartFromSpoil} from '@/utils/utils';
+import foodWikiData3 from '../../utils/mockData/foodWikiData3.json';
+import {LayoutAnimation} from 'react-native';
 
 const Storage: React.FC = () => {
   const [itemList, setItemList] = useState([]);
@@ -44,7 +48,7 @@ const Storage: React.FC = () => {
       setHolding(false);
       setShowRemove(true);
       console.log('Held for 2 seconds, triggering action');
-    }, 2000); // Set to 2 seconds
+    }, 1500); // Set to 2 seconds
   };
 
   const handlePressOut = () => {
@@ -55,10 +59,7 @@ const Storage: React.FC = () => {
     setHolding(false);
   };
 
-  const handleOutsidePress = () => {
-    console.log('Clicked outside of FoodItem');
-    setShowRemove(false);
-  };
+  const handleOutsidePress = () => setShowRemove(() => false);
 
   const {data: userData = [], isSuccess} = useQuery({
     queryKey: ['userInventory', currentUserUUID],
@@ -69,6 +70,10 @@ const Storage: React.FC = () => {
     queryKey: ['foodwiki'],
     queryFn: () => fetchFoodWikFromFirebase(),
   });
+
+  useEffect(() => {
+    // addFoodItemsToFirebase(foodWikiData3);
+  }, []);
 
   useEffect(() => {
     if (isSuccess) {
@@ -95,6 +100,11 @@ const Storage: React.FC = () => {
       );
     }
     setStoreMethod(selectedOption);
+  };
+
+  const handleLayout = event => {
+    const {x, y, width, height} = event.nativeEvent.layout;
+    console.log('Layout Info:', {x, y, width, height});
   };
 
   return (
@@ -128,6 +138,7 @@ const Storage: React.FC = () => {
           <FlatList
             data={sortFoodStartFromSpoil(filteredData)}
             numColumns={3}
+            onLayout={handleLayout}
             renderItem={({item}) => (
               <View className="flex-1 max-w-[33.33%] m-1">
                 <FoodItem

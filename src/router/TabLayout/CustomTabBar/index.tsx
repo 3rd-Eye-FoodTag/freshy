@@ -72,7 +72,7 @@ const CustomTabBar: React.FC<BottomTabBarProps> = props => {
       })}
 
       <TouchableOpacity
-        className="absolute bottom-2 right-3 bg-[#00A86B] rounded-full w-24 h-24 justify-center items-center z-10"
+        className="absolute bottom-2 left-1/2 bg-[#00A86B] rounded-full w-28 h-28 justify-center items-center z-10 transform -translate-x-14"
         onPress={toggleMenu}>
         <MaterialCommunityIcons
           name="plus-minus-variant"
