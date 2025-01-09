@@ -39,6 +39,7 @@ import {
 import {Text} from '@/components/ui/text';
 import {VStack} from '@/components/ui/vstack';
 import {HStack} from '@/components/ui/hstack';
+import {Pressable} from '@/components/ui/pressable';
 
 export {
   Actionsheet,
@@ -80,4 +81,5 @@ export {
   SelectItem,
   Text,
   VStack,
+  Pressable,
 };

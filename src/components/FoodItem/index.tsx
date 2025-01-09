@@ -26,7 +26,7 @@ const FoodItem: React.FC<FoodItemProps> = ({
   handlePressOut,
 }) => {
   const daysLeft = calculateDaysDifference(item?.expiryDate);
-  const {mutate: removeFoodItem, isLoading} = useRemoveFoodItem(item.foodID);
+  const {mutate: removeFoodItem} = useRemoveFoodItem(item.foodID);
 
   const rotateAnimation = useRef(new Animated.Value(0)).current;
   const scaleAnimation = useRef(new Animated.Value(1)).current;

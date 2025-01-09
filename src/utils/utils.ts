@@ -160,21 +160,69 @@ export const findSimilarIds = (
   }
 };
 
-export const sortFoodStartFromSpoil = (
-  foodGroup: FoodDetailsProps[],
-  order?: number,
-) => {
+export const sortFoodStartFromSpoil = ({
+  foodGroup = [],
+  order = 0, // Default value for order
+  sortMethod = 'All', // Default value for sortMethod
+  searchFood = '',
+}: {
+  foodGroup: FoodDetailsProps[];
+  order?: number;
+  sortMethod?: string;
+  searchFood?: string;
+}) => {
+  if (searchFood) {
+    const filtered = foodGroup.filter(item =>
+      item.foodName.toLowerCase().includes(searchFood.toLowerCase()),
+    );
+
+    filtered.map(item => console.log(item.foodName));
+
+    return filtered;
+  }
+
   if (order < 0) {
     return foodGroup.sort(
       (a: FoodDetailsProps, b: FoodDetailsProps) =>
         calculateDaysDifference(b?.expiryDate) -
         calculateDaysDifference(a?.expiryDate),
     );
-  } else {
+  } else if (order > 0) {
     return foodGroup.sort(
       (a: FoodDetailsProps, b: FoodDetailsProps) =>
         calculateDaysDifference(a?.expiryDate) -
         calculateDaysDifference(b?.expiryDate),
     );
+  }
+
+  switch (sortMethod) {
+    case 'Expired':
+      return foodGroup.filter(
+        item => calculateDaysDifference(item?.expiryDate) < 1,
+      );
+    case 'Expiring':
+      return foodGroup.filter(
+        item =>
+          calculateDaysDifference(item?.expiryDate) > 0 &&
+          calculateDaysDifference(item?.expiryDate) < 7,
+      );
+    case 'Fresh':
+      return foodGroup.filter(
+        item => calculateDaysDifference(item?.expiryDate) >= 7,
+      );
+    case 'H2L':
+      return foodGroup.sort(
+        (a: FoodDetailsProps, b: FoodDetailsProps) =>
+          calculateDaysDifference(b?.expiryDate) -
+          calculateDaysDifference(a?.expiryDate),
+      );
+    case 'L2H':
+      return foodGroup.sort(
+        (a: FoodDetailsProps, b: FoodDetailsProps) =>
+          calculateDaysDifference(a?.expiryDate) -
+          calculateDaysDifference(b?.expiryDate),
+      );
+    default:
+      return foodGroup;
   }
 };

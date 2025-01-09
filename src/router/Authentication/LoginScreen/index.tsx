@@ -77,7 +77,7 @@ const LoginScreen: React.FC = () => {
               />
               <InputSlot onPress={() => setShowPassword(!showPassword)}>
                 <InputIcon
-                  as={showPassword ? EyeIcon : EyeOffIcon}
+                  as={EyeOffIcon}
                   name={showPassword ? 'visibility' : 'visibility-off'}
                   size={20}
                   color="#6B7280" // CoolGray
