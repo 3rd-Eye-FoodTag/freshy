@@ -22,6 +22,7 @@ import {GluestackUIProvider} from './src/components/ui/gluestack-ui-provider';
 import Stack from './src/router/stack';
 import ModalContainer from './src/components/Modal';
 import './global.css';
+import {requestUserPermission} from './src/config/firebase';
 
 const queryClient = new QueryClient();
 
@@ -30,6 +31,10 @@ const Router = (): React.JSX.Element => {
 
   const dispatch = useDispatch();
   const current = useSelector(currentUser);
+
+  useEffect(() => {
+    requestUserPermission();
+  }, []);
 
   useEffect(() => {
     onAuthStateChanged(auth, user => {
