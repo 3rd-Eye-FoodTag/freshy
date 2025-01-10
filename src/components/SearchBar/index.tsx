@@ -69,7 +69,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
   return (
     <TouchableWithoutFeedback onPress={handleOutsidePress}>
-      <VStack space="md" className="w-full ml-4 flex-1 relative">
+      <VStack space="md" className="w-full flex-1 relative my-2">
         <Input>
           <InputField
             ref={inputRef}
@@ -87,7 +87,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
           <ActionsheetFlatList
             data={filteredData}
             keyExtractor={(item, index) => `${item.foodID}-${index}`}
-            className="absolute top-full left-0 right-0 bg-gray-200 rounded-md shadow-lg z-50 mt-1.5"
+            className="absolute top-10 left-0 right-0 bg-gray-200 rounded-md shadow-lg z-50 mt-1.5"
             renderItem={({item}) => (
               <TouchableOpacity onPress={() => handleSelect(item)}>
                 <Text className="p-2 border-b border-gray-300">

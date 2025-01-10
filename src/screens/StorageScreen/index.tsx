@@ -45,9 +45,10 @@ import {
   SelectItem,
 } from '@/components/ui';
 import {HStack, VStack} from 'native-base';
+import OptionSelector from '@/components/OptionSelector';
 
 const Storage: React.FC = () => {
-  const [inventoryData, setInventoryData] = useState([]);
+  const [inventoryData, setInventoryData] = useState<any>([]);
   const [sortValue, setSortValue] = useState('All');
   const dispatch = useDispatch();
   const currentUserUUID = useSelector(currentUser);
@@ -66,12 +67,12 @@ const Storage: React.FC = () => {
   };
 
   const options = [
-    {label: 'All', value: 'All'},
-    {label: 'Expired', value: 'Expired'},
-    {label: 'Expiring', value: 'Expiring'},
-    {label: 'Fresh', value: 'Fresh'},
-    {label: 'L2H', value: 'L2H'},
-    {label: 'H2L', value: 'H2L'},
+    {label: 'All', value: 'All', type: 'status'},
+    {label: 'L2H', value: 'L2H', type: 'status'},
+    {label: 'H2L', value: 'H2L', type: 'status'},
+    {label: 'Meat', value: 'Meat', type: 'category'},
+    {label: 'Vegetable', value: 'Veg', type: 'category'},
+    {label: 'Beverages', value: 'Beverages', type: 'category'},
   ];
 
   const handlePressOut = () => {
@@ -106,8 +107,6 @@ const Storage: React.FC = () => {
   }, [userData]);
 
   const handleSelectChange = (selectSort: string) => {
-    console.log('handleSelectChange', selectSort);
-
     setInventoryData(() => {
       const {data} = userData;
 
@@ -115,9 +114,6 @@ const Storage: React.FC = () => {
         foodGroup: data,
         sortMethod: selectSort,
       });
-
-      food.map(item => console.log(item.expiryDate, item.foodName));
-
       return [...food];
     });
   };
@@ -135,36 +131,44 @@ const Storage: React.FC = () => {
           </View>
         </View>
         <VStack className="w-full px-4 my-4">
-          <HStack className="w-full z-20">
-            <Select
-              closeOnOverlayClick={true}
-              onValueChange={handleSelectChange}
-              defaultValue={options[0].value}>
-              <SelectTrigger
-                variant="outline"
-                size="md"
-                className="flex justify-center items-center w-20 rounded-lg bg-[#00A86B]">
-                <SelectInput
-                  // value={sortValue}
-                  className="text-center text-white w-full"
+          <VStack className="w-full mb-10 z-20">
+            <HStack className="w-full z-20">
+              <Select
+                closeOnOverlayClick={true}
+                onValueChange={handleSelectChange}
+                defaultValue={options[0].value}>
+                <SelectTrigger
+                  variant="outline"
+                  size="md"
+                  className="flex justify-center items-center w-20 rounded-full bg-[#00A86B]">
+                  <SelectInput className="text-center text-white w-full" />
+                </SelectTrigger>
+                <SelectPortal>
+                  <SelectBackdrop />
+                  <SelectContent>
+                    <SelectDragIndicatorWrapper>
+                      <SelectDragIndicator />
+                    </SelectDragIndicatorWrapper>
+                    {options.map((item, index) => (
+                      <SelectItem
+                        label={item.label}
+                        value={item.value}
+                        key={`sort-option-${index}`}
+                      />
+                    ))}
+                  </SelectContent>
+                </SelectPortal>
+              </Select>
+              <View className="flex-row w-full justify justify-evenly">
+                <ToggleButton
+                  options={['Expired', 'Expiring']}
+                  onSelect={e => {
+                    handleSelectChange(e);
+                  }}
+                  size="auto"
                 />
-              </SelectTrigger>
-              <SelectPortal>
-                <SelectBackdrop />
-                <SelectContent>
-                  <SelectDragIndicatorWrapper>
-                    <SelectDragIndicator />
-                  </SelectDragIndicatorWrapper>
-                  {options.map(item => (
-                    <SelectItem
-                      label={item.label}
-                      value={item.value}
-                      // onPress={() => setSortValue(item.value)}
-                    />
-                  ))}
-                </SelectContent>
-              </SelectPortal>
-            </Select>
+              </View>
+            </HStack>
 
             <SearchBar
               placeholder="Search"
@@ -185,10 +189,10 @@ const Storage: React.FC = () => {
               }}
               onSelect={item => {
                 // Handle item selection
-                console.log('hello');
               }}
             />
-          </HStack>
+          </VStack>
+
           {isSuccess && (
             <FlatList
               data={inventoryData}

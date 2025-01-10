@@ -200,16 +200,19 @@ export const sortFoodStartFromSpoil = ({
       return foodGroup.filter(
         item => calculateDaysDifference(item?.expiryDate) < 1,
       );
+
     case 'Expiring':
       return foodGroup.filter(
         item =>
           calculateDaysDifference(item?.expiryDate) > 0 &&
           calculateDaysDifference(item?.expiryDate) < 7,
       );
-    case 'Fresh':
-      return foodGroup.filter(
-        item => calculateDaysDifference(item?.expiryDate) >= 7,
-      );
+    case 'Meat':
+      return foodGroup.filter(item => item.category === 'Meat');
+    case 'Veg':
+      return foodGroup.filter(item => item.category === 'Veg');
+    case 'Beverages':
+      return foodGroup.filter(item => item.category === 'Beverages');
     case 'H2L':
       return foodGroup.sort(
         (a: FoodDetailsProps, b: FoodDetailsProps) =>
@@ -225,4 +228,24 @@ export const sortFoodStartFromSpoil = ({
     default:
       return foodGroup;
   }
+};
+
+export const daysCollection = [
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+  'Sunday',
+];
+
+export const generateTimeOptions = () => {
+  const times = [];
+  for (let hour = 0; hour < 24; hour++) {
+    const period = hour < 12 ? 'AM' : 'PM';
+    const formattedHour = hour % 12 === 0 ? 12 : hour % 12; // Format 0 as 12
+    times.push(`${formattedHour}:00 ${period}`);
+  }
+  return times;
 };

@@ -42,6 +42,8 @@ const FoodItem: React.FC<FoodItemProps> = ({
     textColor = 'text-orange-500';
   }
 
+  console.log(item.category);
+
   useEffect(() => {
     let wobble;
 
