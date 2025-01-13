@@ -22,6 +22,7 @@ import {GluestackUIProvider} from './src/components/ui/gluestack-ui-provider';
 import Stack from './src/router/stack';
 import ModalContainer from './src/components/Modal';
 import './global.css';
+import PushNotification from 'react-native-push-notification';
 
 const queryClient = new QueryClient();
 
@@ -30,6 +31,18 @@ const Router = (): React.JSX.Element => {
 
   const dispatch = useDispatch();
   const current = useSelector(currentUser);
+
+  useEffect(() => {
+    PushNotification.localNotificationSchedule({
+      channelId: 'default-channel-id', // For Android; ignored by iOS
+      title: 'Scheduled Notification',
+      message: 'This notification was scheduled 10 seconds ago!',
+      date: new Date(Date.now() + 10 * 1000), // 10 seconds from now
+      allowWhileIdle: true, // Ensure it triggers even if the device is idle (Android-specific)
+      repeatType: 'time', // For recurring notifications (optional)
+      repeatTime: 60000, // Repeat every minute (optional)
+    });
+  }, []);
 
   useEffect(() => {
     onAuthStateChanged(auth, user => {

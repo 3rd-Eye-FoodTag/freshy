@@ -36,7 +36,6 @@ import {
   Select,
   SelectTrigger,
   SelectInput,
-  SelectIcon,
   SelectPortal,
   SelectBackdrop,
   SelectContent,
@@ -45,7 +44,7 @@ import {
   SelectItem,
 } from '@/components/ui';
 import {HStack, VStack} from 'native-base';
-import OptionSelector from '@/components/OptionSelector';
+import PushNotification from 'react-native-push-notification';
 
 const Storage: React.FC = () => {
   const [inventoryData, setInventoryData] = useState<any>([]);
@@ -118,6 +117,15 @@ const Storage: React.FC = () => {
     });
   };
 
+  const handleSendNotification = () => {
+    console.log('push handleSendNotification');
+    PushNotification.localNotification({
+      channelId: 'notification-test',
+      title: 'The food is expiring',
+      message: 'There is a expiring food',
+    });
+  };
+
   return (
     <TouchableWithoutFeedback onPress={handleOutsidePress}>
       <SafeAreaView className="flex-1 bg-white">
@@ -132,6 +140,9 @@ const Storage: React.FC = () => {
         </View>
         <VStack className="w-full px-4 my-4">
           <VStack className="w-full mb-10 z-20">
+            <Button onPress={handleSendNotification}>
+              <ButtonText>Send NOtification</ButtonText>
+            </Button>
             <HStack className="w-full z-20">
               <Select
                 closeOnOverlayClick={true}
