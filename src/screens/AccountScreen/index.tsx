@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Box,
   Avatar,
@@ -11,48 +11,47 @@ import {
   ScrollView,
   FlatList,
 } from 'native-base';
-import { StyleSheet, TouchableOpacity } from 'react-native';
-import { signOut } from 'firebase/auth';
-import { auth } from '../../config/firebase';
-import { RootStackParams } from '../../router/constants';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { SafeAreaView } from 'react-native';
-import { useQuery } from '@tanstack/react-query';
-import { useSelector } from 'react-redux';
-import { currentUser, userSelector } from '../../redux/reducer';
-import { fetchUserDataFromFirebase } from '../../utils/api';
+import {StyleSheet, TouchableOpacity} from 'react-native';
+// import {signOut} from 'firebase/auth';
+// import {auth} from '../../config/firebase';
+import {RootStackParams} from '../../router/constants';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {SafeAreaView} from 'react-native';
+import {useQuery} from '@tanstack/react-query';
+import {useSelector} from 'react-redux';
+import {currentUser, userSelector} from '../../redux/reducer';
+import {fetchUserDataFromFirebase} from '../../utils/api';
 
 const profileOptions = [
-  { id: '1', icon: 'person', label: 'Edit User Profile' },
-  { id: '2', icon: 'settings', label: 'Settings' },
-  { id: '3', icon: 'home', label: 'Household Profile' },
-  { id: '4', icon: 'email', label: 'Contact Us' },
-  { id: '5', icon: 'subscriptions', label: 'Subscription' },
-  { id: '6', icon: 'card-giftcard', label: 'Refer, Log And Earn' },
-  { id: '7', icon: 'thumb-up', label: 'Like Us on App Store' },
+  {id: '1', icon: 'person', label: 'Edit User Profile'},
+  {id: '2', icon: 'settings', label: 'Settings'},
+  {id: '3', icon: 'home', label: 'Household Profile'},
+  {id: '4', icon: 'email', label: 'Contact Us'},
+  {id: '5', icon: 'subscriptions', label: 'Subscription'},
+  {id: '6', icon: 'card-giftcard', label: 'Refer, Log And Earn'},
+  {id: '7', icon: 'thumb-up', label: 'Like Us on App Store'},
 ];
 
 type Props = NativeStackScreenProps<RootStackParams, 'WelcomeScreen'>;
 
-const AccountScreen: React.FC<Props> = ({ navigation }) => {
+const AccountScreen: React.FC<Props> = ({navigation}) => {
   const [username, setUsername] = useState<string | null>(null);
   const [avater, setAvater] = useState<string | null>(null);
   const [error, setError] = useState(null);
 
   const currentUserUUID = useSelector(currentUser);
 
-  const { data: userData, isSuccess } = useQuery({
+  const {data: userData, isSuccess} = useQuery({
     queryKey: ['fetchUserInfo', currentUserUUID],
     queryFn: () => fetchUserDataFromFirebase(currentUserUUID),
   });
 
-
   const handleLogout = async () => {
-    try {
-      await signOut(auth);
-    } catch (e: any) {
-      setError(e);
-    }
+    // try {
+    //   await signOut(auth);
+    // } catch (e: any) {
+    //   setError(e);
+    // }
   };
 
   if (error) {
@@ -60,10 +59,10 @@ const AccountScreen: React.FC<Props> = ({ navigation }) => {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
+    <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
       <ScrollView>
         <Box style={styles.container}>
-          <VStack space={4} alignItems="center" mt={8} style={{ zIndex: 1 }}>
+          <VStack space={4} alignItems="center" mt={8} style={{zIndex: 1}}>
             <Avatar size="2xl" source={require('../../assets/avater.png')} />
             <Text fontSize="lg" fontWeight="bold" color="coolGray.800">
               {isSuccess ? userData?.name : 'Loading...'}
@@ -72,7 +71,7 @@ const AccountScreen: React.FC<Props> = ({ navigation }) => {
           <FlatList
             data={profileOptions}
             keyExtractor={item => item.id}
-            renderItem={({ item }) => (
+            renderItem={({item}) => (
               <ProfileOption
                 icon={item.icon}
                 label={item.label}
@@ -80,12 +79,12 @@ const AccountScreen: React.FC<Props> = ({ navigation }) => {
               />
             )}
             ItemSeparatorComponent={() => <Divider />}
-            contentContainerStyle={{ marginTop: 24 }}
+            contentContainerStyle={{marginTop: 24}}
           />
           <Button
             mt={4}
             bg="#00A86B"
-            _text={{ color: 'white' }}
+            _text={{color: 'white'}}
             onPress={handleLogout}>
             Sign Out
           </Button>
@@ -99,7 +98,7 @@ const ProfileOption: React.FC<{
   icon: string;
   label: string;
   navigation: Props['navigation'];
-}> = ({ icon, label, navigation }) => (
+}> = ({icon, label, navigation}) => (
   <TouchableOpacity
     onPress={() => {
       switch (label) {

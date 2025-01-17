@@ -15,46 +15,97 @@ import {NavigationContainer} from '@react-navigation/native';
 import {NativeBaseProvider} from 'native-base';
 
 import {currentUser, setCurrentUser} from './src/redux/reducer';
-import {onAuthStateChanged} from '@firebase/auth';
-import {auth} from './src/config/firebase';
+// import {onAuthStateChanged} from '@firebase/auth';
+// import {auth} from './src/config/firebase';
+import auth from '@react-native-firebase/auth';
 import {GluestackUIProvider} from './src/components/ui/gluestack-ui-provider';
 
 import Stack from './src/router/stack';
 import ModalContainer from './src/components/Modal';
 import './global.css';
 import PushNotification from 'react-native-push-notification';
+import notifee, {AuthorizationStatus} from '@notifee/react-native';
+import messaging from '@react-native-firebase/messaging';
+import {Alert} from 'react-native';
 
 const queryClient = new QueryClient();
 
 const Router = (): React.JSX.Element => {
   const [user, setUser] = useState(null);
+  const [initializing, setInitializing] = useState(true);
 
   const dispatch = useDispatch();
   const current = useSelector(currentUser);
 
-  useEffect(() => {
-    PushNotification.localNotificationSchedule({
-      channelId: 'default-channel-id', // For Android; ignored by iOS
-      title: 'Scheduled Notification',
-      message: 'This notification was scheduled 10 seconds ago!',
-      date: new Date(Date.now() + 10 * 1000), // 10 seconds from now
-      allowWhileIdle: true, // Ensure it triggers even if the device is idle (Android-specific)
-      repeatType: 'time', // For recurring notifications (optional)
-      repeatTime: 60000, // Repeat every minute (optional)
-    });
-  }, []);
+  // useEffect(() => {
+  //   const requestPermission = async () => {
+  //     const settings = await notifee.requestPermission();
+
+  //     if (settings.authorizationStatus >= AuthorizationStatus.AUTHORIZED) {
+  //       console.log('Permission settings', settings);
+  //     } else {
+  //       console.log('User declined permission');
+  //     }
+  //   };
+  //   requestPermission();
+
+  //   const subscribeToTopic = async () => {
+  //     try {
+  //       await messaging().subscribeToTopic('Topic');
+  //       console.log('subscribed to topic: Topic');
+  //     } catch (error) {
+  //       console.error('sub', error);
+  //     }
+  //   };
+
+  //   subscribeToTopic();
+
+  //   const unsubscribeOnMessage = messaging().onMessage(async remoteMessage => {
+  //     console.log('Notification Foreground received', remoteMessage);
+  //     try {
+  //       await notifee.displayNotification({
+  //         title: remoteMessage.notification?.title || 'New Notification',
+  //         body: remoteMessage.notification?.body || 'Checkout this update',
+  //       });
+  //     } catch (error) {
+  //       console.log('Push unsubscribe notification fail', error);
+  //     }
+  //   });
+
+  //   return () => {
+  //     unsubscribeOnMessage();
+  //   };
+  // }, []);
+
+  const handleOnAuthStateChanged = user => {
+    console.log('USER IS STILL LOGGsD IN: ', user);
+    if (user) {
+      setUser(user);
+      dispatch(setCurrentUser(user.uid));
+    } else {
+      dispatch(setCurrentUser(''));
+    }
+  };
 
   useEffect(() => {
-    onAuthStateChanged(auth, user => {
-      // console.log('USER IS STILL LOGGsD IN: ', user);
-      if (user) {
-        setUser(user);
-        dispatch(setCurrentUser(user.uid));
-      } else {
-        dispatch(setCurrentUser(''));
-      }
-    });
-  }, [user]);
+    const subscriber = auth().onAuthStateChanged(handleOnAuthStateChanged);
+    console.log({subscriber});
+    return subscriber; // unsubscribe on unmount
+  }, []);
+
+  console.log({user});
+
+  // useEffect(() => {
+  //   onAuthStateChanged(auth, user => {
+  //     // console.log('USER IS STILL LOGGsD IN: ', user);
+  //     if (user) {
+  //       setUser(user);
+  //       dispatch(setCurrentUser(user.uid));
+  //     } else {
+  //       dispatch(setCurrentUser(''));
+  //     }
+  //   });
+  // }, [user]);
 
   return <Stack />;
 };
