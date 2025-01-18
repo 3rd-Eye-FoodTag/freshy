@@ -1,7 +1,7 @@
 // ComponentWithMutation.tsx
 import {currentUser} from '@/redux/reducer';
 import {updateModalConstant} from '@/redux/reducer/storageReducer';
-import {removeInventoryItem} from '@/utils/api';
+import {removeItemInventoryList} from '@/utils/routes';
 import {useMutation, useQueryClient} from '@tanstack/react-query'; // Assuming react-query is being used
 import {useDispatch, useSelector} from 'react-redux';
 
@@ -12,7 +12,7 @@ export const useRemoveFoodItem = foodID => {
 
   const removeFoodItem = useMutation({
     mutationFn: async () => {
-      return await removeInventoryItem(currentUserUUID, foodID);
+      return await removeItemInventoryList(currentUserUUID, foodID);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({queryKey: ['userInventory']});

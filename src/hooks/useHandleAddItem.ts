@@ -9,13 +9,11 @@ import {
   updateModalConstant,
 } from '../redux/reducer/storageReducer';
 import {useQueryClient, useMutation, useQuery} from '@tanstack/react-query';
-import {
-  postInventoryUpdateToFirebase,
-  addFoodItemsToFirebase,
-} from '../utils/api';
+import {addFoodItemsToFirebase} from '../utils/api';
 import {useDispatch, useSelector} from 'react-redux';
 import {FoodItem, AddFoodRequestBody} from '../utils/interface';
 import {currentUser} from '../redux/reducer';
+import {postInventoryUpdateToFirebase} from '@/utils/routes';
 
 const useHandleAddItem = () => {
   const queryClient = useQueryClient();

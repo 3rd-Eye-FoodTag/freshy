@@ -14,7 +14,6 @@ import {useDispatch, useSelector} from 'react-redux';
 import {currentUser} from '../../redux/reducer';
 import {
   fetchInventoryDataFromeFirebase,
-  fetchFoodWikFromFirebase,
   addFoodDataToFirestore,
   addFoodItemsToFirebase,
 } from '../../utils/api';
@@ -45,6 +44,7 @@ import {
 } from '@/components/ui';
 import {HStack, VStack} from 'native-base';
 import PushNotification from 'react-native-push-notification';
+import {getFoodWikiFromFirebase, getUserInventoryList} from '@/utils/routes';
 
 const Storage: React.FC = () => {
   const [inventoryData, setInventoryData] = useState<any>([]);
@@ -86,12 +86,12 @@ const Storage: React.FC = () => {
 
   const {data: userData = [], isSuccess} = useQuery({
     queryKey: ['userInventory', currentUserUUID],
-    queryFn: () => fetchInventoryDataFromeFirebase(currentUserUUID),
+    queryFn: () => getUserInventoryList(currentUserUUID),
   });
 
   const {data: foodWikiData = []} = useQuery({
     queryKey: ['foodwiki'],
-    queryFn: () => fetchFoodWikFromFirebase(),
+    queryFn: () => getFoodWikiFromFirebase(),
   });
 
   useEffect(() => {
@@ -138,7 +138,7 @@ const Storage: React.FC = () => {
             <TouchableOpacity className="absolute right-5 z-20" />
           </View>
         </View>
-        <VStack className="w-full px-4 my-4">
+        <VStack className="w-full px-4 my-4 pb-10">
           <VStack className="w-full mb-10 z-20">
             <Button onPress={handleSendNotification}>
               <ButtonText>Send NOtification</ButtonText>
@@ -209,7 +209,8 @@ const Storage: React.FC = () => {
               data={inventoryData}
               numColumns={3}
               keyExtractor={item => item.foodID}
-              contentContainerStyle={{marginTop: 10}}
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{marginTop: 10, paddingBottom: 30}}
               renderItem={({item, index}) => (
                 <View
                   className="flex-1 max-w-[33.33%] pb-2"

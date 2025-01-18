@@ -16,10 +16,6 @@ import {
 import {useDispatch, useSelector} from 'react-redux';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import {
-  removeInventoryItem,
-  updateExistedInventoryItem,
-} from '../../../utils/api';
 import {FoodDetailsProps} from '../../../utils/interface';
 import {
   calculateDaysDifference,
@@ -37,6 +33,10 @@ import {
 import {useMutation, useQueryClient} from '@tanstack/react-query';
 import _uniq from 'lodash/uniq';
 import useHandleAddItem from '../../../hooks/useHandleAddItem';
+import {
+  removeItemInventoryList,
+  postUpdateExistingInventory,
+} from '@/utils/routes';
 
 const FoodDetailsEditModal: React.FC<{
   onClose?: () => void;
@@ -103,7 +103,7 @@ const FoodDetailsEditModal: React.FC<{
   const updateFoodItem = useMutation({
     mutationFn: async (postUpdatePayload: any) => {
       const {userId, data} = postUpdatePayload;
-      return await updateExistedInventoryItem(userId, data);
+      return await postUpdateExistingInventory(userId, data);
     },
 
     onSuccess: () => {
@@ -114,7 +114,7 @@ const FoodDetailsEditModal: React.FC<{
   const removeFoodItem = useMutation({
     mutationFn: async (postUpdatePayload: any) => {
       const {userId} = postUpdatePayload;
-      return await removeInventoryItem(userId, selectedFoodDetails.foodID);
+      return await removeItemInventoryList(userId, selectedFoodDetails.foodID);
     },
 
     onSuccess: () => {
@@ -131,7 +131,7 @@ const FoodDetailsEditModal: React.FC<{
     if (isNewItem) {
       addFoodToInventory(true, [formData]);
     } else {
-      updateExistedInventoryItem(currentUserUUID, formData);
+      postUpdateExistingInventory(currentUserUUID, formData);
       updateFoodItem.mutate({userId: currentUserUUID, data: formData});
       dispatch(
         updateModalConstant({
