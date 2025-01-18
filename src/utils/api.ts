@@ -1,24 +1,24 @@
 import axios from 'axios';
-import {
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-} from 'firebase/auth';
+// import {
+//   signInWithEmailAndPassword,
+//   createUserWithEmailAndPassword,
+// } from 'firebase/auth';
 
 import foodWikiData from './mockData/foodWikiData.json';
 import foodInventoryData from './mockData/foodInventoryData.json';
 
-import {auth, db} from '../config/firebase';
-import {
-  getDoc,
-  doc,
-  setDoc,
-  updateDoc,
-  collection,
-  query,
-  where,
-  getDocs,
-  addDoc,
-} from 'firebase/firestore';
+// import {auth, db} from '../config/firebase';
+// import {
+//   getDoc,
+//   doc,
+//   setDoc,
+//   updateDoc,
+//   collection,
+//   query,
+//   where,
+//   getDocs,
+//   addDoc,
+// } from 'firebase/firestore';
 import {FoodDetailsProps} from './interface';
 
 //authetication
@@ -28,6 +28,8 @@ const WEB_API_KEY = JQ;
 const firebaseUrl = (JQ: string) => {
   return 'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=' + JQ;
 };
+
+const collectionWiki = 'FoodWiki3';
 
 const DATA_BASE_URL = 'https://thirdeyes-37f5d-default-rtdb.firebaseio.com';
 
@@ -117,31 +119,30 @@ export const handleAuthentication = async (
   email: string,
   password: string,
 ) => {
-  try {
-    let response;
-    if (mode === 'LogIn') {
-      response = await signInWithEmailAndPassword(auth, email, password);
-    } else {
-      response = await createUserWithEmailAndPassword(auth, email, password);
-    }
-    return response;
-  } catch (e: any) {
-    console.log({e});
-    return e;
-  }
+  // try {
+  //   let response;
+  //   if (mode === 'LogIn') {
+  //     response = await signInWithEmailAndPassword(auth, email, password);
+  //   } else {
+  //     response = await createUserWithEmailAndPassword(auth, email, password);
+  //   }
+  //   return response;
+  // } catch (e: any) {
+  //   console.log({e});
+  //   return e;
+  // }
 };
 
 //User
 export const fetchUserDataFromFirebase = async (currentUid: string) => {
-  try {
-    const docRef = doc(db, 'Users', currentUid);
-    const docSnap = await getDoc(docRef);
-    const userData = docSnap.data();
-
-    return userData;
-  } catch (error) {
-    console.log(error);
-  }
+  // try {
+  //   const docRef = doc(db, 'Users', currentUid);
+  //   const docSnap = await getDoc(docRef);
+  //   const userData = docSnap.data();
+  //   return userData;
+  // } catch (error) {
+  //   console.log(error);
+  // }
 };
 
 // Update user
@@ -156,151 +157,133 @@ export const updateUserInfoFromFirebase = async (
     zipCode: string;
   }>,
 ) => {
-  try {
-    const docRef = doc(db, 'Users', currentUid);
-
-    await updateDoc(docRef, {
-      ...updatedData,
-    });
-
-    console.log('User information updated successfully');
-  } catch (error) {
-    console.log('Error updating user information:', error);
-  }
+  // try {
+  //   const docRef = doc(db, 'Users', currentUid);
+  //   await updateDoc(docRef, {
+  //     ...updatedData,
+  //   });
+  //   console.log('User information updated successfully');
+  // } catch (error) {
+  //   console.log('Error updating user information:', error);
+  // }
 };
 
 export const handleUpdateInventory = async (uid: string, data: any) => {
-  try {
-    await setDoc(doc(db, 'Inventory', uid), {data: data});
-  } catch (e: any) {
-    console.log(e);
-  }
+  // try {
+  //   await setDoc(doc(db, 'Inventory', uid), {data: data});
+  // } catch (e: any) {
+  //   console.log(e);
+  // }
 };
 
 //FoodWiki
 export const fetchFoodWikFromFirebase = async () => {
-  try {
-    // Create a query to filter documents where 'type' === 'Fruit'
-    const fruitsQuery = query(
-      collection(db, 'FoodWiki2'),
-      where('type', '==', 'Fruit'),
-    );
-
-    // Fetch the filtered documents
-    const querySnapshot = await getDocs(fruitsQuery);
-
-    // Map through the snapshot and extract data
-    const fruitsData = querySnapshot.docs.map(doc => {
-      // console.log('Document ID:', doc.id); // Log each document ID
-      return {
-        id: doc.id,
-        ...doc.data(),
-      };
-    });
-
-    return fruitsData; // Return the filtered result
-  } catch (error) {
-    console.error('Error fetching FoodWiki2 data: ', error);
-    throw new Error('Failed to fetch data from FoodWiki2');
-  }
+  // try {
+  //   // Create a query to filter documents where 'type' === 'Fruit'
+  //   const fruitsQuery = query(
+  //     collection(db, collectionWiki),
+  //     // where('type', '==', 'Fruit'),
+  //   );
+  //   // Fetch the filtered documents
+  //   const querySnapshot = await getDocs(fruitsQuery);
+  //   // Map through the snapshot and extract data
+  //   const fruitsData = querySnapshot.docs.map(doc => {
+  //     // console.log('Document ID:', doc.id); // Log each document ID
+  //     return {
+  //       id: doc.id,
+  //       ...doc.data(),
+  //     };
+  //   });
+  //   return fruitsData; // Return the filtered result
+  // } catch (error) {
+  //   console.error(`Error fetching ${collectionWiki} data: `, error);
+  //   throw new Error(`Failed to fetch data from ${collectionWiki}`);
+  // }
 };
 
 //inventory
 export const fetchInventoryDataFromeFirebase = async (currentUid: string) => {
-  try {
-    // return {data: foodInventoryData};
-    console.log('fetching ------', currentUid);
-    const docRef = doc(db, 'Inventory', currentUid);
-
-    const docSnap = await getDoc(docRef);
-
-    if (docSnap.exists()) {
-      // console.log("Document data:", docSnap.data());
-      return docSnap.data();
-    } else {
-      // docSnap.data() will be undefined in this case
-      console.log('No such document!');
-    }
-  } catch (error) {
-    console.log(error);
-  }
+  // try {
+  //   // return {data: foodInventoryData};
+  //   console.log('fetching ------', currentUid);
+  //   const docRef = doc(db, 'Inventory', currentUid);
+  //   const docSnap = await getDoc(docRef);
+  //   if (docSnap.exists()) {
+  //     // console.log("Document data:", docSnap.data());
+  //     return docSnap.data();
+  //   } else {
+  //     // docSnap.data() will be undefined in this case
+  //     console.log('No such document!');
+  //   }
+  // } catch (error) {
+  //   console.log(error);
+  // }
 };
 
 export const postInventoryUpdateToFirebase = async (
   currentUid: string,
   newItem: FoodDetailsProps[],
 ) => {
-  try {
-    console.log('posting food to Inventory-------------');
-    const docRef = doc(db, 'Inventory', currentUid);
-    const docSnap = await getDoc(docRef);
-    const result = docSnap.data();
-    const inventoryupdate = doc(db, 'Inventory', currentUid);
-
-    await updateDoc(inventoryupdate, {
-      data: [...result?.data, ...newItem],
-    });
-    console.log('succuessfully add to inventory');
-  } catch (error) {
-    console.log('cannot add new item normally', error);
-  }
+  // try {
+  //   console.log('posting food to Inventory-------------');
+  //   const docRef = doc(db, 'Inventory', currentUid);
+  //   const docSnap = await getDoc(docRef);
+  //   const result = docSnap.data();
+  //   const inventoryupdate = doc(db, 'Inventory', currentUid);
+  //   await updateDoc(inventoryupdate, {
+  //     data: [...result?.data, ...newItem],
+  //   });
+  //   console.log('succuessfully add to inventory');
+  // } catch (error) {
+  //   console.log('cannot add new item normally', error);
+  // }
 };
 
 export const updateExistedInventoryItem = async (
   currentUid: string,
   newItem: FoodDetailsProps,
 ) => {
-  try {
-    const docRef = doc(db, 'Inventory', currentUid);
-    const docSnap = await getDoc(docRef);
-    const result = docSnap.data();
-    const collection = result.data;
-
-    const updateItem = collection.map(item => {
-      if (item.foodID === newItem.foodID) {
-        return {...newItem};
-      }
-
-      return item;
-    });
-
-    const inventoryupdate = doc(db, 'Inventory', currentUid);
-
-    await updateDoc(inventoryupdate, {
-      data: [...updateItem],
-    });
-  } catch (error) {
-    console.log(error);
-  }
+  // try {
+  //   const docRef = doc(db, 'Inventory', currentUid);
+  //   const docSnap = await getDoc(docRef);
+  //   const result = docSnap.data();
+  //   const collection = result.data;
+  //   const updateItem = collection.map(item => {
+  //     if (item.foodID === newItem.foodID) {
+  //       return {...newItem};
+  //     }
+  //     return item;
+  //   });
+  //   const inventoryupdate = doc(db, 'Inventory', currentUid);
+  //   await updateDoc(inventoryupdate, {
+  //     data: [...updateItem],
+  //   });
+  // } catch (error) {
+  //   console.log(error);
+  // }
 };
 
 export const removeInventoryItem = async (
   currentUid: string,
   foodID: string,
 ) => {
-  try {
-    const docRef = doc(db, 'Inventory', currentUid);
-    const docSnap = await getDoc(docRef);
-
-    if (!docSnap.exists()) {
-      throw new Error('Inventory does not exist');
-    }
-
-    const result = docSnap.data();
-    const collection = result.data;
-
-    const updatedCollection = collection.filter(item => item.foodID !== foodID);
-
-    const inventoryUpdate = doc(db, 'Inventory', currentUid);
-
-    await updateDoc(inventoryUpdate, {
-      data: updatedCollection,
-    });
-
-    console.log(`Item with foodID ${foodID} has been removed successfully.`);
-  } catch (error) {
-    console.error('Error removing item:', error);
-  }
+  // try {
+  //   const docRef = doc(db, 'Inventory', currentUid);
+  //   const docSnap = await getDoc(docRef);
+  //   if (!docSnap.exists()) {
+  //     throw new Error('Inventory does not exist');
+  //   }
+  //   const result = docSnap.data();
+  //   const collection = result.data;
+  //   const updatedCollection = collection.filter(item => item.foodID !== foodID);
+  //   const inventoryUpdate = doc(db, 'Inventory', currentUid);
+  //   await updateDoc(inventoryUpdate, {
+  //     data: updatedCollection,
+  //   });
+  //   console.log(`Item with foodID ${foodID} has been removed successfully.`);
+  // } catch (error) {
+  //   console.error('Error removing item:', error);
+  // }
 };
 
 export const postMockData = async (data: any) => {
@@ -318,38 +301,33 @@ export const postMockData = async (data: any) => {
   }
 };
 
-const foodWiki = 'FoodWiki2';
-
 export const addFoodItemsToFirebase = async (items: any[]) => {
-  try {
-    // Create an array of promises to add each item
-    console.log('adding to wiki');
-    const addItemPromises = items.map(async item => {
-      const docRef = await addDoc(collection(db, foodWiki), item);
-      // console.log('Document added with ID:', docRef.id);
-      return {id: docRef.id, ...item};
-    });
-
-    // Wait for all items to be added
-    const addedItems = await Promise.all(addItemPromises);
-    console.log('All items added successfully:', addedItems);
-    return addedItems; // Return all added items with their IDs
-  } catch (error) {
-    console.error(`Error adding items to Foo${foodWiki}: `, error);
-    throw new Error(`Failed to add items to ${foodWiki}`);
-  }
+  // try {
+  //   // Create an array of promises to add each item
+  //   console.log('adding to wiki');
+  //   const addItemPromises = items.map(async item => {
+  //     const docRef = await addDoc(collection(db, collectionWiki), item);
+  //     // console.log('Document added with ID:', docRef.id);
+  //     return {id: docRef.id, ...item};
+  //   });
+  //   // Wait for all items to be added
+  //   const addedItems = await Promise.all(addItemPromises);
+  //   console.log('All items added successfully:', addedItems);
+  //   return addedItems; // Return all added items with their IDs
+  // } catch (error) {
+  //   console.error(`Error adding items to Foo${collectionWiki}: `, error);
+  //   throw new Error(`Failed to add items to ${collectionWiki}`);
+  // }
 };
 
 //use to updateFoodWiki
 export const addFoodDataToFirestore = async (foodArray: any) => {
-  const collectionName = 'FoodWiki2'; // Collection name
-
   try {
     // Loop through the array and add each item as a document
     console.log('start adding');
     for (const item of foodArray) {
       // Add each document with its foodID as the document ID
-      // await addDoc(collection(db, collectionName), { ...item })
+      // await addDoc(collection(db, collectionWiki), { ...item })
     }
 
     console.log('Data successfully added to Firestore!');

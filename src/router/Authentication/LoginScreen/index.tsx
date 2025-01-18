@@ -16,7 +16,7 @@ import {
   LinkText,
 } from '@/components/ui'; // Adjust imports based on your Gluestack setup
 import {useQueryClient} from '@tanstack/react-query';
-import {signInWithEmailAndPassword} from 'firebase/auth';
+// import {signInWithEmailAndPassword} from 'firebase/auth';
 import {auth} from '../../../config/firebase';
 import EyeIcon from 'react-native-vector-icons/MaterialIcons';
 import EyeOffIcon from 'react-native-vector-icons/MaterialIcons';
@@ -29,13 +29,13 @@ const LoginScreen: React.FC = () => {
   const queryClient = useQueryClient();
 
   const handleLogin = async () => {
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-      queryClient.invalidateQueries(); // Invalidate and refetch the auth query
-    } catch (err: any) {
-      setError(err.message);
-      console.log(err.message);
-    }
+    // try {
+    //   await signInWithEmailAndPassword(auth, email, password);
+    //   queryClient.invalidateQueries(); // Invalidate and refetch the auth query
+    // } catch (err: any) {
+    //   setError(err.message);
+    //   console.log(err.message);
+    // }
   };
 
   return (
@@ -77,7 +77,7 @@ const LoginScreen: React.FC = () => {
               />
               <InputSlot onPress={() => setShowPassword(!showPassword)}>
                 <InputIcon
-                  as={showPassword ? EyeIcon : EyeOffIcon}
+                  as={EyeOffIcon}
                   name={showPassword ? 'visibility' : 'visibility-off'}
                   size={20}
                   color="#6B7280" // CoolGray

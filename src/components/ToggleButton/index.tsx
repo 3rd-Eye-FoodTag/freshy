@@ -1,12 +1,17 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import React, {useState} from 'react';
+import {View, Text, TouchableOpacity} from 'react-native';
 
 interface ToggleButtonProps {
   options: string[];
   onSelect: (selectedOption: string) => void;
+  size?: string;
 }
 
-const ToggleButton: React.FC<ToggleButtonProps> = ({ options, onSelect }) => {
+const ToggleButton: React.FC<ToggleButtonProps> = ({
+  options,
+  onSelect,
+  size,
+}) => {
   const [selectedOption, setSelectedOption] = useState<string>(options[0]);
 
   const handlePress = (option: string) => {
@@ -15,45 +20,19 @@ const ToggleButton: React.FC<ToggleButtonProps> = ({ options, onSelect }) => {
   };
 
   return (
-    <View style={styles.tabs}>
-      {options.map((option) => (
+    <React.Fragment>
+      {options.map(option => (
         <TouchableOpacity
           key={option}
-          style={[styles.tab, selectedOption === option && styles.activeTab]}
-          onPress={() => handlePress(option)}
-        >
-          <Text style={[styles.tabText, selectedOption === option && styles.tabTextActive]}>
-            {option}
-          </Text>
+          className={`px-5 py-2 w-${
+            size ? size : 'auto'
+          } rounded-full bg-[#00A86B]`}
+          onPress={() => handlePress(option)}>
+          <Text className={'text-base font-medium text-white'}>{option}</Text>
         </TouchableOpacity>
       ))}
-    </View>
+    </React.Fragment>
   );
 };
-
-const styles = StyleSheet.create({
-  tabs: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginHorizontal: 20,
-    marginVertical: 10,
-  },
-  tab: {
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 20,
-    backgroundColor: '#e0e0e0',
-  },
-  activeTab: {
-    backgroundColor: '#00A86B',
-  },
-  tabText: {
-    fontSize: 16,
-    color: '#333',
-  },
-  tabTextActive: {
-    color: '#fff',
-  },
-});
 
 export default ToggleButton;

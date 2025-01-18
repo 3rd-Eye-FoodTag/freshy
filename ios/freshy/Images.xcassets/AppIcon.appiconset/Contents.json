@@ -1,55 +1,55 @@
 {
   "images" : [
     {
-      "filename" : "20pt_2x_no_alpha.png",
+      "filename" : "icon-iphonenotification-2x.png",
       "idiom" : "iphone",
       "scale" : "2x",
       "size" : "20x20"
     },
     {
-      "filename" : "20pt_3x_no_alpha.png",
+      "filename" : "icon-iphonenotification-3x.png",
       "idiom" : "iphone",
       "scale" : "3x",
       "size" : "20x20"
     },
     {
-      "filename" : "29pt_2x_no_alpha.png",
+      "filename" : "icon-iphonesettings-2x.png",
       "idiom" : "iphone",
       "scale" : "2x",
       "size" : "29x29"
     },
     {
-      "filename" : "29pt_3x_no_alpha.png",
+      "filename" : "icon-iphonesettings-3x.png",
       "idiom" : "iphone",
       "scale" : "3x",
       "size" : "29x29"
     },
     {
-      "filename" : "40pt_2x_no_alpha.png",
+      "filename" : "icon-iphonespotlight-2x.png",
       "idiom" : "iphone",
       "scale" : "2x",
       "size" : "40x40"
     },
     {
-      "filename" : "40pt_3x_no_alpha.png",
+      "filename" : "icon-iphonespotlight-3x.png",
       "idiom" : "iphone",
       "scale" : "3x",
       "size" : "40x40"
     },
     {
-      "filename" : "60pt_2x_no_alpha.png",
+      "filename" : "icon-iphoneapp-2x.png",
       "idiom" : "iphone",
       "scale" : "2x",
       "size" : "60x60"
     },
     {
-      "filename" : "60pt_3x_no_alpha.png",
+      "filename" : "icon-iphoneapp-3x.png",
       "idiom" : "iphone",
       "scale" : "3x",
       "size" : "60x60"
     },
     {
-      "filename" : "1024pt_1x_no_alpha.png",
+      "filename" : "icon-appstore.png",
       "idiom" : "ios-marketing",
       "scale" : "1x",
       "size" : "1024x1024"

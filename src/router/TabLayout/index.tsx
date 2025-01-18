@@ -1,10 +1,6 @@
 import React, {useEffect} from 'react';
-import {View, TouchableOpacity, Text, StyleSheet} from 'react-native';
-import {
-  createBottomTabNavigator,
-  BottomTabBarButtonProps,
-} from '@react-navigation/bottom-tabs';
-import {Button} from 'native-base';
+import {View, Text, StyleSheet} from 'react-native';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
 import AccountStackNavigator from '../stack/AccountStackNavigator';
 
@@ -13,9 +9,6 @@ import ShoppingScreen from '../../screens/ShoppingScreen';
 
 import MealPlanScreen from '../../screens/MealPlanScreen';
 
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
-import CenterMenu from '../../components/CenterMenu';
 import CustomTabBar from './CustomTabBar';
 import {useNavigation} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
@@ -23,7 +16,7 @@ import {currentUser} from '../../redux/reducer';
 
 type RootTabParamList = {
   Home: undefined;
-  Storage: undefined;
+  Eats: undefined;
   Add: undefined;
   Shopping: undefined;
   Account: undefined;
@@ -39,17 +32,6 @@ function HomeScreen() {
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
 
-const PlusMiniusComponent: React.FC<BottomTabBarButtonProps> = ({
-  children,
-  onPress,
-}) => {
-  return (
-    <TouchableOpacity style={styles.customButtonContainer} onPress={onPress}>
-      <View style={styles.customButton}>{children}</View>
-    </TouchableOpacity>
-  );
-};
-
 const TabLayout = (): React.JSX.Element => {
   const current = useSelector(currentUser);
   const navigation = useNavigation();
@@ -58,6 +40,7 @@ const TabLayout = (): React.JSX.Element => {
       navigation.navigate('WelcomeScreen');
     }
   }, [current]);
+
   return (
     <Tab.Navigator
       tabBar={props => <CustomTabBar {...props} />}
@@ -81,73 +64,15 @@ const TabLayout = (): React.JSX.Element => {
         headerShown: false,
         tabBarActiveTintColor: '#00B578',
       }}>
-      <Tab.Screen
-        name="Home"
-        component={Storage}
-        options={{
-          tabBarIcon: ({color, size}) => (
-            <MaterialCommunityIcons name="home" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Storage"
-        component={MealPlanScreen}
-        options={{
-          tabBarIcon: ({color, size}) => (
-            <MaterialCommunityIcons
-              name="fridge-outline"
-              size={size}
-              color={color}
-            />
-          ),
-        }}
-      />
+      <Tab.Screen name="Home" component={Storage} />
+      {/* <Tab.Screen name="Eats" component={MealPlanScreen} /> */}
       <Tab.Screen
         name="Add"
-        component={HomeScreen} // Change this to your desired screen
-        options={{
-          tabBarIcon: ({color, size}) => (
-            <MaterialCommunityIcons
-              name="plus-minus-variant"
-              size={32}
-              color="white"
-            />
-          ),
-          tabBarButton: props => (
-            <PlusMiniusComponent {...props}>
-              <MaterialCommunityIcons
-                name="plus-minus-variant"
-                size={32}
-                color="white"
-              />
-            </PlusMiniusComponent>
-          ),
-        }}
+        component={Storage} // Change this to your desired screen
       />
-      <Tab.Screen
-        name="Shopping"
-        component={ShoppingScreen}
-        options={{
-          tabBarIcon: ({color, size}) => (
-            <FontAwesome6 name="basket-shopping" size={20} color={color} />
-          ),
-          headerRight: () => <Button> + </Button>,
-        }}
-      />
-      <Tab.Screen
-        name="Account"
-        component={AccountStackNavigator}
-        options={{
-          tabBarIcon: ({color, size}) => (
-            <MaterialCommunityIcons
-              name="account-circle-outline"
-              size={size}
-              color={color}
-            />
-          ),
-        }}
-      />
+      <Tab.Screen name="Account" component={AccountStackNavigator} />
+
+      {/* <Tab.Screen name="Shopping" component={ShoppingScreen} /> */}
     </Tab.Navigator>
   );
 };

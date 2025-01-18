@@ -1,49 +1,88 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   SafeAreaView,
   Text,
-  StyleSheet,
   View,
   TouchableOpacity,
-  TextInput,
   FlatList,
-  Dimensions,
-  Button,
+  Keyboard,
+  Alert,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import FoodItem from '../../components/FoodItem';
-import {FoodDetailsProps} from '../../utils/interface';
-import ToggleButton from '../../components/ToggleButton';
 import {useDispatch, useSelector} from 'react-redux';
 import {currentUser} from '../../redux/reducer';
 import {
-  handleUpdateInventory,
   fetchInventoryDataFromeFirebase,
-  postInventoryUpdateToFirebase,
   fetchFoodWikFromFirebase,
-  postMockData,
   addFoodDataToFirestore,
+  addFoodItemsToFirebase,
 } from '../../utils/api';
 import {useQuery} from '@tanstack/react-query';
-import {dummyFoodData} from '../../utils/constants';
 import SearchBar from '../../components/SearchBar';
-//test
-import foodWikeData from '../../utils/mockData/foodWikiData.json';
-import foodInventoryData from '../../utils/mockData/foodInventoryData.json';
-import ModalContainer from '../../components/Modal';
+import ToggleButton from '../../components/ToggleButton';
 import {
   updateModalConstant,
   updateSelectedFoodDetails,
 } from '../../redux/reducer/storageReducer';
 import {modalConstants} from '../../components/Modal/constants';
 import {sortFoodStartFromSpoil} from '@/utils/utils';
+import foodWikiData3 from '../../utils/mockData/foodWikiData3.json';
+import EyeOffIcon from 'react-native-vector-icons/MaterialIcons';
+import {
+  Button,
+  ButtonIcon,
+  ButtonText,
+  Select,
+  SelectTrigger,
+  SelectInput,
+  SelectPortal,
+  SelectBackdrop,
+  SelectContent,
+  SelectDragIndicatorWrapper,
+  SelectDragIndicator,
+  SelectItem,
+} from '@/components/ui';
+import {HStack, VStack} from 'native-base';
+import PushNotification from 'react-native-push-notification';
 
 const Storage: React.FC = () => {
-  const [itemList, setItemList] = useState([]);
-  const [filteredData, setFilteredData] = useState([]);
-  const [storeMethod, setStoreMethod] = useState('All');
-
+  const [inventoryData, setInventoryData] = useState<any>([]);
+  const [sortValue, setSortValue] = useState('All');
   const dispatch = useDispatch();
   const currentUserUUID = useSelector(currentUser);
+
+  const [holding, setHolding] = useState(false);
+  const holdTimer = useRef<NodeJS.Timeout | null>(null);
+  const [showRemove, setShowRemove] = useState(false);
+
+  const handlePressIn = () => {
+    setHolding(true);
+    holdTimer.current = setTimeout(() => {
+      setHolding(false);
+      setShowRemove(true);
+      console.log('Held for 2 seconds, triggering action');
+    }, 1500); // Set to 2 seconds
+  };
+
+  const options = [
+    {label: 'All', value: 'All', type: 'status'},
+    {label: 'L2H', value: 'L2H', type: 'status'},
+    {label: 'H2L', value: 'H2L', type: 'status'},
+    {label: 'Meat', value: 'Meat', type: 'category'},
+    {label: 'Vegetable', value: 'Veg', type: 'category'},
+    {label: 'Beverages', value: 'Beverages', type: 'category'},
+  ];
+
+  const handlePressOut = () => {
+    if (holdTimer.current) {
+      clearTimeout(holdTimer.current);
+      holdTimer.current = null;
+    }
+    setHolding(false);
+  };
+
+  const handleOutsidePress = () => setShowRemove(() => false);
 
   const {data: userData = [], isSuccess} = useQuery({
     queryKey: ['userInventory', currentUserUUID],
@@ -56,230 +95,152 @@ const Storage: React.FC = () => {
   });
 
   useEffect(() => {
-    // addFoodDataToFirestore(foodWikeData)
-    // console.log({ foodInventoryData })
-    // postInventoryUpdateToFirebase(currentUserUUID, foodInventoryData)
+    // addFoodItemsToFirebase(foodWikiData3);
   }, []);
 
   useEffect(() => {
     if (isSuccess) {
       const {data} = userData;
-      setItemList(() => data);
-      setFilteredData(() => data);
-      if (
-        storeMethod === 'Fridge' ||
-        storeMethod === 'Freezer' ||
-        storeMethod === 'Pantry'
-      ) {
-        setFilteredData(() => [
-          ...data.filter(item => item.storagePlace === storeMethod),
-        ]);
-      }
+      setInventoryData(data);
     }
   }, [userData]);
 
-  const handleSelect = (selectedOption: string) => {
-    if (selectedOption === 'All') {
-      setFilteredData(itemList);
-    } else {
-      setFilteredData(
-        itemList.filter(item => item.storagePlace === selectedOption),
-      );
-    }
-    setStoreMethod(selectedOption);
+  const handleSelectChange = (selectSort: string) => {
+    setInventoryData(() => {
+      const {data} = userData;
+
+      const food = sortFoodStartFromSpoil({
+        foodGroup: data,
+        sortMethod: selectSort,
+      });
+      return [...food];
+    });
+  };
+
+  const handleSendNotification = () => {
+    console.log('push handleSendNotification');
+    PushNotification.localNotification({
+      channelId: 'notification-test',
+      title: 'The food is expiring',
+      message: 'There is a expiring food',
+    });
   };
 
   return (
-    <SafeAreaView style={styles.screen}>
-      <View style={styles.arcContainer}>
-        <View style={styles.arcBackground} />
-        <View style={styles.header}>
-          <Text style={styles.headerText}>My Storage</Text>
-          <TouchableOpacity style={styles.icon} />
+    <TouchableWithoutFeedback onPress={handleOutsidePress}>
+      <SafeAreaView className="flex-1 bg-white">
+        <View className="relative h-24">
+          <View className="absolute w-[2000px] h-[2000px] bg-green-700 -top-[1920px] -left-[790px] rounded-b-full z-10" />
+          <View className="flex-row justify-center items-center py-2 bg-green-700 z-20">
+            <Text className="text-lg font-medium text-white mt-5">
+              My Storage
+            </Text>
+            <TouchableOpacity className="absolute right-5 z-20" />
+          </View>
         </View>
-      </View>
-      <ToggleButton
-        options={['All', 'Fridge', 'Freezer', 'Pantry']}
-        onSelect={handleSelect}
-      />
-      <SearchBar
-        placeholder="Search"
-        data={foodWikiData.map((item, index) => {
-          if (item === undefined) {
-          }
-          return (
-            item && {
-              id: item.foodID || index,
-              name: item.food || 'undefined',
-              ...item,
-            }
-          );
-        })}
-        onSelect={item => {
-          // Handle item selection
-        }}
-      />
-      {isSuccess && (
-        <FlatList
-          data={sortFoodStartFromSpoil(filteredData)}
-          numColumns={3}
-          renderItem={({item}) => (
-            <View style={styles.itemContainer}>
-              <FoodItem
-                item={item}
-                handleOnClick={() => {
-                  dispatch(updateSelectedFoodDetails(item));
-                  dispatch(
-                    updateModalConstant({
-                      modalConstant: modalConstants.FOOD_DETAILS_MODAL,
-                      modalProps: {
-                        foodDetails: item,
-                      },
-                    }),
-                  );
-                }}
-              />
-            </View>
+        <VStack className="w-full px-4 my-4">
+          <VStack className="w-full mb-10 z-20">
+            <Button onPress={handleSendNotification}>
+              <ButtonText>Send NOtification</ButtonText>
+            </Button>
+            <HStack className="w-full z-20">
+              <Select
+                closeOnOverlayClick={true}
+                onValueChange={handleSelectChange}
+                defaultValue={options[0].value}>
+                <SelectTrigger
+                  variant="outline"
+                  size="md"
+                  className="flex justify-center items-center w-20 rounded-full bg-[#00A86B]">
+                  <SelectInput className="text-center text-white w-full" />
+                </SelectTrigger>
+                <SelectPortal>
+                  <SelectBackdrop />
+                  <SelectContent>
+                    <SelectDragIndicatorWrapper>
+                      <SelectDragIndicator />
+                    </SelectDragIndicatorWrapper>
+                    {options.map((item, index) => (
+                      <SelectItem
+                        label={item.label}
+                        value={item.value}
+                        key={`sort-option-${index}`}
+                      />
+                    ))}
+                  </SelectContent>
+                </SelectPortal>
+              </Select>
+              <View className="flex-row w-full justify justify-evenly">
+                <ToggleButton
+                  options={['Expired', 'Expiring']}
+                  onSelect={e => {
+                    handleSelectChange(e);
+                  }}
+                  size="auto"
+                />
+              </View>
+            </HStack>
+
+            <SearchBar
+              placeholder="Search"
+              className="flex-1"
+              data={inventoryData.map((item, index) => ({
+                id: item.foodID || index,
+                name: item.food || 'undefined',
+                ...item,
+              }))}
+              onTextChange={searchFood => {
+                const {data} = userData;
+                const searchFoodList = sortFoodStartFromSpoil({
+                  foodGroup: data,
+                  searchFood: searchFood,
+                });
+
+                setInventoryData(searchFoodList);
+              }}
+              onSelect={item => {
+                // Handle item selection
+              }}
+            />
+          </VStack>
+
+          {isSuccess && (
+            <FlatList
+              data={inventoryData}
+              numColumns={3}
+              keyExtractor={item => item.foodID}
+              contentContainerStyle={{marginTop: 10}}
+              renderItem={({item, index}) => (
+                <View
+                  className="flex-1 max-w-[33.33%] pb-2"
+                  style={index % 3 !== 2 ? {marginRight: 10} : {}}>
+                  <FoodItem
+                    item={item}
+                    handlePressIn={handlePressIn}
+                    handlePressOut={handlePressOut}
+                    onHoldSet={showRemove}
+                    handleOnClick={() => {
+                      if (!showRemove) {
+                        dispatch(updateSelectedFoodDetails(item));
+                        dispatch(
+                          updateModalConstant({
+                            modalConstant: modalConstants.FOOD_DETAILS_MODAL,
+                            modalProps: {
+                              foodDetails: item,
+                            },
+                          }),
+                        );
+                      }
+                    }}
+                  />
+                </View>
+              )}
+            />
           )}
-          keyExtractor={item => item.foodID}
-          contentContainerStyle={styles.itemsContainer}
-        />
-      )}
-    </SafeAreaView>
+        </VStack>
+      </SafeAreaView>
+    </TouchableWithoutFeedback>
   );
 };
-
-const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  arcContainer: {
-    position: 'relative',
-    height: 150,
-  },
-  arcBackground: {
-    position: 'absolute',
-    width: 2000,
-    height: 2000,
-    backgroundColor: '#00A86B',
-    borderBottomLeftRadius: 1200,
-    borderBottomRightRadius: 1200,
-    zIndex: 1,
-    top: -1880,
-    left: -790,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: '8%',
-    backgroundColor: '#00A86B',
-    zIndex: 2,
-  },
-  headerText: {
-    fontSize: 20,
-    fontWeight: '500',
-    fontFamily: 'PingFang SC',
-  },
-  icon: {
-    position: 'absolute',
-    right: 20,
-    zIndex: 1,
-  },
-  iconImage: {
-    width: 24,
-    height: 24,
-  },
-  tabs: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingLeft: 20,
-    paddingRight: 20,
-  },
-  tab: {
-    paddingHorizontal: 25,
-    paddingVertical: 10,
-    borderRadius: 20,
-    backgroundColor: 'rgba(211, 211, 211, 0.3)',
-  },
-  activeTab: {
-    backgroundColor: '#00B578',
-  },
-  tabText: {
-    color: 'black',
-  },
-  tabTextActive: {
-    color: 'white',
-  },
-  searchBar: {
-    margin: 15,
-    padding: 10,
-    borderRadius: 20,
-    backgroundColor: 'rgba(211, 211, 211, 0.3)',
-    textAlign: 'center',
-  },
-  itemsContainer: {
-    paddingHorizontal: 10,
-  },
-  item: {
-    flex: 1,
-    alignItems: 'center',
-    margin: 10,
-  },
-  itemImageContainer: {
-    position: 'relative',
-  },
-  fakeImage: {
-    width: 40,
-    height: 40,
-    backgroundColor: 'lightgrey',
-  },
-  itemImage: {
-    width: 60,
-    height: 60,
-    backgroundColor: '#E5E5E5',
-    borderRadius: 10,
-  },
-  itemQuantity: {
-    position: 'absolute',
-    top: -5,
-    right: -5,
-    borderRadius: 10,
-    width: 20,
-    height: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  itemQuantityText: {
-    color: 'white',
-    fontSize: 10,
-  },
-  itemText: {
-    marginTop: 5,
-    fontSize: 14,
-    textAlign: 'center',
-  },
-  itemStatus: {
-    fontSize: 12,
-    textAlign: 'center',
-  },
-  progressBarContainer: {
-    marginTop: 5,
-    width: 40,
-    height: 6,
-    backgroundColor: 'lightgrey',
-    overflow: 'hidden',
-  },
-  progressBar: {
-    height: '100%',
-    backgroundColor: 'rgb(81, 179, 125)',
-  },
-  itemContainer: {
-    flex: 1 / 3, // Each item takes up 1/3rd of the row
-    maxWidth: '33.33%', // Ensures no overflow
-    margin: 5,
-  },
-});
 
 export default Storage;

@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import React, {useEffect} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import {StyleSheet, SafeAreaView, ImageBackground} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParams} from '../../constants';
@@ -14,15 +14,26 @@ import {
   Box,
   VStack,
 } from '@/components/ui';
+import {CommonActions} from '@react-navigation/native';
 
 type Props = NativeStackScreenProps<RootStackParams, 'WelcomeScreen'>;
 
 const WelcomeScreen: React.FC<Props> = ({navigation}) => {
   const current = useSelector(currentUser);
+  const handleAuthentication = useCallback(() => {
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [{name: 'HomePage'}],
+      }),
+    );
+  }, [navigation]);
 
   useEffect(() => {
-    navigation.push('HomePage');
-  }, [current, navigation]);
+    if (current) {
+      handleAuthentication();
+    }
+  }, [current, handleAuthentication, navigation]);
 
   const goToRigsterScreen = () => {
     navigation.push('EmailInputScreen');

@@ -1,98 +1,56 @@
 import React, {useState} from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  ScrollView,
-  SafeAreaView,
-} from 'react-native';
-// import Screen from '@/components/globalComponent/Screen';
+import {View, Text, SafeAreaView} from 'react-native';
 
 import UnstyleButton from '../../../../components/UnstyleButton';
 import DateDropDown from '../../../../components/DateDropDown';
+import {daysCollection, generateTimeOptions} from '@/utils/utils';
 
 const WeeklyWrapUpTimeScreen = () => {
+  const [days, setDays] = useState('');
+  const [times, setTimes] = useState('');
+
   return (
-    <SafeAreaView style={styles.screen}>
-      <View style={styles.spacer} />
-      <Text style={styles.descriptionText}>
+    <SafeAreaView className="flex-1 bg-white">
+      <View className="h-[10%]" />
+      <Text className="text-lg font-sans text-gray-500 text-center mb-6 px-2">
         We will let you see what’s expiring, plan meals and generate grocery
         list.
       </Text>
-      <Text style={styles.descriptionText}>
+      <Text className="text-lg font-sans text-gray-500 text-center mb-6 px-2">
         When is a good time for your wrap up?
       </Text>
-      <View style={styles.selectionContainer}>
+      {days && times && (
+        <Text className="text-lg font-sans text-gray-500 text-center mb-6 px-2">
+          {days} {times}
+        </Text>
+      )}
+      <View className="flex-row justify-between w-[90%] mb-[20%] mx-auto">
         <DateDropDown
-          options={['Firday', 'Saturaday', 'Sunday']}
+          options={daysCollection}
           placeholder="Firday"
           containerStyle={{width: '45%'}}
           dropdownOptionsStyle={{left: -35, right: -225}}
+          onSelected={day => {
+            setDays(day);
+          }}
         />
         <DateDropDown
-          options={['8:00 PM', '9:00 PM', '10:00 PM']}
+          options={generateTimeOptions()}
           placeholder="8:00 PM"
           containerStyle={{width: '45%'}}
           dropdownOptionsStyle={{left: -235, right: -30}}
+          onSelected={time => {
+            setTimes(time);
+          }}
         />
       </View>
-
       <UnstyleButton
         text="Continue"
         backgroundColor="rgb(81, 179, 125)"
-        style={{alignSelf: 'center'}}
+        style={{alignSelf: 'center', zIndex: -1}}
       />
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  spacer: {
-    height: '10%',
-  },
-  descriptionText: {
-    fontSize: 18,
-    fontFamily: 'PingFang SC',
-    color: 'grey',
-    textAlign: 'center',
-    marginBottom: 25,
-    paddingHorizontal: 10,
-  },
-  selectionContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '90%',
-    marginBottom: '20%',
-  },
-  selectionBox: {
-    flex: 1,
-    backgroundColor: '#f0f0f0',
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    marginHorizontal: 10,
-    borderRadius: 5,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  selectionText: {
-    fontSize: 18,
-    color: 'black',
-  },
-  continueButton: {
-    backgroundColor: '#4CAF50',
-    paddingVertical: 15,
-    paddingHorizontal: 40,
-    borderRadius: 5,
-  },
-  continueButtonText: {
-    fontSize: 18,
-    color: 'white',
-  },
-});
 
 export default WeeklyWrapUpTimeScreen;

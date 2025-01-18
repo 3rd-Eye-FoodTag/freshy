@@ -1,11 +1,5 @@
-import React, {useState} from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  ScrollView,
-} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {View, Text, TouchableOpacity, ScrollView} from 'react-native';
 
 interface DateDropDownProps {
   placeholder: string;
@@ -14,6 +8,7 @@ interface DateDropDownProps {
   containerStyle?: any;
   optionContainerStyle?: any;
   dropdownOptionsStyle?: any;
+  onSelected?: (e: any) => void;
 }
 
 const DateDropDown: React.FC<DateDropDownProps> = ({
@@ -23,49 +18,64 @@ const DateDropDown: React.FC<DateDropDownProps> = ({
   containerStyle,
   optionContainerStyle,
   dropdownOptionsStyle,
+  onSelected = () => {},
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedOption, setSelectedOption] = useState('');
+  const [selectedOption, setSelectedOption] = useState(options[0]);
 
   const toggleDropdown = () => setIsOpen(!isOpen);
+
+  useEffect(() => {
+    onSelected(selectedOption);
+  }, []);
 
   const handleOptionSelect = (option: string) => {
     setSelectedOption(option);
     setIsOpen(false);
+    onSelected(option);
   };
 
   return (
-    <View style={[styles.inputContainer, containerStyle, style]}>
-      {!selectedOption && <Text style={styles.placeholder}>{placeholder}</Text>}
-      <TouchableOpacity style={styles.dropdownButton} onPress={toggleDropdown}>
-        <Text style={styles.dropdownText}>{selectedOption || placeholder}</Text>
-        <Text style={styles.dropdownArrow}>{'>'}</Text>
+    <View
+      className={`h-12 bg-gray-200 w-[40%] mx-5 flex-1 z-20 ${style || ''} ${
+        containerStyle || ''
+      }`}>
+      {/* {!selectedOption && (
+        <Text className="absolute left-5 top-1/2 transform -translate-y-2.5 text-gray-500 text-lg">
+          {placeholder}
+        </Text>
+      )} */}
+      <TouchableOpacity
+        className="flex-1 flex-row items-center justify-between px-5"
+        onPress={toggleDropdown}>
+        <Text className="flex-1 text-lg text-gray-500">
+          {selectedOption || placeholder}
+        </Text>
+        <Text className="text-xl text-gray-400">{'>'}</Text>
       </TouchableOpacity>
       {isOpen && (
-        <View style={[styles.dropdownOptions, dropdownOptionsStyle]}>
-          <View style={styles.topBar}>
-            <TouchableOpacity
-              style={styles.cancelButton}
-              onPress={() => setIsOpen(false)}>
-              <Text style={[styles.buttonText]}>Cancel</Text>
+        <View
+          className={`absolute top-12 bg-white w-full shadow-lg z-10 ${
+            dropdownOptionsStyle || ''
+          }`}>
+          <View className="flex-row justify-between items-center bg-white px-5 py-2">
+            <TouchableOpacity onPress={() => setIsOpen(false)}>
+              <Text className="text-green-600 text-base">Cancel</Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.doneButton}
-              onPress={() => setIsOpen(false)}>
-              <Text style={[styles.buttonText]}>Done</Text>
+            <TouchableOpacity onPress={() => setIsOpen(false)}>
+              <Text className="text-green-600 text-base">Done</Text>
             </TouchableOpacity>
           </View>
-          <View style={styles.divider} />
-          <ScrollView style={[styles.optionList, optionContainerStyle]}>
+          <View className="h-px bg-gray-300" />
+          <ScrollView className={`h-48 ${optionContainerStyle || ''}`}>
             {options.map((option, index) => (
               <TouchableOpacity
                 key={index}
-                style={[
-                  styles.option,
-                  selectedOption === option && styles.selectedOption,
-                ]}
+                className={`py-5 ${
+                  selectedOption === option ? 'bg-gray-100' : ''
+                }`}
                 onPress={() => handleOptionSelect(option)}>
-                <Text style={styles.optionText}>{option}</Text>
+                <Text className="text-lg text-center">{option}</Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
@@ -74,83 +84,5 @@ const DateDropDown: React.FC<DateDropDownProps> = ({
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  inputContainer: {
-    height: 50,
-    backgroundColor: '#f0f0f0',
-    width: '40%',
-    marginLeft: 20,
-    marginRight: 20,
-  },
-  dropdownContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  placeholder: {
-    position: 'absolute',
-    left: 20,
-    top: '50%',
-    transform: [{translateY: -10}],
-    color: 'white',
-    fontSize: 17,
-  },
-  dropdownButton: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-  },
-  dropdownText: {
-    flex: 1,
-    fontSize: 18,
-    fontFamily: 'PingFang SC',
-    color: 'gray',
-  },
-  dropdownArrow: {
-    fontSize: 28,
-    color: 'lightgray',
-    marginLeft: 10,
-  },
-  dropdownOptions: {
-    position: 'absolute',
-    top: 300,
-    backgroundColor: '#fff',
-  },
-  topBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-  },
-  cancelButton: {
-    paddingVertical: 5,
-  },
-  doneButton: {
-    paddingVertical: 5,
-  },
-  buttonText: {
-    fontSize: 16,
-    color: 'rgb(81, 179, 125)',
-  },
-  divider: {
-    height: 0.5,
-    backgroundColor: 'rgba(211, 211, 211, 0.3)',
-  },
-  optionList: {
-    height: 200,
-  },
-  option: {
-    paddingVertical: 20,
-  },
-  selectedOption: {},
-  optionText: {
-    fontSize: 20,
-    textAlign: 'center',
-  },
-});
 
 export default DateDropDown;

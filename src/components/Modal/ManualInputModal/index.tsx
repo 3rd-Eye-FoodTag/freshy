@@ -54,7 +54,10 @@ const ManualInputModal: React.FC<{showConfirmation: boolean}> = ({
   };
 
   const filteredItems = recommendedList.filter(item => {
-    return item?.food?.toLowerCase().includes(searchTerm.toLowerCase());
+    return (
+      item?.foodName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item?.food?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
   });
 
   return (

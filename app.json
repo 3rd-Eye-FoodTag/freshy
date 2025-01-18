@@ -3,5 +3,8 @@
   "displayName": "freshy",
   "plugins": [
     "expo-font"
-  ]
+  ],
+  "expo": {
+    "userInterfaceStyle": "automatic"
+  }
 }
