@@ -1,6 +1,5 @@
 import {useState} from 'react';
 import axios from 'axios';
-import Config from 'react-native-config';
 import {chatGptQuestion} from './constants';
 
 const useChatGptApi = () => {
@@ -27,7 +26,7 @@ const useChatGptApi = () => {
         requestBody,
         {
           headers: {
-            Authorization: `Bearer ${Config.CHATGPT_API_KEY}`,
+            Authorization: `Bearer ${process.env.CHATGPT_API_KEY}`,
             'Content-Type': 'application/json',
           },
         },

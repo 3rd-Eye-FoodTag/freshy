@@ -1,6 +1,5 @@
 import {useState} from 'react';
 import axios from 'axios';
-import Config from 'react-native-config';
 
 const useGoogleVisionApi = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -21,7 +20,7 @@ const useGoogleVisionApi = () => {
       };
 
       const response = await axios.post(
-        `https://vision.googleapis.com/v1/images:annotate?key=${Config.GOOGLE_VISION_API_KEY}`,
+        `https://vision.googleapis.com/v1/images:annotate?key=${process.env.GOOGLE_VISION_API_KEY}`,
         requestBody,
         {headers: {'Content-Type': 'application/json'}},
       );

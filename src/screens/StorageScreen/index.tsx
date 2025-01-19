@@ -125,7 +125,7 @@ const Storage: React.FC = () => {
             <TouchableOpacity className="absolute right-5 z-20" />
           </View>
         </View>
-        <Text>{process.env.BASE_URL}</Text>
+
         <VStack className="w-full px-4 my-4 pb-10">
           <VStack className="w-full mb-10 z-20">
             <HStack className="w-full z-20">
