@@ -9,6 +9,7 @@ interface DateDropDownProps {
   optionContainerStyle?: any;
   dropdownOptionsStyle?: any;
   onSelected?: (e: any) => void;
+  defaultOption?: string;
 }
 
 const DateDropDown: React.FC<DateDropDownProps> = ({
@@ -19,9 +20,12 @@ const DateDropDown: React.FC<DateDropDownProps> = ({
   optionContainerStyle,
   dropdownOptionsStyle,
   onSelected = () => {},
+  defaultOption,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedOption, setSelectedOption] = useState(options[0]);
+  const [selectedOption, setSelectedOption] = useState(
+    defaultOption || options[0],
+  );
 
   const toggleDropdown = () => setIsOpen(!isOpen);
 
@@ -30,6 +34,7 @@ const DateDropDown: React.FC<DateDropDownProps> = ({
   }, []);
 
   const handleOptionSelect = (option: string) => {
+    console.log({option});
     setSelectedOption(option);
     setIsOpen(false);
     onSelected(option);
@@ -40,11 +45,6 @@ const DateDropDown: React.FC<DateDropDownProps> = ({
       className={`h-12 bg-gray-200 w-[40%] mx-5 flex-1 z-20 ${style || ''} ${
         containerStyle || ''
       }`}>
-      {/* {!selectedOption && (
-        <Text className="absolute left-5 top-1/2 transform -translate-y-2.5 text-gray-500 text-lg">
-          {placeholder}
-        </Text>
-      )} */}
       <TouchableOpacity
         className="flex-1 flex-row items-center justify-between px-5"
         onPress={toggleDropdown}>

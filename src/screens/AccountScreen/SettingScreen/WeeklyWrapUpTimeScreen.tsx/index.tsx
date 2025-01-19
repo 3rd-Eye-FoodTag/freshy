@@ -4,25 +4,25 @@ import {View, Text, SafeAreaView} from 'react-native';
 import UnstyleButton from '../../../../components/UnstyleButton';
 import DateDropDown from '../../../../components/DateDropDown';
 import {daysCollection, generateTimeOptions} from '@/utils/utils';
-import {
-  QueryClient,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from '@tanstack/react-query';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import {useSelector} from 'react-redux';
 import {currentUser} from '@/redux/reducer';
 import {putUpdateWeeklyWrapTime} from '@/utils/routes';
 
 const WeeklyWrapUpTimeScreen = () => {
-  const [days, setDays] = useState('Monday');
-  const [times, setTimes] = useState('12:00 AM');
   const currentUserUUID = useSelector(currentUser);
   const queryClient = useQueryClient();
 
   const {data: userData = []} = useQuery<any>({
     queryKey: ['fetchUserInfo', currentUserUUID],
   });
+
+  const [days, setDays] = useState(
+    userData?.setting?.weeklyWrapTime?.Days || 'Monday',
+  );
+  const [times, setTimes] = useState(
+    userData?.setting?.weeklyWrapTime?.Times || '12:00 AM',
+  );
 
   useEffect(() => {
     if (userData && userData?.setting) {
@@ -34,7 +34,11 @@ const WeeklyWrapUpTimeScreen = () => {
     }
   }, [userData]);
 
-  const handleSave = useMutation({
+  const {
+    mutate: handleWeeklyWrap,
+    isSuccess,
+    isError,
+  } = useMutation({
     mutationFn: async () =>
       putUpdateWeeklyWrapTime({Days: days, Times: times}, currentUserUUID),
     onSuccess: () => {
@@ -45,7 +49,7 @@ const WeeklyWrapUpTimeScreen = () => {
   });
 
   const handleSaveWeeklylWrapTime = async () => {
-    handleSave.mutate();
+    handleWeeklyWrap();
   };
 
   return (
@@ -63,6 +67,16 @@ const WeeklyWrapUpTimeScreen = () => {
           {days} {times}
         </Text>
       )}
+      {isSuccess && (
+        <Text className="text-lg font-sans text-gray-500 text-center mb-6 px-2">
+          Successfully to change the time
+        </Text>
+      )}
+      {isError && (
+        <Text className="text-lg font-sans text-gray-500 text-center mb-6 px-2">
+          Fail to change the time
+        </Text>
+      )}
       <View className="flex-row justify-between w-[90%] mb-[20%] mx-auto">
         <DateDropDown
           options={daysCollection}
@@ -72,6 +86,7 @@ const WeeklyWrapUpTimeScreen = () => {
           onSelected={day => {
             setDays(day);
           }}
+          defaultOption={userData?.setting?.weeklyWrapTime?.Days}
         />
         <DateDropDown
           options={generateTimeOptions()}
@@ -81,6 +96,7 @@ const WeeklyWrapUpTimeScreen = () => {
           onSelected={time => {
             setTimes(time);
           }}
+          defaultOption={userData?.setting?.weeklyWrapTime?.Times}
         />
       </View>
       <UnstyleButton

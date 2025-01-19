@@ -1,9 +1,16 @@
 import axios from 'axios';
 import {FoodDetailsProps} from '../interface';
 
+const BASE_URL =
+  process.env.NODE_ENV === 'production'
+    ? 'https://freshy-server-40bbe573dce2.herokuapp.com'
+    : 'http://localhost:2333';
+
 const apiClient = axios.create({
-  baseURL: process.env.BASE_URL,
+  baseURL: BASE_URL,
 });
+
+console.log('>>>>>>>', process.env.NODE_ENV);
 
 //register create information
 export const postNewCustomersBasicInformation = async (data: any) => {
@@ -22,11 +29,10 @@ export const getUserDataFromFirebase = async (currentUid: string) => {
 };
 
 export const getUserInventoryList = async (currentUid: string) => {
-  console.warn('fetching', {baseURL: process.env.BASE_URL});
   const response = await apiClient.get(
     `/api/inventory/userInventory/${currentUid}`,
   );
-  console.log({response});
+
   return response.data;
 };
 
@@ -61,12 +67,13 @@ export const postUpdateCustomerInfo = async (
 
 export const putUpdateWeeklyWrapTime = async (
   weeklyWrapTime: Partial<{Days: string; Times: string}>,
-  userId: string,
-) =>
-  await apiClient.put('/api/users/updateWeeklyWrapTime', {
+  uid: string,
+) => {
+  return await apiClient.put('/api/users/updateWeeklyWrapTime', {
     weeklyWrapTime,
-    userId,
+    uid,
   });
+};
 
 export const postUpdateExistingInventory = async (
   currentUid: string,

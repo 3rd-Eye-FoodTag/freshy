@@ -89,27 +89,27 @@ const Router = (): React.JSX.Element => {
   }, []);
 
   useEffect(() => {
-    if (userData && userData?.setting && currentUserUUID) {
-      postNotification({
-        title: 'There are few food near to expired',
-        body: 'Banna, Apple',
-        topic: 'ExpiredFood',
-        userId: currentUserUUID,
-      });
-    }
-
     // if (userData && userData?.setting && currentUserUUID) {
-    //   console.warn('ready to shoot a notification');
-    //   const weeklyWraptime = userData?.setting.weeklyWrapTime;
-    //   scheduleFunction(weeklyWraptime.Days, weeklyWraptime.Times, () => {
-    //     postNotification({
-    //       title: 'There are few food near to expired',
-    //       body: 'Banna, Apple',
-    //       topic: 'ExpiredFood',
-    //       userUid: currentUserUUID,
-    //     });
+    //   postNotification({
+    //     title: 'There are few food near to expired',
+    //     body: 'Banna, Apple',
+    //     topic: 'ExpiredFood',
+    //     userId: currentUserUUID,
     //   });
     // }
+
+    if (userData && userData?.setting && currentUserUUID) {
+      console.warn('ready to shoot a notification');
+      const weeklyWraptime = userData?.setting.weeklyWrapTime;
+      scheduleFunction(weeklyWraptime.Days, weeklyWraptime.Times, () => {
+        postNotification({
+          title: 'There are few food near to expired',
+          body: 'Banna, Apple',
+          topic: 'ExpiredFood',
+          userUid: currentUserUUID,
+        });
+      });
+    }
   }, [userData, currentUserUUID]);
 
   useEffect(() => {
