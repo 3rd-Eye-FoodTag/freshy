@@ -1,13 +1,52 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, Text, SafeAreaView} from 'react-native';
 
 import UnstyleButton from '../../../../components/UnstyleButton';
 import DateDropDown from '../../../../components/DateDropDown';
 import {daysCollection, generateTimeOptions} from '@/utils/utils';
+import {
+  QueryClient,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
+import {useSelector} from 'react-redux';
+import {currentUser} from '@/redux/reducer';
+import {putUpdateWeeklyWrapTime} from '@/utils/routes';
 
 const WeeklyWrapUpTimeScreen = () => {
-  const [days, setDays] = useState('');
-  const [times, setTimes] = useState('');
+  const [days, setDays] = useState('Monday');
+  const [times, setTimes] = useState('12:00 AM');
+  const currentUserUUID = useSelector(currentUser);
+  const queryClient = useQueryClient();
+
+  const {data: userData = []} = useQuery<any>({
+    queryKey: ['fetchUserInfo', currentUserUUID],
+  });
+
+  useEffect(() => {
+    if (userData && userData?.setting) {
+      const weeklyWraptime = userData?.setting.weeklyWrapTime;
+      if (weeklyWraptime?.Days && weeklyWraptime?.Times) {
+        setTimes(weeklyWraptime?.Times);
+        setDays(weeklyWraptime?.Days);
+      }
+    }
+  }, [userData]);
+
+  const handleSave = useMutation({
+    mutationFn: async () =>
+      putUpdateWeeklyWrapTime({Days: days, Times: times}, currentUserUUID),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['fetchUserInfo', currentUserUUID],
+      });
+    },
+  });
+
+  const handleSaveWeeklylWrapTime = async () => {
+    handleSave.mutate();
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -47,6 +86,7 @@ const WeeklyWrapUpTimeScreen = () => {
       <UnstyleButton
         text="Continue"
         backgroundColor="rgb(81, 179, 125)"
+        onPress={handleSaveWeeklylWrapTime}
         style={{alignSelf: 'center', zIndex: -1}}
       />
     </SafeAreaView>

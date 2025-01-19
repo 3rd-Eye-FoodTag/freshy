@@ -12,7 +12,7 @@ import {
   FlatList,
 } from 'native-base';
 import {StyleSheet, TouchableOpacity} from 'react-native';
-// import {signOut} from 'firebase/auth';
+import auth from '@react-native-firebase/auth';
 // import {auth} from '../../config/firebase';
 import {RootStackParams} from '../../router/constants';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
@@ -20,7 +20,7 @@ import {SafeAreaView} from 'react-native';
 import {useQuery} from '@tanstack/react-query';
 import {useSelector} from 'react-redux';
 import {currentUser, userSelector} from '../../redux/reducer';
-import {fetchUserDataFromFirebase} from '../../utils/api';
+import {getUserDataFromFirebase} from '@/utils/routes';
 
 const profileOptions = [
   {id: '1', icon: 'person', label: 'Edit User Profile'},
@@ -43,15 +43,15 @@ const AccountScreen: React.FC<Props> = ({navigation}) => {
 
   const {data: userData, isSuccess} = useQuery({
     queryKey: ['fetchUserInfo', currentUserUUID],
-    queryFn: () => fetchUserDataFromFirebase(currentUserUUID),
   });
 
   const handleLogout = async () => {
-    // try {
-    //   await signOut(auth);
-    // } catch (e: any) {
-    //   setError(e);
-    // }
+    try {
+      await auth().signOut();
+    } catch (err: any) {
+      setError(err.message);
+      console.log(err.message);
+    }
   };
 
   if (error) {

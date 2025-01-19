@@ -21,10 +21,12 @@ import {
 import {useSelector} from 'react-redux';
 // import {auth} from '../../../../config/firebase';
 // import {createUserWithEmailAndPassword} from 'firebase/auth';
+import auth from '@react-native-firebase/auth';
 import {registerAuth} from '../../../../redux/reducer';
 // import {doc, setDoc} from 'firebase/firestore';
 // import {db} from '../../../../config/firebase';
 import IconComponent from 'react-native-vector-icons/MaterialIcons';
+import {postNewCustomersBasicInformation} from '@/utils/routes';
 
 const MoreInfoInputScreen: React.FC = () => {
   const [error, setError] = useState('');
@@ -40,30 +42,25 @@ const MoreInfoInputScreen: React.FC = () => {
   const {email, password} = user;
 
   const handleContinue = async () => {
-    // try {
-    //   const userCredential = await createUserWithEmailAndPassword(
-    //     auth,
-    //     email,
-    //     password,
-    //   );
-    //   const user = userCredential.user;
-    //   // Set user information in Firestore
-    //   await setDoc(doc(db, 'Users', user.uid), {
-    //     name,
-    //     age,
-    //     zipCode,
-    //     gender,
-    //     email: user.email,
-    //     uid: user.uid,
-    //     createdAt: new Date(),
-    //   });
-    //   await setDoc(doc(db, 'Inventory', user.uid), {
-    //     data: [],
-    //   });
-    //   console.log('User registered and data added to Firestore:', user);
-    // } catch (err: any) {
-    //   setError(err.message);
-    // }
+    try {
+      const userCredential = await auth().createUserWithEmailAndPassword(
+        email,
+        password,
+      );
+      const user = userCredential.user;
+      const payload = {
+        name,
+        age,
+        zipCode,
+        gender,
+        email: user.email,
+        uid: user.uid,
+        createdAt: new Date(),
+      };
+      postNewCustomersBasicInformation(payload);
+    } catch (err: any) {
+      setError(err.message);
+    }
   };
 
   return (

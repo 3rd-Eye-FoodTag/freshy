@@ -6,7 +6,7 @@ import {
   useCodeScanner,
 } from 'react-native-vision-camera';
 import type {Code} from 'react-native-vision-camera';
-import {getProductInfo, postInventoryUpdateToFirebase} from '../../utils/api';
+import {getProductInfo} from '../../utils/api';
 import {useDispatch, useSelector} from 'react-redux';
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import {calculateExpirationDate, findSimilarIds} from '../../utils/utils';
@@ -19,6 +19,7 @@ import {
   resetConfirmationList,
 } from '../../redux/reducer/storageReducer';
 import {useNavigation} from '@react-navigation/native';
+import {postInventoryUpdateToFirebase} from '@/utils/routes';
 
 const BarcodeScanScreen: React.FC = () => {
   const [scannedCodes, setScannedCodes] = useState<string[]>([]);
