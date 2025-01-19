@@ -29,9 +29,6 @@ import {sortFoodStartFromSpoil} from '@/utils/utils';
 import foodWikiData3 from '../../utils/mockData/foodWikiData3.json';
 import EyeOffIcon from 'react-native-vector-icons/MaterialIcons';
 import {
-  Button,
-  ButtonIcon,
-  ButtonText,
   Select,
   SelectTrigger,
   SelectInput,
@@ -43,7 +40,6 @@ import {
   SelectItem,
 } from '@/components/ui';
 import {HStack, VStack} from 'native-base';
-import PushNotification from 'react-native-push-notification';
 import {getFoodWikiFromFirebase, getUserInventoryList} from '@/utils/routes';
 
 const Storage: React.FC = () => {
@@ -117,15 +113,6 @@ const Storage: React.FC = () => {
     });
   };
 
-  const handleSendNotification = () => {
-    console.log('push handleSendNotification');
-    PushNotification.localNotification({
-      channelId: 'notification-test',
-      title: 'The food is expiring',
-      message: 'There is a expiring food',
-    });
-  };
-
   return (
     <TouchableWithoutFeedback onPress={handleOutsidePress}>
       <SafeAreaView className="flex-1 bg-white">
@@ -140,9 +127,6 @@ const Storage: React.FC = () => {
         </View>
         <VStack className="w-full px-4 my-4 pb-10">
           <VStack className="w-full mb-10 z-20">
-            <Button onPress={handleSendNotification}>
-              <ButtonText>Send NOtification</ButtonText>
-            </Button>
             <HStack className="w-full z-20">
               <Select
                 closeOnOverlayClick={true}

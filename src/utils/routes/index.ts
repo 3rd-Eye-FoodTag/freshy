@@ -56,6 +56,15 @@ export const postUpdateCustomerInfo = async (
   });
 };
 
+export const putUpdateWeeklyWrapTime = async (
+  weeklyWrapTime: Partial<{Days: string; Times: string}>,
+  userId: string,
+) =>
+  await axios.put(env + '/api/users/updateWeeklyWrapTime', {
+    weeklyWrapTime,
+    userId,
+  });
+
 export const postUpdateExistingInventory = async (
   currentUid: string,
   newItem: FoodDetailsProps,
@@ -73,3 +82,7 @@ export const removeItemInventoryList = async (
     currentUid,
     foodID,
   });
+
+export const postNotification = async (data: any) => {
+  return axios.post(env + '/api/notification/send-notification', data);
+};

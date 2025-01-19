@@ -249,3 +249,130 @@ export const generateTimeOptions = () => {
   }
   return times;
 };
+
+export const isWithin10Minutes = (
+  inputDay: string,
+  inputTime: string,
+): boolean => {
+  const weekdayMap: {[key: string]: number} = {
+    Sunday: 0,
+    Monday: 1,
+    Tuesday: 2,
+    Wednesday: 3,
+    Thursday: 4,
+    Friday: 5,
+    Saturday: 6,
+  };
+
+  const inputDayIndex = weekdayMap[inputDay];
+  if (inputDayIndex === undefined) {
+    throw new Error(`Invalid weekday: ${inputDay}`);
+  }
+
+  const timeRegex = /(\d+):(\d+)(am|pm)/i;
+  const match = inputTime.match(timeRegex);
+  if (!match) {
+    throw new Error(`Invalid time format: ${inputTime}`);
+  }
+
+  let [_, hour, minute, period] = match;
+  let hours = parseInt(hour);
+  let minutes = parseInt(minute);
+
+  if (period.toLowerCase() === 'pm' && hours !== 12) {
+    hours += 12;
+  } else if (period.toLowerCase() === 'am' && hours === 12) {
+    hours = 0;
+  }
+
+  const now = new Date();
+  const currentDayIndex = now.getDay();
+  const currentHour = now.getHours();
+  const currentMinute = now.getMinutes();
+
+  if (inputDayIndex !== currentDayIndex) {
+    return false;
+  }
+
+  const inputTimeInMinutes = hours * 60 + minutes;
+  const currentTimeInMinutes = currentHour * 60 + currentMinute;
+
+  return Math.abs(currentTimeInMinutes - inputTimeInMinutes) < 10;
+};
+
+export const scheduleFunction = (
+  targetDay: string,
+  targetTime: string,
+  callback: () => void,
+) => {
+  const weekdayMap: {[key: string]: number} = {
+    Sunday: 0,
+    Monday: 1,
+    Tuesday: 2,
+    Wednesday: 3,
+    Thursday: 4,
+    Friday: 5,
+    Saturday: 6,
+  };
+
+  const targetDayIndex = weekdayMap[targetDay];
+  if (targetDayIndex === undefined) {
+    throw new Error(`Invalid weekday: ${targetDay}`);
+  }
+
+  // Parse the target time (e.g., "8:00am")
+  const timeRegex = /(\d+):(\d+)\s?(am|pm)/i;
+  const match = targetTime.match(timeRegex);
+  if (!match) {
+    throw new Error(`Invalid time format: ${targetTime}`);
+  }
+
+  let [_, hour, minute, period] = match;
+  let hours = parseInt(hour);
+  let minutes = parseInt(minute);
+
+  // Convert to 24-hour format
+  if (period.toLowerCase() === 'pm' && hours !== 12) {
+    hours += 12;
+  } else if (period.toLowerCase() === 'am' && hours === 12) {
+    hours = 0;
+  }
+
+  const now = new Date();
+  const currentDayIndex = now.getDay();
+  const currentHour = now.getHours();
+  const currentMinute = now.getMinutes();
+  const currentSecond = now.getSeconds();
+
+  // Calculate the delay in milliseconds
+  const dayDifference =
+    targetDayIndex >= currentDayIndex
+      ? targetDayIndex - currentDayIndex
+      : 7 - (currentDayIndex - targetDayIndex); // Handle wrapping to the next week
+
+  const currentTimeInMilliseconds =
+    currentHour * 60 * 60 * 1000 +
+    currentMinute * 60 * 1000 +
+    currentSecond * 1000;
+
+  const targetTimeInMilliseconds = hours * 60 * 60 * 1000 + minutes * 60 * 1000;
+
+  let delay =
+    dayDifference * 24 * 60 * 60 * 1000 +
+    (targetTimeInMilliseconds - currentTimeInMilliseconds);
+
+  // If the time for today has passed, move to the next occurrence
+  if (
+    dayDifference === 0 &&
+    targetTimeInMilliseconds <= currentTimeInMilliseconds
+  ) {
+    delay += 7 * 24 * 60 * 60 * 1000; // Move to the next week
+  }
+  // Schedule the first call
+  setTimeout(() => {
+    callback(); // Run the function once
+
+    // Start repeating every week AFTER the first run
+    setInterval(callback, 7 * 24 * 60 * 60 * 1000); // 7 days in milliseconds
+  }, delay);
+};

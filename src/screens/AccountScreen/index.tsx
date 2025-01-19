@@ -43,7 +43,6 @@ const AccountScreen: React.FC<Props> = ({navigation}) => {
 
   const {data: userData, isSuccess} = useQuery({
     queryKey: ['fetchUserInfo', currentUserUUID],
-    queryFn: () => getUserDataFromFirebase(currentUserUUID),
   });
 
   const handleLogout = async () => {
